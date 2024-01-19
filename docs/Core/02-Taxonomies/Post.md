@@ -156,19 +156,16 @@ Method <code>Posts::delete</code> xóa toàn bộ thông tin một hoặc nhiề
 
 > **Tham số truyền vào bao gồm:**
 ```php
-::delete($where, $trash);
+::delete($id, $trash);
 ```
 
-| Params |    Type     |                                                            Description |
-|--------|:-----------:|-----------------------------------------------------------------------:|
-| $where | int hoặc Qr |                 id bài viết cần xóa hoặc điều kiện lấy trang cần xóa   |
-| $trash |    bool     | true nếu cho vào thùng rác, false nếu xóa vĩnh viển (mặc định `false`) |
+| Params | Type |                                                            Description |
+|--------|:----:|-----------------------------------------------------------------------:|
+| $id    | int  |                                                    id bài viết cần xóa |
+| $trash | bool | true nếu cho vào thùng rác, false nếu xóa vĩnh viển (mặc định `false`) |
 
 ```php
 Posts::delete($id);
-```
-```php
-Posts::delete(Qr::set()->whereIn('id', [1,2,3,4]));
 ```
 
 ### Post MetaData
