@@ -23,6 +23,7 @@ code {
 h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
   color:var(--ifm-color-primary);
   padding: 2px 5px;
+  font-size:100%;
 }
 .tabs__item {
   --ifm-tabs-padding-vertical:0.5rem;
