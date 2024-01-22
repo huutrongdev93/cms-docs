@@ -10,16 +10,16 @@ import {themes as prismThemes} from 'prism-react-renderer';
 const config = {
 	title: 'SkillDo',
 	tagline: 'Dinosaurs are cool',
-	favicon: 'img/favicon.ico',
+	favicon: 'img/logo-skilldo.png',
 	url: 'https://sikido.vn',
 	baseUrl: '/',
 	organizationName: 'facebook', // Usually your GitHub org/user name.
-	projectName: 'docusaurus', // Usually your repo name.
+	projectName: 'SkillDo', // Usually your repo name.
 	onBrokenLinks: 'throw',
 	onBrokenMarkdownLinks: 'warn',
 	i18n: {
-		defaultLocale: 'en',
-		locales: ['en'],
+		defaultLocale: 'vi',
+		locales: ['vi'],
 	},
 	presets: [
 		[
@@ -31,7 +31,7 @@ const config = {
 					sidebarPath: './sidebars.js',
 					// Please change this to your repo.
 					// Remove this to remove the "edit this page" links.
-					editUrl: 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+					editUrl: 'https://github.com/huutrongdev93/cms-docs',
 				},
 				blog: false,
 				theme: {
@@ -52,7 +52,7 @@ const config = {
 				title: 'SKILLDO',
 				logo: {
 					alt: 'My Site Logo',
-					src: 'img/logo.svg',
+					src: 'img/logo-skilldo.png',
 				},
 				items: [
 					{
@@ -62,7 +62,7 @@ const config = {
 						label: 'Document',
 					},
 					{
-						href: 'https://github.com/facebook/docusaurus',
+						href: 'https://github.com/huutrongdev93/cms-docs',
 						label: 'GitHub',
 						position: 'right',
 					},
