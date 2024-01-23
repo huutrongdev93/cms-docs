@@ -66,6 +66,22 @@ hoặc sử dụng thuộc tính động của Form ví dụ như thêm field te
 $form->text('myField', ['label' => 'My Field'], 'value');
 ```
 
+với `$args` bạn có thể thêm các attributes vào field hoặc cấu hình field nếu Form hỗ trợ, sau đây là một số cấu hình chung cho taất cả các field:
+> **`start`** : (string hoặc int) chèn thêm mã html vào đầu field, 
+> nếu giá trị start nhận vào là một số sẽ tự đoan chèn 
+> 
+> `<div class="col-md-'.$start.' form-group">`
+
+> **`end`** : (string) chèn thêm mã html vào cuối field, nếu start là một số nguyên end sẽ tự động đóng field bằng div
+>
+
+> **`label`** : (string) label của field
+>
+
+> **`validations`** : Thêm điều kiện validation cho field
+
+Danh sách Field và thuộc tính của Field xem [**`tại đây`**](Form-Fields)
+
 ### Hiển Thị Form
 
 Để hiển thị Form bạn sử dụng ba phương thức `open`, `html` và `close`
