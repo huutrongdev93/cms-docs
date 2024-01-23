@@ -13,7 +13,7 @@ $(document).on('click', '.element', function(event) {
     });
 });
 ```
-> Trong version 7 cms có tích hợp thêm axios để gọi ajax hay các cuộc gọi api
+> Trong version 7 cms có tích hợp thêm [axios](https://axios-http.com/docs/intro) để gọi ajax hay các cuộc gọi api
 
 ```jsx
 $(document).on('click', '.element', function(event) {

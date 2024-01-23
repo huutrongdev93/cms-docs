@@ -177,10 +177,12 @@ my favorite cms is SkillDo. ( và 1 lỗi nữa )
 ### Cách sử dụng `SKD_Error` trong tình huống thực tế
 
 ```php
-if (request()->isMethod('post')) {
+$request = request();
+
+if ($request->isMethod('post')) {
     $error = new SKD_Error();
-    $email  = request()->input('email');
-    $name   = request()->input('name');
+    $email  = $request->input('email');
+    $name   = $request->input('name');
     if(empty($email)) {
         $error->add('empty', 'Email is required field.');
     }
@@ -192,8 +194,9 @@ if (request()->isMethod('post')) {
     }
     
     if ($error->hasErrors()) {
-      echo $error->first()
-    } else {
+        echo $error->first()
+    } 
+    else {
       // continue with the submission data and redirect 
     }
 }

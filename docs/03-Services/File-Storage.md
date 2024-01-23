@@ -28,7 +28,7 @@ $contents = Storage::get('source/file.jpg');
 Nếu file bạn đang lấy có nội dung là `JSON`, bạn có thể sử dụng phương thức `json` để lấy file và giải mã nội dung của nó:
 
 ```php
-$contents = Storage::get('source/file.json');
+$contents = Storage::json('source/file.json');
 ```
 
 Phương thức `exists` có thể được sử dụng để xác định xem một file có tồn tại không:
