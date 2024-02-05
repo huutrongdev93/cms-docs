@@ -13,11 +13,16 @@ $form = new Form();
 $form->setFormId('my_form_id');
 ```
 
+Nếu đây là form dùng để upload file bạn dùng phương thức `setIsUpload` để hệ thống biết đây là form upload:
+
+```php
+$form->setIsUpload(true);
+```
+
 Form SkillDo có cung cấp cơ chế tự động `Validation` field bằng `JS` ở frontend, 
 để kích hoạt cơ chế này bạn có thể sử dụng phương thức `setIsValid` với biến là nhận vào là true
 
 ```php
-$form = new Form();
 $form->setFormId('my_form_id');
 $form->setIsValid(true);
 ```
@@ -28,7 +33,6 @@ Khi kích hoạt Validation bắt buộc form phải có id nếu bạn không s
 Sau khi form Validation thành công bạn không muốn send submit cho backend mà sẽ thực hiện một thao tác js nào đó ví dụ như gửi data form đến ajax thì có thể sử dụng phương thức `setCallbackValidJs`:
 
 ```php
-$form = new Form();
 $form->setFormId('my_form_id');
 $form->setIsValid(true);
 $form->setCallbackValidJs('myFormSubmitHandler');

@@ -6,7 +6,7 @@ SkillDo nhận diện ajax callback của bạn thông qua params action
 ```jsx
 $(document).on('click', '.element', function(event) {
     let data = {
-        'action' : 'TestAjax::actionName',
+        action: 'TestAjax::actionName',
     };
     $.post(ajax, data, function(data) {}, 'json').done(function(response) {
         SkillDoHelper.messages.response(response)
@@ -18,7 +18,7 @@ $(document).on('click', '.element', function(event) {
 ```jsx
 $(document).on('click', '.element', function(event) {
     let data = {
-        'action' : 'TestAjax::actionName',
+        action: 'TestAjax::actionName',
     };
     request.post(ajax, data).then(function(response) {
         SkillDoHelper.messages.response(response)
@@ -29,6 +29,22 @@ Trong 2 ví dụ trên bạn thấy :
 * biến `ajax` là url gọi ajax chung của cms
 * `TestAjax::actionName` là callback ở backend sẽ xử lý dữ liệu và trả data về với dạng **json**
 * biến `request` là axios đã được cms cấu hình để khi sử dụng sẽ tự động gửi thêm **csrf token** nếu bạn không muốn sử dụng cấu hình mặc định của cms bạn có thể tạo 1 cấu hình khác và gọi với cấu hình của bạn, bạn có thể xem cấu hình mặc định ở file `http.js`
+
+Trong một số trường hợp ngôn ngữ giữa `admin` và `client` sẽ không giống nhau ví dụ như admin đang sử dụng ngôn ngữ tiếng việt và client đang sử dụng tiếng anh.
+Để gọi chính xác ngôn ngữ bạn cần bạn có thể thêm params "`_is_lang`" vào data với giá trị là theme nếu muốn lấy ngôn ngữ theo `client` và `admin` nếu lấy theo admin
+
+```jsx
+$(document).on('click', '.element', function(event) {
+    let data = {
+        action: 'TestAjax::actionName',
+        _is_lang: 'theme'
+    };
+    request.post(ajax, data).then(function(response) {
+        SkillDoHelper.messages.response(response)
+    })
+});
+```
+
 
 ### Backend
 

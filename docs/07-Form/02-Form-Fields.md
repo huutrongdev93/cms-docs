@@ -86,15 +86,15 @@ $form->add('field_name', 'wysiwyg-short', ['label' => 'Label Field']);
 $options = [
     'left' => [
         'label' => 'Label 1',
-        'icon'  => '<i class="fa-sharp fa-light fa-align-left"></i>'
+        'icon'  => '<i class="fa-light fa-align-left"></i>'
     ],
     'center' => [
         'label' => 'Label 2',
-        'icon'  => '<i class="fa-sharp fa-light fa-align-justify"></i>'
+        'icon'  => '<i class="fa-light fa-align-justify"></i>'
     ],
     'right' => [
         'label' => 'Label 3',
-        'icon'  => '<i class="fa-sharp fa-light fa-align-right"></i>'
+        'icon'  => '<i class="fa-light fa-align-right"></i>'
     ],
 ];
 
@@ -102,7 +102,7 @@ $form = new Form();
 
 //Sử dụng phương thức `động`
 $form
-    ->checkBoxIcon('field_name_checkbox', $options, ['label' => 'Label Checkbox'])
+    ->checkboxIcon('field_name_checkbox', $options, ['label' => 'Label Checkbox'])
     ->radioIcon('field_name_radio', $options, ['label' => 'Label Radio']);
     
 //Sử dụng phương thức `add`
@@ -566,7 +566,7 @@ Field Text Building là tập hợp các field giao diện để có thể cấu
 $form->textBuilding('field_name', ['label' => 'Label Field']);
     
 //Sử dụng phương thức `add`
-$form->add('field_name', 'textBuilding', ['label' => 'Label Field']);
+$form->add('field_name', 'text-building', ['label' => 'Label Field']);
 ```
 Khi submit bạn sẽ nhận được dữ liệu dạng
 
@@ -641,7 +641,7 @@ Field Color Building là tập hợp các field giao diện để có thể cấ
 $form->colorBuilding('field_name', ['label' => 'Label Field']);
     
 //Sử dụng phương thức `add`
-$form->add('field_name', 'colorBuilding', ['label' => 'Label Field']);
+$form->add('field_name', 'color-building', ['label' => 'Label Field']);
 ```
 Khi submit bạn sẽ nhận được dữ liệu dạng
 
@@ -661,7 +661,7 @@ Field Box Building là tập hợp các field giao diện để có thể cấu 
 $form->boxBuilding('field_name', ['label' => 'Label Field']);
     
 //Sử dụng phương thức `add`
-$form->add('field_name', 'boxBuilding', ['label' => 'Label Field']);
+$form->add('field_name', 'box-building', ['label' => 'Label Field']);
 ```
 Khi submit bạn sẽ nhận được dữ liệu dạng
 
@@ -696,7 +696,7 @@ Thành phần của Box Building bao gồm:
 > hover
 
 ```php
-$form->textBuilding('boxBuilding', ['label' => 'Label Field', 'customInput' => [
+$form->textBuilding('textBuilding', ['label' => 'Label Field', 'customInput' => [
     'hover' => false,
 ]]);
 ```
@@ -709,7 +709,7 @@ Field Button Building là tập hợp các field giao diện để có thể c�
 $form->buttonBuilding('field_name', ['label' => 'Label Field']);
     
 //Sử dụng phương thức `add`
-$form->add('field_name', 'buttonBuilding', ['label' => 'Label Field']);
+$form->add('field_name', 'button-building', ['label' => 'Label Field']);
 ```
 Khi submit bạn sẽ nhận được dữ liệu dạng
 
