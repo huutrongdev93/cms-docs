@@ -2,7 +2,7 @@ Trình tạo truy vấn cơ sở dữ liệu của SkillDo cung cấp giao diệ
 Nó có thể được sử dụng với `model` để thực hiện hầu hết các hoạt động cơ sở dữ liệu
 
 ### Khai báo
-Để sử dụng query builder ta có dùng `Qr::set()` để khởi tạo query builder
+Để sử dụng query builder bạn có thể dùng `Qr::set()` để khởi tạo query builder
 
 ```php
 $args = Qr::set();
@@ -12,6 +12,9 @@ $args = Qr::set($column, $operator, $value);
 $args =  Qr::set($number);
 
 $user = model('users')->get($args);
+
+//hoặc
+$user = model('users')::where('id', $id)->first();
 ```
 
 ### Select
@@ -22,6 +25,9 @@ Bạn có thể không phải lúc nào cũng muốn chọn tất cả các cộ
 $args = Qr::set()->select('id', 'name');
 
 $user = model('users')->get($args);
+
+//hoặc
+$user = model('users')::select('id', 'name')->first();
 ```
 
 Đôi khi bạn có thể cần chèn một chuỗi tùy ý vào một truy vấn. Để tạo biểu thức chuỗi thô, bạn có thể sử dụng phương thức được cung cấp
@@ -33,16 +39,19 @@ $user = model('users')->get($args);
 //hoặc sử dụng
 $args = Qr::set()->selectRaw('price * ? as price_with_tax', [1.0825]);
 $product = model('products')->get($args);
+
+//hoặc sử dụng
+$product = model('products')::selectRaw('price * ? as price_with_tax', [1.0825])->first();
 ```
 
 ### Joins
-
+```php
 Inner Join Clause
 Qr::set()->join('contacts', 'users.id', '=', 'contacts.user_id')
 Left Join / Right Join Clause
 Qr::set()->leftJoin('posts', 'users.id', '=', 'posts.user_id')
 Qr::set()->rightJoin('posts', 'users.id', '=', 'posts.user_id')
-
+```
 ### Where Clauses
 Bạn có thể sử dụng method `where` của `Qr` để thêm mệnh đề "where" vào truy vấn. Cuộc gọi cơ bản nhất đến phương thức yêu cầu ba đối số. 
 Đối số đầu tiên là tên của cột. Đối số thứ hai là một toán tử, có thể là bất kỳ toán tử nào được hỗ trợ của cơ sở dữ liệu. Đối số thứ ba là giá trị để so sánh với giá trị của cột
@@ -50,12 +59,16 @@ Bạn có thể sử dụng method `where` của `Qr` để thêm mệnh đề "
 ```php
 $args = Qr::set()->where('votes', '=', 100)->where('age', '>', 35);
 $exm = model('table')->gets($args);
+//hoặc
+$exm = model('table')::where('votes', '=', 100)->where('age', '>', 35)->all();
 ```
 
 Để thuận tiện, nếu bạn muốn xác minh rằng một cột là một giá trị nhất định, bạn có thể chuyển giá trị làm đối số thứ hai cho phương thức. Query sẽ giả sử bạn muốn sử dụng toán tử: `=`
 ```php
 $args = Qr::set()->where('votes', 100);
 $exm = model('table')->gets($args);
+//hoặc
+$exm = model('table')::where('votes', 100)->all();
 ```
 Như đã đề cập trước đây, bạn có thể sử dụng bất kỳ toán tử nào được hệ thống cơ sở dữ liệu của bạn hỗ trợ:
 ```php
@@ -64,6 +77,12 @@ $args = Qr::set()
     ->where('votes', '<>', 100)
     ->where('name', 'like', 'T%');
 $exm = model('table')->gets($args);
+
+//hoặc
+$exm = model('table')::where('votes', '>=', 100)
+    ->where('votes', '<>', 100)
+    ->where('name', 'like', 'T%')
+    ->all();
 ```
 ### Or Where Clauses
 
@@ -72,6 +91,8 @@ $args = Qr::set()
     ->where('votes', '>', 100)
     ->orWhere('name', 'John');
 $exm = model('table')->gets($args);
+//hoặc
+$exm = model('table')::where('votes', '>', 100)->orWhere('name', 'John')->all();
 ```
 
 Nếu bạn cần nhóm một điều kiện "hoặc" trong ngoặc đơn, bạn có thể chuyển một Qr làm đối số đầu tiên cho phương thức
@@ -82,6 +103,12 @@ $args = Qr::set()
     ->orWhere(function($query) { $query->where('name', 'Abigail')->where('votes', '>', 50); });
 
 $exm = model('table')->gets($args);
+
+//hoặc
+$exm = model('table')::where('votes', '>', 100)
+    ->orWhere(function($query) {
+        $query->where('name', 'Abigail')->where('votes', '>', 50); 
+    })->all();
 ```
 
 Ví dụ sẽ tạo mẫu SQL

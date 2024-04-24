@@ -6,10 +6,10 @@ Lớp `Request` của SkillDo dựa trên lớp `Illuminate\Http\Request` của 
 
 ### Sử dụng Request
 
-Trong ajax callback sẽ tự động nhận được request là tham số đầu tiên và bạn cần thêm gợi ý lớp `SkillDo\Request\HttpRequest` để sử dụng
+Trong ajax callback sẽ tự động nhận được request là tham số đầu tiên và bạn cần thêm gợi ý lớp `SkillDo\Request\Request` để sử dụng
 ```php
 #[NoReturn]
-function ajaxCallback(SkillDo\Request\HttpRequest $request, $model): void
+function ajaxCallback(SkillDo\Request\Request $request, $model): void
 {
     if($request->isMethod('post')) {
     
@@ -23,9 +23,9 @@ function ajaxCallback(SkillDo\Request\HttpRequest $request, $model): void
 Hoặc
 
 ```php
-use SkillDo\Request\HttpRequest;
+use SkillDo\Request\Request;
 #[NoReturn]
-function ajaxCallback(HttpRequest $request, $model): void
+function ajaxCallback(Request $request, $model): void
 {
     if($request->isMethod('post')) {
     
@@ -110,7 +110,7 @@ if ($request->isMethod('post')) {
 
 ### Request Headers
 
-Bạn có thể lấy request header từ `SkillDo\Request\HttpRequest` bằng cách sử dụng phương thức `header`. Nếu header không có trong request, `null` sẽ được trả về. Tuy nhiên, phương thức `header` chấp nhận một tham số thứ hai tùy chọn sẽ được trả về nếu header không có trong request:
+Bạn có thể lấy request header từ `SkillDo\Request\Request` bằng cách sử dụng phương thức `header`. Nếu header không có trong request, `null` sẽ được trả về. Tuy nhiên, phương thức `header` chấp nhận một tham số thứ hai tùy chọn sẽ được trả về nếu header không có trong request:
 
 ```php
 $value = $request->header('X-Header-Name');
@@ -169,7 +169,7 @@ $request->collect('users')->each(function (string $user) {
 
 #### Lấy Giá Trị Dữ liệu Input
 
-Sử dụng một số phương thức đơn giản, bạn có thể truy cập tất cả dữ liệu đầu vào của người dùng từ thể hiện `SkillDo\Request\HttpRequest` mà không phải lo lắng về loại HTTP nào được sử dụng cho request. 
+Sử dụng một số phương thức đơn giản, bạn có thể truy cập tất cả dữ liệu đầu vào của người dùng từ thể hiện `SkillDo\Request\Request` mà không phải lo lắng về loại HTTP nào được sử dụng cho request. 
 Bất kỳ loại HTTP nào đi nữa, phương thức `input` có thể sử dụng để lấy dữ liệu input của người dùng:
 
 ```php
@@ -257,7 +257,7 @@ Nếu giá trị đầu vào hiện diện nhưng có định dạng không hợ
 
 #### Lấy Input Thông Qua Thuộc Tính Động
 
-Bạn cũng có thể truy cập Input bằng cách sử dụng các thuộc tính động trên `SkillDo\Http\HttpRequest`. 
+Bạn cũng có thể truy cập Input bằng cách sử dụng các thuộc tính động trên `SkillDo\Http\Request`. 
 Ví dụ, nếu một trong các form của bạn chứa một trường `name`, bạn có thể truy cập giá trị của trường như sau:
 
 ```php
@@ -373,7 +373,7 @@ $request->whenMissing('name', function (array $input) {
 
 ### Xử lý File Uploaded
 
-Bạn có thể lấy file đã tải lên từ một thể hiện `SkillDo\Http\HttpRequest` bằng cách sử dụng phương thức `file` hoặc sử dụng các thuộc tính động. 
+Bạn có thể lấy file đã tải lên từ một thể hiện `SkillDo\Http\Request` bằng cách sử dụng phương thức `file` hoặc sử dụng các thuộc tính động. 
 Phương thức `file` trả về một thể hiện của lớp `Illuminate\Http\UploadedFile`, mở rộng từ lớp PHP `SplFileInfo` và cung cấp nhiều phương thức để tương tác với file:
 
 ```php

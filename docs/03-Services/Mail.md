@@ -10,7 +10,7 @@ cho phép bạn nhanh chóng bắt đầu gửi thư qua dịch vụ cục bộ 
 #### Cách gửi email
 Bạn có thể sử dụng static method
 ```php
-Email::to($to)
+Mail::to($to)
     ->subject($subject)
     ->replyTo($mail, $name)
     ->body($body, $bodyValue)
@@ -18,7 +18,7 @@ Email::to($to)
 ```
 Hoặc class Mail
 ```php
-$email = new Email();
+$email = new Mail();
 $email->to($to)
     ->subject($subject)
     ->replyTo($mail, $name)

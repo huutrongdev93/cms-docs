@@ -9,7 +9,16 @@ Storage::put('file.png')
 ```
 
 Mặc định các thao lưu, xóa, thêm file hay thư mục điều bên trong thư mục lưu trữ của cms `uploads`, 
-nếu bạn cần thao tác với thư mục khác bạn có thể sử dụng phương thức `make` nhận vào một đối số là thư mục cần thao tác, mặc định giá trị này sẽ được đặt thành thư mục lưu trữ của cms `uploads`
+nếu bạn cần thao tác với thư mục khác bạn có thể sử dụng phương thức `disk`
+```php
+$storage = Storage::disk('root') // storage này sẽ thao tác với nguồn của source code
+$storage = Storage::disk('upload') // storage này sẽ thao tác với các data nằm trong thư mục uploads
+$storage = Storage::disk('views') // storage này sẽ thao tác với các data nằm trong thư mục views
+$storage = Storage::disk('plugin') // storage này sẽ thao tác với các data nằm trong thư mục views/plugins
+$storage = Storage::disk('admin') // storage này sẽ thao tác với các data nằm trong thư mục views/backend
+$storage = Storage::disk('cache') // storage này sẽ thao tác với các data nằm trong thư mục views/cache
+```
+hoặc bạn có thể sử dụng method `make`, method nhận vào một đối số là thư mục cần thao tác, mặc định giá trị này sẽ được đặt thành thư mục lưu trữ của cms `uploads`
 ```php
 $storage = Storage::make(string $path)
 ```
@@ -24,11 +33,15 @@ Hãy nhớ rằng, tất cả các đường dẫn `file` nên được chỉ đ
 
 ```php
 $contents = Storage::get('source/file.jpg');
+//hoặc
+$contents = Storage::disk('upload')->get('source/file.jpg');
 ```
 Nếu file bạn đang lấy có nội dung là `JSON`, bạn có thể sử dụng phương thức `json` để lấy file và giải mã nội dung của nó:
 
 ```php
 $contents = Storage::json('source/file.json');
+//hoặc
+$contents = Storage::disk('upload')->json('source/file.json');
 ```
 
 Phương thức `exists` có thể được sử dụng để xác định xem một file có tồn tại không:
