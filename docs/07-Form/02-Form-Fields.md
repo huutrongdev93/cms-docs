@@ -131,7 +131,10 @@ $form->switch('field_name_switch', ['label' => 'Label switch', 'options' => [
     1 => 'on', //Giá trị trả về khi bật
 ]]);
 ```
-
+Mặc định label của 2 lựa chọn field switch là bật và tắt nếu muốn thay đổi bạn có thể sử dụng attribute `label-true` và `label-false` để thay đổi
+```php
+$form->switch('field_name_switch', ['label' => 'Label switch', 'label-true' => 'Ok', 'label-false' => 'No']);
+```
 #### Color
 Input color sử dụng thư viện `melloware/coloris` nên bạn cần nhúng vào `theme` thư viện này nếu muốn sử dụng field color ở theme
 ```php
@@ -247,9 +250,27 @@ $form->add('items', 'repeater', ['label' => 'Label Test', 'fields' => [
     ['name' => 'des', 'type' => 'textarea', 'label' => __('Mô tả'), 'start' => 12],
 ]]);
 ```
+#### Font Icon
+Field font icon tạo một giao diện để bạn có thể chọn icon nhanh từ font icon cms hỗ trợ
+```php
+//Sử dụng phương thức `động`
+$form->fontIcon('field_name_range', ['label' => 'Label icon']);
+    
+//Sử dụng phương thức `add`
+$form->add('field_name_range', 'font-icon', ['label' => 'Label icon']);
+```
 
+#### Price
+Field price tạo một input nhập số tự động chèn thêm "," cho phần ngàn
+```php
+//Sử dụng phương thức `động`
+$form->price('field_name_range', ['label' => 'Label price']);
+    
+//Sử dụng phương thức `add`
+$form->add('field_name_range', 'price', ['label' => 'Label price']);
+```
 
-### Field Lấy Dữ Liệu
+### Field lấy dữ liệu
 
 #### Gallery
 Lấy danh sách thư viện _(Admin > Thư viện)_ dưới dạng select2
@@ -313,7 +334,7 @@ $form->add('field_name_category', 'postCategory', ['label' => 'Label Category', 
 ```
 
 
-### Field Giao Diện
+### Field giao diện
 
 #### inputResponsive
 inputResponsive Tạo cho bạn field text có thể điền 3 kích thước (Desktop, Tablet, Mobile)
@@ -437,6 +458,11 @@ Khi submit bạn sẽ nhận được dữ liệu dạng
     ]
 ]
 ```
+Để chuyển đổi nhanh data từ field background thành css bạn có thể sử dụng method `cssBg` của class `Template`
+
+```php
+$css = Template::cssBg($backgrounData);
+```
 
 #### border
 Field tạo cho bạn input có thể cấu hình cho thuộc tính css `border`:
@@ -469,7 +495,39 @@ Khi submit bạn sẽ nhận được dữ liệu dạng
     ]
 ]
 ```
+Bạn có thể thêm attribute `customInput` để custom các field, `customInput` là một mãng các giá trị
 
+| Params | Type |                                    Description | Default |
+|--------|:----:|-----------------------------------------------:|:-------:|
+| border | bool |        Hiển thị các field liên quan đến border |  true   |
+| radius | bool | Hiển thị các field liên quan đến border-radius |  true   |
+
+Để chuyển đổi nhanh data từ field border thành css bạn có thể sử dụng method `cssBorder` của class `Template`
+
+```php
+$css = Template::cssBorder($data);
+```
+Giá trị bạn nhận được sẽ là
+
+```php
+[
+    "style" => "",
+    "color" => "",
+    "width" => [
+        "top"    => "",
+        "right"  => "",
+        "bottom" => "",
+        "left"   => "",
+    ],
+    "radius" => [
+        "top"     => "",
+        "right"   => "",
+        "bottom"  => "",
+        "left"    => "",
+    ],
+    "css" => "...." //mã css
+]
+```
 
 #### boxShadow
 Field tạo cho bạn input có thể cấu hình cho thuộc tính css `box-shadow`:
@@ -485,17 +543,33 @@ Khi submit bạn sẽ nhận được dữ liệu dạng
 ```php
 [
     'field_name' => [
-        "color" => ""
-        "x" => ""
-        "y" => ""
-        "blur" => ""
-        "spread" => ""
+        "color" => "",
+        "x" => "",
+        "y" => "",
+        "blur" => "",
+        "spread" => "",
         "position" => "outline"
     ]
 ]
 ```
+Để chuyển đổi nhanh data từ field boxShadow thành css bạn có thể sử dụng method `cssBoxShadow` của class `Template`
 
+```php
+$css = Template::cssBoxShadow($data);
+```
+Giá trị bạn nhận được sẽ là
 
+```php
+[
+    "color" => ""
+    "x"     => ""
+    "y"     => ""
+    "blur"  => ""
+    "spread" => ""
+    "position" => "",
+    "css" => "...." //mã css
+]
+```
 #### spacing
 Field tạo cho bạn input có thể cấu hình cho thuộc tính css `margin` và `padding`:
 ```php
@@ -553,8 +627,20 @@ Khi submit bạn sẽ nhận được dữ liệu dạng
     ]
 ]
 ```
+Bạn có thể thêm attribute `customInput` để custom các field, `customInput` là một mãng các giá trị
 
-### Field Build
+| Params  | Type |                              Description | Default |
+|---------|:----:|-----------------------------------------:|:-------:|
+| padding | bool | Hiển thị các field liên quan đến padding |  true   |
+| margin  | bool |  Hiển thị các field liên quan đến margin |  true   |
+
+Để chuyển đổi nhanh data từ field boxShadow thành css bạn có thể sử dụng method `cssSpacing` của class `Template`
+
+```php
+$css = Template::cssSpacing($data);
+```
+
+### Field build
 
 Field Build là tập hợp các field giao diện để có thể cấu hình css cho một thành phần element html nào đo như button, text...
 
@@ -600,31 +686,24 @@ Khi submit bạn sẽ nhận được dữ liệu dạng
 
 Để cấu hình loại bỏ các thành phần trong Text Building bạn có thể sử dụng options `customInput` là một mãng với key là thành phần và có value là `false`, 
 Thành phần của Text Building bao gồm:
-> Field text (txt)
->
-> Font family (fontFamily)
-> 
-> Font size (fontSize)
-> 
-> Font weight (fontWeight)
-> 
-> LineHeight (lineHeight)
-> 
-> Font style (textStyle)
-> 
-> Color (color)
-> 
-> Color hover (colorHover)
-> 
-> Align (align)
-> 
-> Margin (margin)
-> 
-> Padding (padding)
-> 
-> Stroke (stroke)
-> 
-> Shadow (shadow)
+
+| Params             | Type |                                       Description | Default |
+|--------------------|:----:|--------------------------------------------------:|:-------:|
+| txt                | bool |                          Hiển thị field nhập text |  true   |
+| fontFamily         | bool |                   Hiển thị field chọn font family |  true   |
+| fontSize           | bool |                     Hiển thị field nhập font size |  true   |
+| fontSizeResponsive | bool | nếu true font size sẽ là chọn lựa theo kích thước |  true   |
+| fontWeight         | bool |                   Hiển thị field chọn font weight |  true   |
+| lineHeight         | bool |                    Hiển thị field nhập LineHeight |  true   |
+| textStyle          | bool |                    Hiển thị field nhập font style |  true   |
+| color              | bool |                       Hiển thị field chọn màu chữ |  true   |
+| colorHover         | bool |             Hiển thị field chọn màu chữ lúc hover |  false  |
+| align              | bool |                         Hiển thị field chọn align |  true   |
+| margin             | bool |         Hiển thị field chọn margin ở tab nâng cao |  true   |
+| padding            | bool |        Hiển thị field chọn padding ở tab nâng cao |  true   |
+| stroke             | bool |         Hiển thị field chọn stroke ở tab nâng cao |  true   |
+| shadow             | bool |         Hiển thị field chọn shadow ở tab nâng cao |  true   |
+| tabAdvanced        | bool |                          Hiển thị cả tab nâng cao |  true   |
 
 ```php
 //Sử dụng phương thức `động`
@@ -632,6 +711,29 @@ $form->textBuilding('field_name', ['label' => 'Label Field', 'customInput' => [
     'txt' => false,
     'colorHover' => false,
 ]]);
+```
+
+Để chuyển đổi nhanh data từ field textBuilding thành css bạn có thể sử dụng method `cssText` của class `Template`
+
+```php
+$css = Template::cssText($data);
+```
+Giá trị bạn nhận được sẽ là
+
+```php
+[
+    ...
+    "cssText" => "", //các css liên quan đến text
+    "cssTextTablet" => "", //các css liên quan đến text cho tablet
+    "cssTextMobile" => "", //các css liên quan đến text cho mobile
+    "cssDimension" => "" //css margin padding 
+    "cssDimensionTablet" => "" //css margin padding cho tablet
+    "cssDimensionMobile" => "" //css margin padding cho mobile
+    "css"       => "" //css tất cả
+    "cssMobile" => "" //css tất cả cho mobile
+    "cssTablet" => "" //css tất cả cho tablet
+    "cssHover"  => "" //css cho các thành phần có hover
+]
 ```
 
 #### `Color Building`
@@ -683,22 +785,42 @@ Khi submit bạn sẽ nhận được dữ liệu dạng
 
 Tương tự như Text Building, Box Building cũng sử dụng options `customInput`,
 Thành phần của Box Building bao gồm:
-> background
->
-> border
->
-> margin
->
-> padding
->
-> boxShadow
->
-> hover
+
+| Params     | Type |                                Description | Default |
+|------------|:----:|-------------------------------------------:|:-------:|
+| background | bool |                  Hiển thị field background |  true   |
+| border     | bool |                 Hiển thị field chọn border |  true   |
+| margin     | bool |  Hiển thị field chọn margin ở tab nâng cao |  true   |
+| padding    | bool | Hiển thị field chọn padding ở tab nâng cao |  true   |
+| boxShadow  | bool |  Hiển thị field chọn shadow ở tab nâng cao |  true   |
+| hover      | bool |                   Hiển thị các field hover |  true   |
+
 
 ```php
-$form->textBuilding('textBuilding', ['label' => 'Label Field', 'customInput' => [
+$form->boxBuilding('boxBuilding', ['label' => 'Label Field', 'customInput' => [
     'hover' => false,
 ]]);
+```
+
+Để chuyển đổi nhanh data từ field boxBuilding thành css bạn có thể sử dụng method `cssBox` của class `Template`
+
+```php
+$css = Template::cssBox($data);
+```
+Giá trị bạn nhận được sẽ là
+
+```php
+[
+    ...
+    "cssBox"             => "", //các css liên quan đến box background, border, box-shadow
+    "cssDimension"       => "" //css margin padding 
+    "cssDimensionTablet" => "" //css margin padding cho tablet
+    "cssDimensionMobile" => "" //css margin padding cho mobile
+    "css"       => "" //css tất cả
+    "cssMobile" => "" //css tất cả cho mobile
+    "cssTablet" => "" //css tất cả cho tablet
+    "cssHover"  => "" //css cho các thành phần có hover
+]
 ```
 
 #### Button Building
@@ -740,31 +862,22 @@ Khi submit bạn sẽ nhận được dữ liệu dạng
 
 Tương tự như Text Building, Button Building cũng sử dụng options `customInput`,
 Thành phần của Button Building bao gồm:
-> background
->
-> border
-> 
-> color
-> 
-> fontFamily
-> 
-> fontSize
-> 
-> textStyle
-> 
-> align
-> 
-> lineHeight
-> 
-> fontWeight
->
-> margin
->
-> padding
->
-> boxShadow
->
-> hover
+
+| Params     | Type |                                Description | Default |
+|------------|:----:|-------------------------------------------:|:-------:|
+| background | bool |                  Hiển thị field background |  true   |
+| border     | bool |                 Hiển thị field chọn border |  true   |
+| color      | bool |                Hiển thị field chọn màu chữ |  true   |
+| fontFamily | bool |            Hiển thị field chọn font family |  true   |
+| fontSize   | bool |              Hiển thị field nhập font size |  true   |
+| textStyle  | bool |             Hiển thị field nhập font style |  true   |
+| lineHeight | bool |             Hiển thị field nhập LineHeight |  true   |
+| align      | bool |                  Hiển thị field chọn align |  true   |
+| fontWeight | bool |            Hiển thị field chọn font weight |  true   |
+| margin     | bool |  Hiển thị field chọn margin ở tab nâng cao |  true   |
+| padding    | bool | Hiển thị field chọn padding ở tab nâng cao |  true   |
+| boxShadow  | bool |  Hiển thị field chọn shadow ở tab nâng cao |  true   |
+| hover      | bool |                  Hiển thị cac trường hover |  true   |
 
 ```php
 //Sử dụng phương thức `động`
@@ -772,6 +885,12 @@ $form->buttonBuilding('field_name', ['label' => 'Label Field', 'customInput' => 
     'padding' => false,
     'margin' => false,
 ]]);
+```
+
+Để chuyển đổi nhanh data từ field boxBuilding thành css bạn có thể sử dụng method `cssButton` của class `Template`
+
+```php
+$css = Template::cssButton($data);
 ```
 
 

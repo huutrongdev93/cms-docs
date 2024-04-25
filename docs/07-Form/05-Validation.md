@@ -1,6 +1,6 @@
 ### Khởi Tạo Xác Thực
 Để xác thực cho form bạn cần thêm quy tắc xác thực vào field khi khởi tạo,
-Quy tắc xác thực được tạo bằng đối tượng `SkillDo\Form\FormValidationRule`:
+Quy tắc xác thực được tạo bằng đối tượng `SkillDo\Validate\Rule`:
 
 ```php
 use SkillDo\Validate\Rule;
@@ -12,8 +12,8 @@ $form->text('myField', [
 ```
 ### Xác Thực
 #### Xác thực bằng form
-Để xác thực các request của một form đã hợp lệ hay chưa bạn sử dụng phương thức `validate` của class `SkillDo\Http\HttpRequest`.
-Phương thức validate của request nhận vào một đối số có thể là đối tượng `Form`, `FormAdmin` hoặc `SkillDo\Form\FormValidation` và trả về đối tượng `SkillDo\Validate\Validate`
+Để xác thực các request của một form đã hợp lệ hay chưa bạn sử dụng phương thức `validate` của class `SkillDo\Http\Request`.
+Phương thức validate của request nhận vào một đối số có thể là đối tượng `Form`, `FormAdmin` hoặc `SkillDo\Validate\Rule` và trả về đối tượng `SkillDo\Validate\Validate`
 
 ```php
 use SkillDo\Validate\Rule;
@@ -51,8 +51,24 @@ if($validate->fails()) {
 ```
 #### Xác thực không form
 
-Hoặc bạn có thể tạo validate mà không cần form bằng cách sử dụng phương thức `make` của `SkillDo\Validate\Validate`.
+Hoặc bạn có thể tạo validate mà không cần form bằng cách sử dụng phương thức `validate` của `SkillDo\Http\Request` hoặc `make` của `SkillDo\Validate\Validate`.
 
+```php
+use SkillDo\Validate\Validate;
+use SkillDo\Validate\Rule;
+
+$request = request();
+
+$validate = $request->validate([
+    'username' => Rule::make('Tên đăng nhập')->notEmpty(),
+    'password' => Rule::make('Mật khẩu')->notEmpty(),
+]);
+
+if($validate->fails()) {
+    $errors = $validate->errors();
+}
+```
+hoặc
 ```php
 use SkillDo\Validate\Validate;
 use SkillDo\Validate\Rule;
@@ -295,7 +311,7 @@ Xác thực địa chỉ IP v6
 Rule::make()->ipv6();
 ```
 
-####  lessThan
+####  `lessThan`
 So sánh giá trị hai trường dữ liệu, Trường được xác thực phải nhỏ hơn trường đã cho. Hai trường phải cùng loại dữ liệu.
 Đối với dữ liệu chuỗi (string), giá trị tương ứng với số ký tự. 
 Đối với dữ liệu số (numeric), giá trị tương ứng với một giá trị nguyên nhất định (phải đi kèm validate rule số hoặc số nguyên). 
@@ -328,7 +344,7 @@ Kiểm tra xem giá trị trường được kiểm tra có nhỏ hơn hoặc b�
 Rule::make()->max(float $max, bool $equal);
 ```
 
-####  greaterThan
+####  `greaterThan`
 So sánh giá trị hai trường dữ liệu, Trường được xác thực phải lớn hơn trường đã cho. Hai trường phải cùng loại dữ liệu.
 Đối với dữ liệu chuỗi (string), giá trị tương ứng với số ký tự.
 Đối với dữ liệu số (numeric), giá trị tương ứng với một giá trị nguyên nhất định (phải đi kèm validate rule số hoặc số nguyên).
@@ -464,20 +480,46 @@ use SkillDo\Validate\Rule;
 
 $request = request();
 
-$validate = Validate::make($request->all(), [
-    'myField' => Rule::make()
-                    ->notEmpty()
-                    ->integer()
-                    ->max(10)
-                    ->errorMessage([
-                         'notEmpty' => 'Không được để trống trường :attribute',                      
-                         'max' => [
-                            'numeric' => 'Vui long điền số cho trường :attribute nhỏ hơn :max'
-                         ]                    
-                    ]),
-])->validate();
+$validate = $request->validate([
+    'myField' => Rule::make()->notEmpty()->integer()->max(10)
+        ->errorMessage([
+             'notEmpty' => 'Không được để trống trường :attribute',                      
+             'max' => [
+                'numeric' => 'Vui long điền số cho trường :attribute nhỏ hơn :max'
+             ]                    
+        ]),
+]);
 
 if($validate->fails()) {
     $errors = $validate->errors();
 }
 ```
+
+## Xác Thực JS
+Ngoài xác thực trên server cms còn cung cấp xác thực trên client khi `setIsValid` của form được bật, sau đây là danh sách rule được hỗ trợ
+
+| Params      |                      Cần thêm                      | Description |  
+|-------------|:--------------------------------------------------:|------------:|
+| alpha       |                                                    |             |
+| alphaDash   |                                                    |             |
+| alphaNum    |                                                    |             |
+| alphaSpaces |                                                    |             |
+| notEmpty    |                                                    |             |
+| color       |                                                    |             |
+| colorRGB    |                                                    |             |
+| colorRGBA   |                                                    |             |
+| colorHex    |                                                    |             |
+| ip          |                                                    |             |
+| ipv4        |                                                    |             |
+| ipv6        |                                                    |             |
+| ipv6        |                                                    |             |
+| file        |                                                    |             |
+| lessThan    |                                                    |             |
+| email       |                                                    |             |
+| phone       |                                                    |             |
+| between     | phải có rule là string, file, numeric hoặc integer |             |
+| min         | phải có rule là string, file, numeric hoặc integer |             |
+| max         | phải có rule là string, file, numeric hoặc integer |             |
+| date        |                                                    |             |
+| before      |                                                    |             |
+| after       |                                                    |             |

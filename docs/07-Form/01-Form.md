@@ -4,7 +4,12 @@ SkillDo cung cấp thư viện mạnh mẽ để làm việc với Form
 Để tạo một Form bạn cần khởi tạo một đối tượng từ class Form
 
 ```php
+use SkillDo\Form\Form;
 $form = new Form();
+```
+Hoặc sử dụng function toàn cục `form`
+```php
+$form = form();
 ```
 
 Để set id cho Form bạn dùng phương thức `setFormId`:
@@ -72,7 +77,7 @@ $form->text('myField', ['label' => 'My Field'], 'value');
 
 với `$args` bạn có thể thêm các attributes vào field hoặc cấu hình field nếu Form hỗ trợ, sau đây là một số cấu hình chung cho taất cả các field:
 > **`start`** : (string hoặc int) chèn thêm mã html vào đầu field, 
-> nếu giá trị start nhận vào là một số sẽ tự đoan chèn 
+> nếu giá trị start nhận vào là một số sẽ tự động chèn 
 > 
 > `<div class="col-md-'.$start.' form-group">`
 
