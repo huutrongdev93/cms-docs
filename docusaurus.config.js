@@ -12,7 +12,7 @@ const config = {
 	tagline: 'Dinosaurs are cool',
 	favicon: 'img/logo-skilldo.png',
 	url: 'https://sikido.vn',
-	baseUrl: '/',
+	baseUrl: '/docs/cms/v7/',
 	organizationName: 'facebook', // Usually your GitHub org/user name.
 	projectName: 'SkillDo', // Usually your repo name.
 	onBrokenLinks: 'throw',
@@ -59,7 +59,7 @@ const config = {
 						type: 'docSidebar',
 						sidebarId: 'documentSidebar',
 						position: 'left',
-						label: 'Document',
+						label: 'Documentation',
 					},
 					{
 						href: 'https://github.com/huutrongdev93/cms-docs',
