@@ -89,15 +89,14 @@ ColumnText::make('created', $item, $args)->datetime('d/m/Y')->description(fn ($i
 Table hỗ trợ hiển thị các trạng thái, trong đó bạn có thể muốn hiển thị huy hiệu có màu phù hợp với trạng thái:
 Hiện tại cms hỗ trợ các loại màu:
 - gray
-- error (hoặc red)
+- red (hoặc error)
 - pink
 - yellow
-- info
-- warning (hoặc orange)
+- orange (hoặc warning)
 - cyan
-- success (hoặc green)
+- green (hoặc success)
 - lime
-- info (hoặc blue)
+- blue (hoặc info)
 - purple
 - geekblue
 
@@ -113,4 +112,77 @@ ColumnBadge::make('status', $item, $args)
         'published' => 'Đã duyệt',
         'block'     => 'Hủy',
     })
+```
+
+### Column Checkbox
+
+```php
+ColumnCheckbox::make('public', $item, $args)
+```
+
+### Column Image
+Hình ảnh có thể được hiển thị dễ dàng trong bảng của bạn:
+```php
+ColumnImage::make('image', $item, $args)
+```
+
+#### `#`Tùy chỉnh kích thước
+Bạn có thể tùy chỉnh kích thước hình ảnh bằng `width()` và `height()` hoặc cả hai với `size()`:
+```php
+ColumnImage::make('image', $item, $args)->width(200)
+
+ColumnImage::make('image', $item, $args)->height(200)
+
+ColumnImage::make('image', $item, $args)->size(40)
+```
+
+#### `#`Hình ảnh tròn
+Bạn có thể làm cho hình ảnh được làm tròn hoàn toàn, điều này rất hữu ích cho việc hiển thị hình đại diện:
+```php
+ColumnImage::make('image', $item, $args)->circular()
+```
+
+### Column tùy chỉnh
+#### `#`View tùy chỉnh
+Bạn có thể hiển thị chế độ xem tùy chỉnh cho một ô bằng phương thức `html()`
+```php
+ColumnView::make('image', $item, $args)->html(function(ColumnView $column) {
+    //view custom
+})
+```
+
+#### `#`Classes tùy chỉnh
+Bạn có thể tạo các lớp cột tùy chỉnh và chế độ xem ô của riêng mình để bạn có thể sử dụng lại trong dự án của mình và thậm chí phát hành dưới dạng plugin cho cộng đồng.
+>
+Tạo thư mục sau trong theme hoặc plugin của bạn
+```php
+core/Table/Columns
+```
+
+Tạo class column của bạn kế thừa lại class `SKDColumn` của cms
+
+```php
+namespace SkillDo\Table\Columns;
+
+use SkillDo\Table\SKDColumn;
+
+class ColumnCustom extends SKDColumn {
+
+    public function view(): void
+    {
+        //nội dung column
+    }
+}
+```
+
+Nếu ở chế độ DEBUG = false bạn cần xóa cache `core_table_columns_factories` để cập nhật lại danh sách columns
+
+```php
+CacheHandler::delete('core_table_columns_factories')
+```
+
+Sau đó bạn có thể sử dụng column mới
+
+```php
+ColumnCustom::make('name', $item, $args);
 ```
