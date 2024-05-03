@@ -37,10 +37,11 @@ class MyFieldCustom extends InputBuilder {
 
 Với method output sẽ gán giao diện input cần hiển thị vào biến output
 
-Nếu ở chế độ DEBUG = false bạn cần xóa cache `core_form_fields_factories` để cập nhật lại danh sách field
+Nếu ở chế độ DEBUG = false bạn cần xóa cache `core_form_fields_factories` và `core_files_loader` để cập nhật lại danh sách field
 
 ```php
 CacheHandler::delete('core_form_fields_factories')
+CacheHandler::delete('core_files_loader')
 ```
 
 Sau đó bạn có thể sử dụng field mới bằng cách

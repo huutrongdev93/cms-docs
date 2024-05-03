@@ -175,10 +175,10 @@ class ColumnCustom extends SKDColumn {
 }
 ```
 
-Nếu ở chế độ DEBUG = false bạn cần xóa cache `core_table_columns_factories` để cập nhật lại danh sách columns
+Nếu ở chế độ DEBUG = false bạn cần xóa cache `core_files_loader` để cập nhật lại danh sách columns
 
 ```php
-CacheHandler::delete('core_table_columns_factories')
+CacheHandler::delete('core_files_loader')
 ```
 
 Sau đó bạn có thể sử dụng column mới

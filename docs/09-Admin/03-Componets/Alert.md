@@ -6,11 +6,29 @@ Admin::alert($template, $message, $attributes)
 ```
 
 Các loại template button
-- error
-- warning
-- info
 - success
+![img_1.png](img_1.png)
+```php
+echo Admin::alert('success', 'Đây là nội dung thông báo');
+```
 
+- info
+![img_2.png](img_2.png)
+```php
+echo Admin::alert('info', 'Đây là nội dung thông báo');
+```
+
+- warning
+![img_3.png](img_3.png)
+```php
+echo Admin::alert('warning', 'Đây là nội dung thông báo');
+```
+
+- error
+![img_4.png](img_4.png)
+```php
+echo Admin::alert('error', 'Đây là nội dung thông báo');
+```
 Danh sách attributes:
 
 | Key     |  Type  |        Description |
@@ -19,5 +37,7 @@ Danh sách attributes:
 | heading | string |  tiêu đề thông báo |
 
 ```php
-echo Admin::alert('warning', 'Đây là nội dung thông báo');
+echo Admin::alert('warning', 'Đây là nội dung thông báo', [
+    'heading' => 'Header'
+]);
 ```

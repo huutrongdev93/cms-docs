@@ -142,10 +142,11 @@ class MyPopover extends PopoverHandle {
 Với method `search` xử lý khi bạn tìm kiếm đối tượng,
 method `value` xử lý hiển thị đối tượng đã được chọn
 >
-Nếu ở chế độ DEBUG = false bạn cần xóa cache `core_form_fields_popover_classes` để cập nhật lại danh sách field popover
+Nếu ở chế độ DEBUG = false bạn cần xóa cache `core_form_fields_popover_classes` và `core_files_loader` để cập nhật lại danh sách field popover
 
 ```php
 CacheHandler::delete('core_form_fields_popover_classes')
+CacheHandler::delete('core_files_loader')
 ```
 > 
 Sau đó bạn có thể sử dụng field mới bằng cách
