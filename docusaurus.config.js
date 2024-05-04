@@ -29,8 +29,6 @@ const config = {
 				docs: {
 					routeBasePath: '/',
 					sidebarPath: './sidebars.js',
-					// Please change this to your repo.
-					// Remove this to remove the "edit this page" links.
 					editUrl: 'https://github.com/huutrongdev93/cms-docs',
 				},
 				blog: false,
@@ -57,9 +55,15 @@ const config = {
 				items: [
 					{
 						type: 'docSidebar',
-						sidebarId: 'documentSidebar',
 						position: 'left',
+						sidebarId: 'doc',
 						label: 'Documentation',
+					},
+					{
+						type: 'docSidebar',
+						position: 'left',
+						sidebarId: 'api',
+						label: 'API',
 					},
 					{
 						href: 'https://github.com/huutrongdev93/cms-docs',
