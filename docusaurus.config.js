@@ -30,6 +30,13 @@ const config = {
 					routeBasePath: '/',
 					sidebarPath: './sidebars.js',
 					editUrl: 'https://github.com/huutrongdev93/cms-docs',
+					lastVersion: 'current',
+					versions: {
+						current: {
+							label: '7.0.0',
+							path: '7.0.0',
+						},
+					},
 				},
 				blog: false,
 				theme: {
@@ -47,6 +54,7 @@ const config = {
 			// Replace with your project's social card
 			image: 'img/docusaurus-social-card.jpg',
 			navbar: {
+				hideOnScroll: true,
 				title: 'SKILLDO',
 				logo: {
 					alt: 'My Site Logo',
@@ -64,6 +72,17 @@ const config = {
 						position: 'left',
 						sidebarId: 'api',
 						label: 'API',
+					},
+					{
+						type: 'docsVersionDropdown',
+						position: 'right',
+						dropdownItemsAfter: [
+							{ to: 'https://developers.sikido.vn/docs/cms/v6-0-0', label: 'v6', target: '_blank' },
+							{ to: 'https://developers.sikido.vn/docs/cms/v5-0-0', label: 'v5', target: '_blank' },
+							{ to: 'https://developers.sikido.vn/docs/cms/v4-0-0', label: 'v4', target: '_blank' },
+							{ to: 'https://developers.sikido.vn/docs/cms/v3-0-0', label: 'v3', target: '_blank' },
+						],
+						dropdownActiveClassDisabled: true,
 					},
 					{
 						href: 'https://github.com/huutrongdev93/cms-docs',

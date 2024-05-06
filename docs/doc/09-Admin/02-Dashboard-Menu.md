@@ -1,4 +1,5 @@
 # Dashboard Menu
+![img_3.png](img_3.png)
 ### Thêm Menu
 Để thêm một Menu Item vào Dashboard menu trong Admin thì bạn sử dụng `AdminMenu::add`
 
@@ -24,16 +25,19 @@ $args chứa các thông tin
 
 ```php
 class CustomMenu {
-    static function register() {
+    
+    static function register(): void 
+    {
         $args = [
             'icon'  => '<img src="icon-post.png">',
             'callback' => 'CustomMenu::render',
-            'position' => 'theme'
+            'position' => 'theme',
         ];
         AdminMenu::add('plugin_demo', 'Plugin Demo', 'plugins?page=plugin_demo', $args);
     }
     
-    static function render() {
+    static function render(): void 
+    {
         echo '<h1>Plugin demo callback</h1>';
     }
 }

@@ -8,7 +8,7 @@ Skilldo là một CMS linh hoạt, thân thiện với người dùng để tạ
 >
 Created: `01/01/2017`
 >
-By: [Skilldo Technologies](https://sikido.vn)
+By: [Sikido Technologies](https://sikido.vn)
 >
 Email: kythuat@sikido.com
 >

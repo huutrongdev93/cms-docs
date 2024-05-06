@@ -2,11 +2,12 @@
 
 Widget là các khối chức năng độc lập giúp giải quyết các nhiệm vụ khác nhau.
 Các widget luôn có giao diện người dùng để chuẩn bị dữ liệu widget.
-Để cấu hình widget bạn vào `admin > Giao diện > widget sidebar`
+Để cấu hình widget bạn vào `admin > Giao diện > sidebar (Danh sách)`
+hoặc `admin > Giao diện > sidebar (Chi tiết)`
 
 ## Sidebar
 
-### Register Widget Area
+### Đăng ký vùng chứa widget
 Thêm mã dưới đây vào `/views/your-theme/config.php` để tạo vùng chứa cho widget
 ```php
 Sidebar::add('sidebar_id', 'sidebar_name', 'sidebarList');

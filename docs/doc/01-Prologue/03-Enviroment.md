@@ -1,6 +1,5 @@
-### Môi trường debug
 
-|            Hành động             |  Tắt (false)  |    Bật (true)     |
+|            Hành động             | DEBUG (false) |   DEBUG (true)    |
 |:--------------------------------:|:-------------:|:-----------------:|
 |    Load danh sách Form Field     | Load từ cache | Load từ hệ thống  |
 |  Load danh sách Form validator   | Load từ cache | Load từ hệ thống  |
