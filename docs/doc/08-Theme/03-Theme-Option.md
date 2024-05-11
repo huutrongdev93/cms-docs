@@ -70,8 +70,20 @@ Option::get('logo_bg');
 ## Hooks
 Một số hooks liên quan
 
-| Key                  |    Type    |                                    Description |
-|----------------------|:----------:|-----------------------------------------------:|
-| theme_custom_options | do_action  | Hook chỉnh sữa theme option hiện tại của theme |
-| theme_option_save    | add_filter | Hook giúp bạn chỉnh data options trước khi lưu |
+| Key                                     |  Type  |                                                 Description | Theme version |
+|-----------------------------------------|:------:|------------------------------------------------------------:|:-------------:|
+| theme_custom_options                    | action |              Hook chỉnh sữa theme option hiện tại của theme |     3.0.0     |
+| theme_option_save                       | filter |              Hook giúp bạn chỉnh data options trước khi lưu |     4.0.0     |
+| theme_options_general_form              | filter |        Hook chỉnh sữa form của tab general (Cấu hình chung) |     4.0.0     |
+| theme_options_header_form               | filter |                 Hook chỉnh sữa form của tab header (Header) |     4.0.0     |
+| theme_options_header_mobile_form        | filter |   Hook chỉnh sữa form của tab header mobile (Header mobile) |     4.0.0     |
+| theme_options_header_mobile_menu_form   | filter |      Hook chỉnh sữa form của tab header mobile(Menu Mobile) |     4.0.0     |
+| theme_options_header_mobile_search_form | filter | Hook chỉnh sữa form của tab header mobile (Tìm kiếm Mobile) |     4.0.0     |
+| theme_options_map_form                  | filter |                             Hook chỉnh sữa form của tab map |     4.0.0     |
+| theme_options_post_form                 | filter |             Hook chỉnh sữa form của tab bài viết (Bài viết) |     4.0.0     |
+| theme_options_post_category_form        | filter |             Hook chỉnh sữa form của tab bài viết (Danh mục) |     4.0.0     |
+| theme_options_footer_form               | filter |                 Hook chỉnh sữa form của tab footer (Footer) |     4.0.0     |
+| theme_options_footer_bottom_form        | filter |          Hook chỉnh sữa form của tab footer (Footer Bottom) |     4.0.0     |
+| theme_options_fonts_form                | filter |              Hook chỉnh sữa form của tab fonts (Font style) |     4.0.0     |
+| theme_options_fonts_footer_form         | filter |             Hook chỉnh sữa form của tab fonts (Font footer) |     4.0.0     |
 
