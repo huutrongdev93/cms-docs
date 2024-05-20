@@ -74,6 +74,11 @@ const config = {
 						label: 'API',
 					},
 					{
+						to: 'blog',
+						label: 'Blog',
+						position: 'left'
+					},
+					{
 						type: 'docsVersionDropdown',
 						position: 'right',
 						dropdownItemsAfter: [

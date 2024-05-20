@@ -36,14 +36,14 @@ $ex = ExModel::where('id', 10)->first();
 
 ### Truy xuất danh sách các giá trị cột
 
-Nếu bạn cần lấy danh sách dữ liệu từ bảng cơ sở dữ liệu, bạn có thể sử dụng phương thức `gets` hoặc `all` của model.
+Nếu bạn cần lấy danh sách dữ liệu từ bảng cơ sở dữ liệu, bạn có thể sử dụng phương thức `gets` hoặc `fetch` của model.
 Phương thức này sẽ trả về một đối tượng `Illuminate\Support\Collection` chứa các `stdClass`:
 > Phương thức nhận vào một `Query Builder` để tạo câu lệnh query
 
 ```php
 $ex = = ExModel::get(Qr::set()->where('id', '<=', 20));
 //hoặc
-$ex = ExModel::where('id', '<=', 20)->all();
+$ex = ExModel::where('id', '<=', 20)->fetch();
 ```
 
 ### Đếm số lượng hàng data
@@ -103,7 +103,7 @@ ExModel::insert([
     'excerpt' => 'đây là mô tả',
 ]);
 ```
-### Columns
+#### Columns
 Để sử dụng phương thức insert bạn cần khai báo danh sách cột trong bảng cần sử dụng
 ```php
 use Skilldo\Model\Model;
@@ -114,12 +114,7 @@ class ExModel extends Model
     
     static array $columns = [
         'title'             => ['string'],
-        'slug'              => [
-            'datatype'      => ['string'],
-            'type'          => 'post',
-            'controller'    => 'frontend/post/detail/',
-            'dependent'     => 'title'
-        ],
+        'slug'              => ['string'],
         'content'           => ['wysiwyg'],
         'excerpt'           => ['wysiwyg'],
         'seo_title'         => ['string'],
@@ -129,16 +124,9 @@ class ExModel extends Model
         'image'             => ['image'],
         'post_type'         => ['string', 'post'],
         'public'            => ['int', 1],
-        '_insert_config' => [
-            'created'           => true,
-            'updated'           => true,
-            'seo_title'         => 'title',
-            'seo_description'   => 'excerpt'
-        ]
     ];
 }
 ```
-#### Column thông thường
 Các column thông thường như title, name, content... sẻ trỏ đến một mãng chứa giá trị đầu là loại dữ liệu sẽ được lọc, giá trị thứ 2 là giá trị mặc định
 Các loại dữ liệu được hỗ trợ
 
@@ -154,21 +142,63 @@ Các loại dữ liệu được hỗ trợ
 |     file     |     file     |                     Dữ liệu sẽ lọc về dạng link file của cms                      |
 |    array     |    array     |          Dữ liệu nhận vào nếu là array sẽ mã hóa serialize về dạng chuổi          |
 
-#### Column slug
-Trường slug dùng để tạo router cho một module trong cms
+#### Rules insert
+Để thiết lập các quy định khi insert data bạn sử dụng thuộc tính rules
+```php
+static array $rules = [
+    'slug'              => [
+        'type'          => 'post',
+        'controller'    => 'frontend/post/detail/',
+        'dependent'     => 'title'
+    ],
+    'created'  => true,
+    'updated'  => true,
+    'user_created'      => true,
+    'user_updated'      => true,
+    'language'          => true,
+    'add'               => [
+        'takeIt' => [
+            'seo_title'         => 'title',
+            'seo_description'   => 'excerpt',
+        ],
+        'require' => [
+            'title' => trans('Tiêu đề trang không được để trống')
+        ]
+    ],
+    'hooks'    => [
+        'columns' => 'columns_db_branch',
+        'data' => 'pre_insert_branch_data',
+    ]
+];
+```
+- `slug` dùng để tạo router cho một module trong cms
 
 | Loại dữ liệu |  Kiểu  |                    Mô tả                     |
 |:------------:|:------:|:--------------------------------------------:|
-|   datatype   | array  |              array kiểu dữ liệu              |
 |     type     | string |                Module dữ liệu                |
 |  controller  | string |       đường dẫn controller chạy module       |
 |  dependent   | string | khi slug rỗng sẽ dùng column này để tạo slug |
 
-#### Column _insert_config
-Một số cấu hình thêm cho việc insert
+- Một số cấu hình thêm cho việc insert
 
-| Loại dữ liệu |                                   Mô tả                                    |
-|:------------:|:--------------------------------------------------------------------------:|
-|   created    |   nếu true khi thêm dữ liệu sẽ tự động thêm thời gian vào column created   |
-|   updated    | nếu true khi cập nhật dữ liệu sẽ tự động thêm thời gian vào column updated |
-|  seo_title   |   khi thêm mới nếu seo_title trống sẽ lấy giá trị cột chỉ định thay thế    |
+| Loại dữ liệu |                                                        Mô tả                                                        |
+|:------------:|:-------------------------------------------------------------------------------------------------------------------:|
+|   created    |                       nếu true khi thêm dữ liệu sẽ tự động thêm thời gian vào column created                        |
+|   updated    |                     nếu true khi cập nhật dữ liệu sẽ tự động thêm thời gian vào column updated                      |
+| user_created |          nếu true khi cập nhật dữ liệu sẽ tự động thêm id user hiện đang thao tác vào column user_created           |
+| user_updated |          nếu true khi cập nhật dữ liệu sẽ tự động thêm id user hiện đang thao tác vào column user_updated           |
+|   language   |                                      Module dữ liệu để thêm vào bảng language                                       |
+|    getQr     | Khi cập nhật data cần lấy object trước đó theo id nếu bạn muốn tùy chỉnh điều kiện lấy dữ liệu có thể sử dụng getQr |
+- `hooks` dùng để thay đổi các hook mặc định của method insert
+
+  | Loại dữ liệu |  Kiểu  |                                    Mô tả                                     |
+  |:------------:|:------:|:----------------------------------------------------------------------------:|
+  |   columns    | string |                 Tên hook dùng để cập nhật các trường columns                 |
+  |     data     | string | Tên hook dùng để cập nhật các dữ liệu trước khi add hoặc update vào database |
+
+- `add` Để thêm một số quy định cho lúc thêm mới dữ liệu
+
+| Loại dữ liệu |                                       Mô tả                                       |
+|:------------:|:---------------------------------------------------------------------------------:|
+|    takeIt    | Danh sách các trường nếu bỏ trống sẽ tự động lấy dư liệu của trường khác thay thế |
+|   require    |                        Danh sách các trường bắt buộc điền                         |
