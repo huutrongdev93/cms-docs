@@ -39,7 +39,7 @@ if($validate->fails()) {
 }
 ```
 
-Để lấy danh sách message lỗi khi xác thực bạn sử dụng phương thức `error`, phương thức sẽ trả về một đối tượng là [SKD_Error](/Services/Errors)
+Để lấy danh sách message lỗi khi xác thực bạn sử dụng phương thức `error`, phương thức sẽ trả về một đối tượng là `SKD_Error`
 
 ```php
 $validate = $request->validate($form);

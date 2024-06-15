@@ -45,6 +45,40 @@ const config = {
 			}),
 		],
 	],
+	plugins: [
+		[
+			'@docusaurus/plugin-content-docs',
+			{
+				id: 'devtool', // omitted => default instance
+				path: 'devtool',
+				routeBasePath: 'devtool',
+				sidebarPath: './sidebars-devtool.js',
+				lastVersion: 'current',
+				versions: {
+					current: {
+						label: '1.0.0',
+						path: '1.0.0',
+					},
+				},
+			},
+		],
+		[
+			'@docusaurus/plugin-content-docs',
+			{
+				id: 'ecommerce',
+				path: 'ecommerce',
+				routeBasePath: 'ecommerce',
+				sidebarPath: './sidebars-ecommerce.js',
+				lastVersion: 'current',
+				versions: {
+					current: {
+						label: '1.0.0',
+						path: '1.0.0',
+					},
+				},
+			},
+		],
+	],
 	themeConfig:
 	/** @type {import('@docusaurus/preset-classic').ThemeConfig} */
 		({
@@ -70,6 +104,20 @@ const config = {
 					{
 						type: 'docSidebar',
 						position: 'left',
+						sidebarId: 'devtool',
+						docsPluginId: 'devtool',
+						label: 'DevTool',
+					},
+					{
+						type: 'docSidebar',
+						position: 'left',
+						sidebarId: 'ecommerce',
+						docsPluginId: 'ecommerce',
+						label: 'E-commerce',
+					},
+					/*{
+						type: 'docSidebar',
+						position: 'left',
 						sidebarId: 'api',
 						label: 'API',
 					},
@@ -77,7 +125,7 @@ const config = {
 						to: 'blog',
 						label: 'Blog',
 						position: 'left'
-					},
+					},*/
 					{
 						type: 'docsVersionDropdown',
 						position: 'right',
@@ -106,5 +154,6 @@ const config = {
 				maxHeadingLevel: 5,
 			},
 		}),
+	staticDirectories: ['static'],
 }
 export default config;

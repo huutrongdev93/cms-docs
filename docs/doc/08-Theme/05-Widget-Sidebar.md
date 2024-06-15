@@ -36,7 +36,6 @@ class Widget_Demo_Sidebar extends WidgetSidebar {
     function __construct() 
     {
         parent::__construct('Widget_Demo_Sidebar', 'Tên widget');
-        $this->configContainer(true);
         $this->configClass('Widget_Demo_Sidebar');
         $this->setTags('about');
     }
@@ -55,8 +54,7 @@ class Widget_Demo_Sidebar extends WidgetSidebar {
     
     public function cssBuilder(): string
     {
-        $css     = '';
-        return Template::minifyCss($css);
+        return Template::minifyCss($this->cssBuild());
     }
     
     public function default(): void 
@@ -122,21 +120,24 @@ public function form()
 ```
 
 ### Widget Field
-Để thêm một field bạn sử dụng `$this->tabs('tab_key')->fields->{Form Builder}` thực hiện như ví dụ sau
+Để thêm field bạn sử dụng `$this->tabs('tab_key')->adds` thực hiện như ví dụ sau
 
 ```php
 public function form()
 {   
     //Thêm field vào tab generate
-    $this->tabs('generate')->fields
-        ->color('test', ['label' => 'test label 1']);
-        
+    $this->tabs('generate')->adds(function (Skilldo\Widget\WidgetField $form) {
+        $form->color('test', ['label' => 'test label 1']);
+    })
+
     //Thêm field vào tab style
-    $this->tabs('style')->fields
-        ->text('test1', ['label' => 'test label 2']);
-        
+    $this->tabs('style')->adds(function (Skilldo\Widget\WidgetField $form) {
+        $form->text('test1', ['label' => 'test label 2']);
+    })
+
     //Thêm field vào tab advanced
-    $this->tabs('advanced')->fields
-        ->number('test2', ['label' => 'test label 3']);
+    $this->tabs('advanced')->adds(function (Skilldo\Widget\WidgetField $form) {
+        $form->number('test2', ['label' => 'test label 3']);
+    }) 
 }
 ```

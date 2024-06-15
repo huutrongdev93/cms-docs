@@ -52,8 +52,7 @@ class Widget_Demo extends Widget {
     
     public function cssBuilder(): string
     {
-        $css     = '';
-        return Template::minifyCss($css);
+        return Template::minifyCss($this->cssBuild());
     }
     
     public function default(): void 
@@ -130,15 +129,18 @@ public function form()
 public function form()
 {   
     //Thêm field vào tab generate
-    $this->tabs('generate')->fields
-        ->color('test', ['label' => 'test label 1']);
-        
+    $this->tabs('generate')->adds(function (Skilldo\Widget\WidgetField $form) {
+        $form->color('test', ['label' => 'test label 1']);
+    })
+
     //Thêm field vào tab style
-    $this->tabs('style')->fields
-        ->text('test1', ['label' => 'test label 2']);
-        
+    $this->tabs('style')->adds(function (Skilldo\Widget\WidgetField $form) {
+        $form->text('test1', ['label' => 'test label 2']);
+    })
+
     //Thêm field vào tab advanced
-    $this->tabs('advanced')->fields
-        ->number('test2', ['label' => 'test label 3']);
+    $this->tabs('advanced')->adds(function (Skilldo\Widget\WidgetField $form) {
+        $form->number('test2', ['label' => 'test label 3']);
+    }) 
 }
 ```
