@@ -14,7 +14,6 @@ ThemeOption::addGroup('general', [
         $form->text('general_label', ["label" => "Tên website (shop)"]);
         $form->color('theme_color', ["label" => "Màu chủ đề"]);
         $form->background('bodyBg', ["label" => "Nền website"]);
-        return $form;
     }
 ]);
 ```
@@ -37,7 +36,6 @@ ThemeOption::addGroupSub('general', 'general-bottom', [
         $form->switch('footer_bottom_public', ['label' => 'Hiển thị footer bottom', 'start' => 4, 'options' => 1]);
         $form->color('footer_bottom_bg_color', ['label' => 'Nền footer bottom', 'start' => 4]);
         $form->color('footer_bottom_text_color', ['label' => 'Màu chữ footer bottom', 'start' => 4]);
-        return $form;
     }
 ]);
 ```

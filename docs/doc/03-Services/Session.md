@@ -10,7 +10,7 @@ Trước tiên, hãy xem xét việc truy cập `session` thông qua `request`
 $value = request()->session()->get('key');
  
 #[NoReturn]
-function demoMethod(SkillDo\Request\HttpRequest $request, $model): void
+function demoMethod(SkillDo\Http\Request $request, $model): void
 {
     $request->session()->get('key')
 }

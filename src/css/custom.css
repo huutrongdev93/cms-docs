@@ -76,3 +76,73 @@ img {
   order:-1;
   opacity: 1;
 }
+.badge {
+  display: inline-block;
+  padding: 0.45em 0.75em;
+  font-size: 0.85em;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.375em;
+  --bs-bg-opacity: 0.2;
+  --bs-pink-rgb: 235,47,150;
+  --bs-yellow-rgb: 250,219,20;
+  --bs-cyan-rgb: 19,194,194;
+  --bs-purple-rgb: 114,46,209;
+  --bs-success-rgb: 82,196,2;
+  --bs-primary-rgb: 13, 110, 253;
+  --bs-secondary-rgb: 108, 117, 125;
+  --bs-danger-rgb: 220, 53, 69;
+}
+.badge.text-bg-red,
+.badge.text-bg-error,
+.badge.text-bg-danger {
+  color: rgba(var(--bs-danger-rgb), 1) !important;
+  background-color: RGBA(var(--bs-danger-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.badge.text-bg-gray,
+.badge.text-bg-secondary {
+  color: rgba(var(--bs-secondary-rgb), 1) !important;
+  background-color: RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.badge.text-bg-pink {
+  color: rgba(var(--bs-pink-rgb), 1) !important;
+  background-color: RGBA(var(--bs-pink-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.badge.text-bg-yellow {
+  color: #897a0f !important;
+  background-color: RGBA(var(--bs-yellow-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.badge.text-bg-orange,
+.badge.text-bg-warning {
+  color: rgba(var(--bs-warning-rgb), 1) !important;
+  background-color: RGBA(var(--bs-warning-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.badge.text-bg-cyan {
+  color: rgba(var(--bs-cyan-rgb), 1) !important;
+  background-color: RGBA(var(--bs-cyan-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.badge.text-bg-green,
+.badge.text-bg-success {
+  color: rgba(var(--bs-success-rgb), 1) !important;
+  background-color: RGBA(var(--bs-success-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.badge.text-bg-blue,
+.badge.text-bg-info {
+  color: rgba(var(--bs-primary-rgb), 1) !important;
+  background-color: RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.badge.text-bg-purple {
+  color: rgba(var(--bs-purple-rgb), 1) !important;
+  background-color: RGBA(var(--bs-purple-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+
+.card-command {
+  border: 2px solid rgb(75,85,99);
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}

@@ -52,10 +52,10 @@ $(document).on('click', '.element', function(event) {
 Ở Backend bạn cần tạo function callback mà bạn đã gán vào action ở phía frontend
 > Example
 ```php
-use SkillDo\Request
+use SkillDo\Http\Request
 class TestAjax {
     #[NoReturn]
-    static function actionName(HttpRequest $request, $model): void
+    static function actionName(Request $request, $model): void
     {
         if($request->isMethod('post')) {
         

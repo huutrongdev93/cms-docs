@@ -11,7 +11,9 @@ Storage::put('file.png')
 Mặc định các thao lưu, xóa, thêm file hay thư mục điều bên trong thư mục lưu trữ của cms `uploads`, 
 nếu bạn cần thao tác với thư mục khác bạn có thể sử dụng phương thức `disk`
 ```php
-$storage = Storage::disk('root') // storage này sẽ thao tác với nguồn của source code
+$storage = Storage::disk('app') // storage này sẽ thao tác với thư mục application
+$storage = Storage::disk('language') // storage này sẽ thao tác với thư mục language
+$storage = Storage::disk('router') // storage này sẽ thao tác với thư mục router
 $storage = Storage::disk('upload') // storage này sẽ thao tác với các data nằm trong thư mục uploads
 $storage = Storage::disk('views') // storage này sẽ thao tác với các data nằm trong thư mục views
 $storage = Storage::disk('plugin') // storage này sẽ thao tác với các data nằm trong thư mục views/plugins
