@@ -446,6 +446,36 @@ Các quốc gia được hỗ trợ:
 | ja  |  Nhật Bản  |
 | en  | 	Nước Anh  |
 
+####  `in`
+Kiểm tra giá trị nhập vào có nằm trong danh sách giá trị cho trước
+
+**Tham số:**
+
+| Params | Type  |                 Description | Default |
+|--------|:-----:|----------------------------:|:-------:|
+| $data  | array | danh sách giá trị cho trước |         |
+
+```php
+Rule::make()->in(['pending', 'confirm', 'cancel']);
+```
+####  `custom`
+Kiểm tra giá trị nhập vào dự theo function custom của bạn
+
+**Tham số:**
+
+| Params   |  Type   |                                                            Description | Default |
+|----------|:-------:|-----------------------------------------------------------------------:|:-------:|
+| $closure | Closure | function kiểm tra trả về `true` nếu hợp lệ và `false` nếu không hợp lệ |         |
+
+```php
+Rule::make()->custom(function ($value) {
+
+    if(!is_numeric($value)) return false;
+    
+    return $value%2;
+});
+```
+
 ##  Error Messages
 
 Sau khi xác thực, nếu xác thực bị `fail` hệ thống sẽ trả về cho bạn một đối tượng `SKD_Error` trong đó chứa các thông báo lỗi mặc định.

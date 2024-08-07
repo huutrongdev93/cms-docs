@@ -12,7 +12,7 @@ $form->popoverAdvance('field_name', [
     'search'    => 'page',
 ])
 ```
-Thuộc tính bôt sung
+Thuộc tính bổ sung
 
 | Params   | Type |                    Description | Default |
 |----------|:----:|-------------------------------:|:-------:|
@@ -28,7 +28,7 @@ $form->popoverAdvance('field_name', [
 ])
 ```
 
-Thuộc tính bôt sung
+Thuộc tính bổ sung
 
 | Params   |  Type  |                    Description | Default |
 |----------|:------:|-------------------------------:|:-------:|
@@ -46,7 +46,7 @@ $form->popoverAdvance('field_name', [
 ])
 ```
 
-Thuộc tính bôt sung
+Thuộc tính bổ sung
 
 | Params   |  Type  |                    Description |     Default     |
 |----------|:------:|-------------------------------:|:---------------:|
@@ -64,7 +64,7 @@ $form->popoverAdvance('field_name', [
 ]);
 ```
 
-Thuộc tính bôt sung
+Thuộc tính bổ sung
 
 | Params   |  Type  |                    Description |     Default     |
 |----------|:------:|-------------------------------:|:---------------:|

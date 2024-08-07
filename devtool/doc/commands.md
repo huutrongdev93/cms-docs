@@ -157,7 +157,8 @@ make:command [<name>]
 <div class="card-command">
 
 #### ```make:db:plugin```
-Tạo file migration cho một plugin được chỉ định
+Tạo file migration cho một plugin được chỉ định.  
+File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/database```
 > **Arguments**
 * plugin_name -  tên thư mục plugin muốn tạo migration <span class="badge text-bg-red">REQUIRED</span>
 * file_name -  tên file migration muốn tạo <span class="badge text-bg-red">REQUIRED</span>
@@ -170,7 +171,8 @@ make:db:plugin [<plugin_name>] [<file_name>]
 <div class="card-command">
 
 #### ```make:db:theme```
-Tạo file migration cho theme hiện tại
+Tạo file migration cho theme hiện tại  
+File được tạo nằm trong thư mục ```views/[theme]/database```
 > **Arguments**
 * file_name -  tên file migration muốn tạo <span class="badge text-bg-red">REQUIRED</span>
 ```shell
@@ -182,7 +184,8 @@ make:db:theme [<file_name>]
 <div class="card-command">
 
 #### ```make:form-field:plugin```
-Tạo field mới cho một plugin được chỉ định
+Tạo field mới cho một plugin được chỉ định  
+File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/core/Form/Field```
 > **Arguments**
 * plugin_name -  tên thư mục plugin muốn tạo field <span class="badge text-bg-red">REQUIRED</span>
 * file_name -  tên class field muốn tạo <span class="badge text-bg-red">REQUIRED</span>
@@ -195,7 +198,8 @@ make:form-field:plugin [<plugin_name>] [<file_name>]
 <div class="card-command">
 
 #### ```make:form-field:theme```
-Tạo field mới cho theme hiện tại
+Tạo field mới cho theme hiện tại  
+File được tạo nằm trong thư mục ```views/[theme]/core/Form/Field```
 > **Arguments**
 * file_name -  tên class field muốn tạo <span class="badge text-bg-red">REQUIRED</span>
 ```shell
@@ -207,7 +211,9 @@ make:form-field:theme [<file_name>]
 <div class="card-command">
 
 #### ```make:lang:plugin```
-Tạo bản dịch cho một plugin được chỉ định
+Tạo bản dịch cho một plugin được chỉ định  
+File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/language/[local]```
+
 > **Arguments**
 * plugin_name -  tên thư mục plugin muốn tạo bản dịch <span class="badge text-bg-red">REQUIRED</span>
 * local -  tên ngôn ngữ muốn tạo bản dịch <span class="badge text-bg-red">REQUIRED</span>
@@ -221,7 +227,9 @@ make:lang:plugin [<plugin_name>] [<local>] [<file_name>]
 <div class="card-command">
 
 #### ```make:lang:theme```
-Tạo bản dịch cho theme hiện tại
+Tạo bản dịch cho theme hiện tại  
+File được tạo nằm trong thư mục ```views/[theme]/language/[local]```
+
 > **Arguments**
 * local -  tên ngôn ngữ muốn tạo bản dịch <span class="badge text-bg-red">REQUIRED</span>
 * file_name -  tên file bản dịch muốn tạo <span class="badge text-bg-red">REQUIRED</span>
@@ -234,7 +242,8 @@ make:lang:theme [<local>] [<file_name>]
 <div class="card-command">
 
 #### ```make:macro:plugin```
-Tạo file macro cho một plugin được chỉ định
+Tạo file macro cho một plugin được chỉ định  
+File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/core/Macro```
 > **Arguments**
 * plugin_name -  tên thư mục plugin muốn tạo macro <span class="badge text-bg-red">REQUIRED</span>
 * file_name -  tên file macro muốn tạo <span class="badge text-bg-red">REQUIRED</span>
@@ -247,7 +256,9 @@ make:macro:plugin [<plugin_name>] [<file_name>]
 <div class="card-command">
 
 #### ```make:macro:theme```
-Tạo file macro cho theme hiện tại
+Tạo file macro cho theme hiện tại  
+File được tạo nằm trong thư mục ```views/[theme]/core/Macro```
+
 > **Arguments**
 * file_name -  tên file macro muốn tạo <span class="badge text-bg-red">REQUIRED</span>
 ```shell
@@ -259,7 +270,8 @@ make:macro:theme [<file_name>]
 <div class="card-command">
 
 #### ```make:popover:plugin```
-Tạo popover cho một plugin được chỉ định
+Tạo popover cho một plugin được chỉ định  
+File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/core/Form/Popover```
 > **Arguments**
 * plugin_name -  tên thư mục plugin muốn tạo popover <span class="badge text-bg-red">REQUIRED</span>
 * file_name -  tên class popover muốn tạo <span class="badge text-bg-red">REQUIRED</span>
@@ -272,7 +284,9 @@ make:popover:plugin [<plugin_name>] [<file_name>]
 <div class="card-command">
 
 #### ```make:popover:theme```
-Tạo popover cho theme hiện tại
+Tạo popover cho theme hiện tại  
+File được tạo nằm trong thư mục ```views/[theme]/core/Form/Popover```
+
 > **Arguments**
 * file_name -  tên class popover muốn tạo <span class="badge text-bg-red">REQUIRED</span>
 ```shell
@@ -284,7 +298,9 @@ make:popover:theme [<file_name>]
 <div class="card-command">
 
 #### ```make:validate:plugin```
-Tạo validate rule cho một plugin được chỉ định
+Tạo validate rule cho một plugin được chỉ định  
+File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/core/Validate```
+
 > **Arguments**
 * plugin_name -  tên thư mục plugin muốn tạo validate <span class="badge text-bg-red">REQUIRED</span>
 * file_name -  tên class validate muốn tạo <span class="badge text-bg-red">REQUIRED</span>
@@ -297,7 +313,9 @@ make:validate:plugin [<plugin_name>] [<file_name>]
 <div class="card-command">
 
 #### ```make:validate:theme```
-Tạo validate rule cho theme hiện tại
+Tạo validate rule cho theme hiện tại  
+File được tạo nằm trong thư mục ```views/[theme]/core/Validate```
+
 > **Arguments**
 * file_name -  tên class validate muốn tạo <span class="badge text-bg-red">REQUIRED</span>
 ```shell
