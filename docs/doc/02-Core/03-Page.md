@@ -6,20 +6,26 @@ Class <b>Pages</b> cung cấp cho bạn các method thao tác với data của t
 #### <code>Pages::get</code>
 Method <code>Pages::get</code> trả thông tin Pages theo điều kiện Query Builder, Nếu truy vấn của bạn có nhiều hơn một Pages, method chỉ trả về hàng đầu tiên. Kết quả được trả về như một đối tượng.
 ```php
-$page = Pages::get(Qr::set($id)->select('id', 'title', 'excerpt'))
+$page = Pages::where('id', $id)->select('id', 'title', 'excerpt')->first();
+//or
+$page = Pages::gets(Qr::set($id)->select('id', 'title', 'excerpt'));
 ```
 
 #### <code>Pages::gets</code>
 Method <code>Pages::gets</code> trả về danh sách Pages theo điều kiện Query Builder
 ```php
-$pages = Pages::gets(Qr::set('trash', 0)->select('id', 'Pagesname'))
+$pages = Pages::gets(Qr::set('trash', 0)->select('id', 'name'));
+//or
+$pages = Pages::where('trash', 0)->select('id', 'name')->fetch();
 ```
 
 #### <code>Pages::count</code>
 Method <code>Pages::count</code> trả về số lượng Pages theo điều kiện Query Builder
 
 ```php
-$pagesNumber = Pages::count(Qr::set('trash', 0))
+$pagesNumber = Pages::count(Qr::set('trash', 0));
+//hoặc
+$pagesNumber = Pages::where('trash', 0)->amount();
 ```
 
 #### <code>Pages::insert</code>
@@ -73,7 +79,7 @@ Pages::insert($pageUpdate);
 //Cập nhật nếu có sẳn đối tượng cần cập nhật
 //Để giảm tải câu lệnh SQL
 $id = 10;
-$page = Pages::get(Qr::set($id));
+$page = Pages::where('id', $id)->first();
 $pageUpdate = [
     'id'        => $id
     'title'     => 'example title page',
@@ -95,7 +101,7 @@ Method <code>Pages::update</code> cập nhật một hoặc nhiều page theo đ
 $pageNew = [
    'title' => 'example title page',
 ]
-Pages::update($pageNew, Qr::set()->whereIn('id', [1,2,3,4]));
+Pages::whereIn('id', [1,2,3,4])->update($pageNew);
 ```
 
 #### <code>Pages::delete</code>
@@ -108,12 +114,13 @@ Method <code>Pages::delete</code> xóa toàn bộ thông tin một hoặc nhiề
 
 | Params |    Type     |                                                            Description |
 |--------|:-----------:|-----------------------------------------------------------------------:|
-| $where | int hoặc Qr |                 id bài viết cần xóa hoặc điều kiện lấy trang cần xóa   |
+| $where | int hoặc Qr |                   id bài viết cần xóa hoặc điều kiện lấy trang cần xóa |
 | $trash |    bool     | true nếu cho vào thùng rác, false nếu xóa vĩnh viển (mặc định `false`) |
 
 ```php
 Pages::delete($id);
-```
-```php
+
 Pages::delete(Qr::set()->whereIn('id', [1,2,3,4]));
+
+Pages::whereIn('id', [1,2,3,4])->remove();
 ```

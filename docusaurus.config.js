@@ -12,7 +12,7 @@ const config = {
 	tagline: 'Dinosaurs are cool',
 	favicon: 'img/logo-skilldo.png',
 	url: 'https://sikido.vn',
-	baseUrl: '/docs/cms/v7/',
+	baseUrl: '',
 	organizationName: 'facebook', // Usually your GitHub org/user name.
 	projectName: 'SkillDo', // Usually your repo name.
 	onBrokenLinks: 'throw',

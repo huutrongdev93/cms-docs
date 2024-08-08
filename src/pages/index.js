@@ -26,7 +26,7 @@ function HomepageHeader() {
                             projects done very fast with high quality using our CMS.</p>
                         <div className={styles.buttons}></div>
                     </div>
-                    <img src="/docs/cms/v7/img/logo-skilldo.png" alt="My Site Logo" width="250px"/>
+                    <img src="/img/logo-skilldo.png" alt="My Site Logo" width="250px"/>
                 </div>
             </div>
         </header>

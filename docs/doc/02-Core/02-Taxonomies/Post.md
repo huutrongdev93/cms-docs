@@ -3,32 +3,35 @@ import TOCInline from "@theme/TOCInline"
 Class <b>Posts</b> cung cấp cho bạn các method thao tác với data của bài viết
 ### Thao tác với Posts
 
-#### <code>Posts::get</code>
-Method <code>Posts::get</code> trả thông tin Posts theo điều kiện Query Builder, Nếu truy vấn của bạn có nhiều hơn một Posts, method chỉ trả về hàng đầu tiên. Kết quả được trả về như một đối tượng.
+#### <code>get or first</code>
+Method <code>get</code> trả thông tin Posts theo điều kiện Query Builder, Nếu truy vấn của bạn có nhiều hơn một Posts, method chỉ trả về hàng đầu tiên. Kết quả được trả về như một đối tượng.
 ```php
-$post = Posts::get(Qr::set($id)->select('id', 'title', 'excerpt'))
+$post = Posts::get(Qr::set($id)->select('id', 'title', 'excerpt'));
+//or
+$post = Posts::where($id)->select('id', 'title', 'excerpt')->first();
 ```
 
-#### <code>Posts::gets</code>
+#### <code>gets or fetch</code>
 Method <code>Posts::gets</code> trả về danh sách Posts theo điều kiện Query Builder
 ```php
-$posts = Posts::gets(Qr::set('trash', 0)->select('id', 'title'))
+$posts = Posts::gets(Qr::set('trash', 0)->select('id', 'title'));
+//or
+$posts = Posts::where('trash', 0)->select('id', 'title')->fetch();
 ```
 
-#### <code>Posts::getsRelated</code>
-Method <code>Posts::getsRelated</code> trả về danh sách Posts cùng chuyên mục với bài viết truyền vào
+#### <code>related</code>
+Method <code>related</code> trả về danh sách Posts cùng chuyên mục với bài viết truyền vào
 
 > **Tham số truyền vào bao gồm:**
 ```php
-::getsRelated($object, $args);
+::related($object);
 ```
 | Params    |   Type    |                           Description |
 |-----------|:---------:|--------------------------------------:|
 | $object   | int, post | id của bài viết hoặc bài viết cần lấy |
-| $args     |    Qr     |                 Điều kiện lọc dữ liệu |
 
 ```php
-$posts = Posts::getsRelated(10, Qr::set()->select('id', 'title'))
+$posts = Posts::where('public', 1)->related(10)->select('id', 'title')->fetch();
 ```
 
 #### <code>Posts::getsCategory</code>
@@ -48,15 +51,17 @@ $categories = Posts::getsCategory(10, Qr::set()->select('id', 'name'))
 ```
 
 
-#### <code>Posts::count</code>
-Method <code>Posts::count</code> trả về số lượng Posts theo điều kiện Query Builder
+#### <code>count or amount</code>
+Method <code>count</code> trả về số lượng Posts theo điều kiện Query Builder
 
 ```php
-$postsNumber = Posts::count(Qr::set('trash', 0))
+$postsNumber = Posts::count(Qr::set('trash', 0));
+//or
+$postsNumber = Posts::where('trash', 0)->amount();
 ```
 
-#### <code>Posts::insert</code>
-Method <code>Posts::insert</code> thêm or cập nhật thông tin Posts
+#### <code>insert</code>
+Method <code>insert</code> thêm or cập nhật thông tin Posts
 > **Tham số thứ nhất nhận vào là một mãng bao gồm:**
 
 | Column Name     |  Type  |                                                    Description |
@@ -83,10 +88,10 @@ Method <code>Posts::insert</code> thêm or cập nhật thông tin Posts
 Khi bạn truyền thêm column id thì method sẽ tiến hành cập nhật Posts
 > **Kết quả sau khi thực thi:**
 
-| Kết quả     |   Type    |                                        Description |
-|-------------|:---------:|---------------------------------------------------:|
-| Thành công  |  number   | Id của Posts vừa ược thêm mới hoặc id Posts cập nhật |
-| Thất bại    | SKD_Error |                                 Object SKD_Error   |
+| Kết quả    |   Type    |                                          Description |
+|------------|:---------:|-----------------------------------------------------:|
+| Thành công |  number   | Id của Posts vừa ược thêm mới hoặc id Posts cập nhật |
+| Thất bại   | SKD_Error |                                     Object SKD_Error |
 
 ```php
 //Thêm mới
@@ -133,8 +138,8 @@ $postUpdate = [
 ];
 Posts::insert($postUpdate, $post);
 ```
-#### <code>Posts::update</code>
-Method <code>Posts::update</code> cập nhật một hoặc nhiều post theo điều kiện Query Builder
+#### <code>update</code>
+Method <code>update</code> cập nhật một hoặc nhiều post theo điều kiện Query Builder
 > **Tham số truyền vào bao gồm:**
 ```php
 ::update($updateData, $args);
@@ -142,30 +147,30 @@ Method <code>Posts::update</code> cập nhật một hoặc nhiều post theo đ
 | Params      | Type  |                                  Description |
 |-------------|:-----:|---------------------------------------------:|
 | $updateData | array | mãng các trường thay đổi và giá trị cập nhật |
-| $args       |  Qr   |                           Điều kiện cập nhật |
 
 ```php
 $pageNew = [
    'title' => 'example title page',
 ]
-Posts::update($pageNew, Qr::set()->whereIn('id', [1,2,3,4]));
+Posts::whereIn('id', [1,2,3,4])->update($pageNew);
 ```
 
-#### <code>Posts::delete</code>
-Method <code>Posts::delete</code> xóa toàn bộ thông tin một hoặc nhiều Page khỏi database,
+#### <code>delete or remove</code>
+Method <code>delete</code> xóa toàn bộ thông tin một hoặc nhiều Page khỏi database,
 
 > **Tham số truyền vào bao gồm:**
 ```php
-::delete($id, $trash);
+::delete($id);
 ```
 
 | Params | Type |                                                            Description |
 |--------|:----:|-----------------------------------------------------------------------:|
 | $id    | int  |                                                    id bài viết cần xóa |
-| $trash | bool | true nếu cho vào thùng rác, false nếu xóa vĩnh viển (mặc định `false`) |
 
 ```php
 Posts::delete($id);
+//or
+Posts::where('id', $id)->remove();
 ```
 
 ### Post MetaData

@@ -130,6 +130,21 @@ db:table [<table_name>]
 
 </div>
 
+
+<div class="card-command">
+
+#### ```db:seed```
+Tạo dữ liệu mẫu
+> **Options**
+* module -  tên module muốn tạo dữ liệu (hiện tại chỉ hỗ trợ post) <span class="badge text-bg-red">REQUIRED</span>
+> **Arguments**
+* number -  số lượng dữ liệu muốn tạo nhỏ nhất 1 và lớn nhất là 50 (mặc định 10) <span class="badge text-bg-success">optional</span>
+```shell
+db:seed [--module] [<number>]
+```
+
+</div>
+
 ### Lang
 <div class="card-command">
 
