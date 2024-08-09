@@ -1,6 +1,6 @@
 # Tabs
 
-![img.png](img.png)
+![img.png](tabs-img/img.png)
 
 Để sử dụng component tab bạn sử dụng
 

@@ -3,7 +3,7 @@ import TOCInline from "@theme/TOCInline"
 Class <b>Posts</b> cung cấp cho bạn các method thao tác với data của bài viết
 ### Thao tác với Posts
 
-#### <code>get or first</code>
+#### <code>get / first</code>
 Method <code>get</code> trả thông tin Posts theo điều kiện Query Builder, Nếu truy vấn của bạn có nhiều hơn một Posts, method chỉ trả về hàng đầu tiên. Kết quả được trả về như một đối tượng.
 ```php
 $post = Posts::get(Qr::set($id)->select('id', 'title', 'excerpt'));
@@ -11,7 +11,7 @@ $post = Posts::get(Qr::set($id)->select('id', 'title', 'excerpt'));
 $post = Posts::where($id)->select('id', 'title', 'excerpt')->first();
 ```
 
-#### <code>gets or fetch</code>
+#### <code>gets / fetch</code>
 Method <code>Posts::gets</code> trả về danh sách Posts theo điều kiện Query Builder
 ```php
 $posts = Posts::gets(Qr::set('trash', 0)->select('id', 'title'));
@@ -34,7 +34,7 @@ Method <code>related</code> trả về danh sách Posts cùng chuyên mục vớ
 $posts = Posts::where('public', 1)->related(10)->select('id', 'title')->fetch();
 ```
 
-#### <code>Posts::getsCategory</code>
+#### <code>::getsCategory</code>
 Method <code>Posts::getsCategory</code> trả về danh sách danh mục của bài viết truyền vào
 
 > **Tham số truyền vào bao gồm:**
@@ -51,7 +51,7 @@ $categories = Posts::getsCategory(10, Qr::set()->select('id', 'name'))
 ```
 
 
-#### <code>count or amount</code>
+#### <code>count / amount</code>
 Method <code>count</code> trả về số lượng Posts theo điều kiện Query Builder
 
 ```php
@@ -155,7 +155,7 @@ $pageNew = [
 Posts::whereIn('id', [1,2,3,4])->update($pageNew);
 ```
 
-#### <code>delete or remove</code>
+#### <code>delete / remove</code>
 Method <code>delete</code> xóa toàn bộ thông tin một hoặc nhiều Page khỏi database,
 
 > **Tham số truyền vào bao gồm:**
@@ -177,7 +177,7 @@ Posts::where('id', $id)->remove();
 Bảng <code>post</code> của SkillDo được thiết kế để chỉ chứa thông tin cần thiết về người dùng.
 Do đó, để lưu trữ dữ liệu bổ sung, bảng _post_metadata_ đã được giới thiệu, có thể lưu trữ bất kỳ lượng dữ liệu tùy ý nào về người dùng
 
-#### <code>Posts::getMeta</code>
+#### <code>::getMeta</code>
 Method <code>Posts::getMeta</code> lấy metadata của post
 
 | Params   |  Type  |                  Description |
@@ -190,7 +190,7 @@ Posts::getMeta($id, 'views');
 ```
 
 
-#### <code>Posts::updateMeta</code>
+#### <code>::updateMeta</code>
 Method <code>Posts::updateMeta</code> thêm mới (nếu metaKey chưa có) hoặc cập nhật metadata của post
 
 | Params     |  Type  |                              Description |
@@ -203,7 +203,7 @@ Method <code>Posts::updateMeta</code> thêm mới (nếu metaKey chưa có) ho�
 Posts::updateMeta($id, 'views', 10);
 ```
 
-#### <code>Posts::deleteMeta</code>
+#### <code>::deleteMeta</code>
 Method <code>Posts::deleteMeta</code> xóa metadata của post khỏi database
 
 | Params   |  Type  |                              Description |

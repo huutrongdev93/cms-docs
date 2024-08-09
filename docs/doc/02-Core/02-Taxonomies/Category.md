@@ -4,16 +4,20 @@ Class <b>PostCategory</b> cung cấp cho bạn các method thao tác với data 
 > _Khi sử dụng Query Builder không có điều kiện **cate_type** mặc định cate_type sẽ là **`post_categories`**_
 ### Thao tác với danh mục
 
-#### <code>PostCategory::get</code>
-Method <code>PostCategory::get</code> trả thông tin PostCategory theo điều kiện Query Builder, Nếu truy vấn của bạn có nhiều hơn một PostCategory, method chỉ trả về hàng đầu tiên. Kết quả được trả về như một đối tượng.
+#### <code>get / first</code>
+Method <code>get</code> trả thông tin PostCategory theo điều kiện Query Builder, Nếu truy vấn của bạn có nhiều hơn một PostCategory, method chỉ trả về hàng đầu tiên. Kết quả được trả về như một đối tượng.
 ```php
-$post = PostCategory::get(Qr::set($id)->select('id', 'name', 'excerpt'))
+$category = PostCategory::get(Qr::set($id)->select('id', 'name', 'excerpt'));
+//or
+$category = PostCategory::where('id', $id)->select('id', 'name', 'excerpt')->first();
 ```
 
-#### <code>PostCategory::gets</code>
-Method <code>PostCategory::gets</code> trả về danh sách PostCategory theo điều kiện Query Builder
+#### <code>gets / fetch</code>
+Method <code>gets</code> trả về danh sách PostCategory theo điều kiện Query Builder
 ```php
-$posts = PostCategory::gets(Qr::set('trash', 0)->select('id', 'title'))
+$categories = PostCategory::gets(Qr::set('trash', 0)->select('id', 'title'));
+//or
+$categories = PostCategory::where('trash', 0)->select('id', 'title')->fetch();
 ```
 
 Trong Query Builder sử dụng phương thức categoryType để lấy các danh mục theo các loại khác nhau
@@ -145,11 +149,13 @@ $listId = PostCategory::children(['andParent' => true, 'id' => 1]);
 $listId = PostCategory::children(['andParent' => true, 'category' => PostCategory::get(Qr::set(1)->select('id', 'lft', 'rgt'))]);
 ```
 
-#### <code>PostCategory::count</code>
-Method <code>PostCategory::count</code> trả về số lượng PostCategory theo điều kiện Query Builder
+#### <code>count / amount</code>
+Method <code>count</code> trả về số lượng PostCategory theo điều kiện Query Builder
 
 ```php
-$postsNumber = PostCategory::count(Qr::set('trash', 0))
+$categoryNumber = PostCategory::count(Qr::set('trash', 0));
+//or
+$categoryNumber = PostCategory::where('trash', 0)->amount();
 ```
 
 #### <code>PostCategory::insert</code>
@@ -228,8 +234,8 @@ $postUpdate = [
 ];
 PostCategory::insert($postUpdate, $post);
 ```
-#### <code>PostCategory::update</code>
-Method <code>PostCategory::update</code> cập nhật một hoặc nhiều post theo điều kiện Query Builder
+#### <code>update</code>
+Method <code>update</code> cập nhật một hoặc nhiều post theo điều kiện Query Builder
 > **Tham số truyền vào bao gồm:**
 ```php
 ::update($updateData, $args);
@@ -237,17 +243,16 @@ Method <code>PostCategory::update</code> cập nhật một hoặc nhiều post 
 | Params      | Type  |                                  Description |
 |-------------|:-----:|---------------------------------------------:|
 | $updateData | array | mãng các trường thay đổi và giá trị cập nhật |
-| $args       |  Qr   |                           Điều kiện cập nhật |
 
 ```php
 $pageNew = [
    'title' => 'example title page',
 ]
-PostCategory::update($pageNew, Qr::set()->whereIn('id', [1,2,3,4]));
+PostCategory::whereIn('id', [1,2,3,4])->update($pageNew);
 ```
 
-#### <code>PostCategory::delete</code>
-Method <code>PostCategory::delete</code> xóa toàn bộ thông tin một hoặc nhiều Page khỏi database,
+#### <code>delete / remove</code>
+Method <code>PostCategory::delete</code> xóa toàn bộ thông tin một hoặc nhiều danh mục khỏi database,
 
 > **Tham số truyền vào bao gồm:**
 ```php
@@ -260,13 +265,15 @@ Method <code>PostCategory::delete</code> xóa toàn bộ thông tin một hoặc
 
 ```php
 PostCategory::delete($id);
+//or
+PostCategory::where('id', $id)->remove();
 ```
 
 ### MetaData
 Bảng <code>categories</code> của SkillDo được thiết kế để chỉ chứa thông tin cần thiết về người dùng.
 Do đó, để lưu trữ dữ liệu bổ sung, bảng categories_metadata đã được giới thiệu, có thể lưu trữ bất kỳ lượng dữ liệu tùy ý nào về người dùng
 
-#### <code>PostCategory::getMeta</code>
+#### <code>::getMeta</code>
 Method <code>PostCategory::getMeta</code> lấy metadata của danh mục
 
 | Params   |  Type  |                      Description |
@@ -278,7 +285,7 @@ Method <code>PostCategory::getMeta</code> lấy metadata của danh mục
 PostCategory::getMeta($id, 'views');
 ```
 
-#### <code>PostCategory::updateMeta</code>
+#### <code>::updateMeta</code>
 Method <code>PostCategory::updateMeta</code> thêm mới (nếu metaKey chưa có) hoặc cập nhật metadata của danh mục
 
 | Params     |  Type  |                                  Description |
@@ -291,7 +298,7 @@ Method <code>PostCategory::updateMeta</code> thêm mới (nếu metaKey chưa c�
 PostCategory::updateMeta($id, 'views', 10);
 ```
 
-#### <code>PostCategory::deleteMeta</code>
+#### <code>::deleteMeta</code>
 Method <code>PostCategory::deleteMeta</code> xóa metadata của danh mục khỏi database
 
 | Params   |  Type  |                      Description |

@@ -6,18 +6,18 @@ Tạo thông báo thành công
 SkilldoMessage.success('success message')
 ```
 
-# error
+### error
 Tạo thông báo lỗi thất bại
 ```javascript
 SkilldoMessage.error('error message')
 ```
-# warning
+### warning
 Tạo thông báo cảnh báo
 ```javascript
 SkilldoMessage.warning('warning message')
 ```
 
-# response
+### response
 Tạo thông báo cho response chuẩn nhận từ ajax
 ```javascript
 SkilldoMessage.response(response)
