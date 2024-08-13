@@ -10,7 +10,7 @@ cho phép bạn nhanh chóng bắt đầu gửi thư qua dịch vụ cục bộ 
 #### Cách gửi email
 Bạn có thể sử dụng static method
 ```php
-Mail::to($to)
+SkillDo\Mail::to($to)
     ->subject($subject)
     ->replyTo($mail, $name)
     ->body($body, $bodyValue)
@@ -18,7 +18,7 @@ Mail::to($to)
 ```
 Hoặc class Mail
 ```php
-$email = new Mail();
+$email = new SkillDo\Mail();
 $email->to($to)
     ->subject($subject)
     ->replyTo($mail, $name)
@@ -73,7 +73,7 @@ Các kiểu layout bạn có thể sử dụng
 ```php
 $order = Order::get(1);
 
-Email::to('kythuat@sikido.vn')
+ SkillDo\Mail::to('kythuat@sikido.vn')
     ->subject('Email thông báo gia hạn dịch vụ')
     ->replyTo('hotro@sikido.vn', 'Hỗ trợ gia hạn')
     ->body('email/layout-extend.blade', [
