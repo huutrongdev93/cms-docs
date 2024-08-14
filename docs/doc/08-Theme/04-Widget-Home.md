@@ -144,3 +144,64 @@ public function form()
     }) 
 }
 ```
+
+### Widget cssBuilder
+Để tạo css từ các input cấu hình widget bạn có thể sử dụng method `cssBuilder` để tạo ví dụ
+```php
+public function cssBuilder()
+{   
+    $this->cssVariables('--about-left-width', '100px');
+}
+```
+cssVariables: Khởi tạo các biến cho css
+
+```php
+public function cssBuilder()
+{   
+    $this->cssStyle($class, [
+            'data'  => $this->options->buttonStyle,
+            'style' => 'cssButton',
+            'options' => [
+                'desktop' => 'css',
+                'tablet'  => 'cssTablet',
+                'mobile'  => 'cssMobile',
+                'hover'   => 'cssHover',
+            ]
+        ]);
+}
+```
+`cssStyle`: khởi tạo css cho một dom có class được chỉ định
+
+- **$class** : class của dom cần được áp dụng css
+- **$args** : cấu hình  
+`data` : chứa dữ liệu từ field building  
+`style` : function tương ứng với từng loại field
+
+| data                                     | style         |
+|------------------------------------------|---------------|
+| background                               | cssBackground |
+| textBuilding                             | cssText       |
+| inputDimension                           | cssRadius     |
+| inputDimension, inputDimensionResponsive | cssDimension  |
+| boxShadow                                | cssBoxShadow  |
+| border                                   | cssBorder     |
+| spacing                                  | cssSpacing    |
+| buttonBuilding                           | cssButton     |
+| boxBuilding                              | cssBox        |
+| colorBuilding                            | cssColor      |
+| colorBuilding                            | cssTextColor  |
+
+`options` : bạn sẽ khai báo các loại css nào sẽ áp dụng cho các trường hợp nào
+- desktop: css hỗ trợ cho màng hình desktop
+- tablet: css hỗ trợ cho màng hình tablet
+- mobile: css hỗ trợ cho màng hình mobile
+- hover: css hỗ trợ cho trường hợp hover vào dom đang xử lý  
+
+Ngoài ra bạn cũng có thể truyền thẳng css vào style bằng `Clouse`
+```php
+$this->cssStyle('.read-more a:after', [
+    'style' => function ($widget) {
+        return 'background-color:' . $widget->options->color : '';
+    },
+]);
+```

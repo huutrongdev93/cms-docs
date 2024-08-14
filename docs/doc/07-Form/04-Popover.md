@@ -182,22 +182,22 @@ Khai báo file giao diện, function `Theme::makeView` chỉ là demo có thể 
 ```php
 public function templateValueImg(): string
 {
-    return Theme::makeView('admin/popover/template-popover');
+    return Theme::partial('admin/popover/template-popover');
 }
 
 public function templateValueNoImg(): string
 {
-    return Theme::makeView('admin/popover/template-popover');
+    return Theme::partial('admin/popover/template-popover');
 }
 
 public function templateSearchImg(): string
 {
-    return Theme::makeView('admin/popover/template-popover');
+    return Theme::partial('admin/popover/template-popover');
 }
 
 public function templateSearchNoImg(): string
 {
-    return Theme::makeView('admin/popover/template-popover');
+    return Theme::partial('admin/popover/template-popover');
 }
 ```
 

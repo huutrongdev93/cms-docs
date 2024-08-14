@@ -344,7 +344,11 @@ $form->add('field_name_category', 'postCategory', ['label' => 'Label Category', 
 
 
 ### Field giao diện
-
+#### none
+none cho phép chèn html vào form
+```php
+$form->none(Admin::button('red', ['text' => 'Xóa']));
+```
 #### inputResponsive
 inputResponsive Tạo cho bạn field text có thể điền 3 kích thước (Desktop, Tablet, Mobile)
 
