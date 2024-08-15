@@ -140,7 +140,7 @@ Tạo dữ liệu mẫu
 > **Arguments**
 * number -  số lượng dữ liệu muốn tạo nhỏ nhất 1 và lớn nhất là 50 (mặc định 10) <span class="badge text-bg-success">optional</span>
 ```shell
-db:seed [--module] [<number>]
+db:seed [--module=] [<number>]
 ```
 
 </div>
@@ -322,7 +322,6 @@ File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/core/V
 ```shell
 make:validate:plugin [<plugin_name>] [<file_name>]
 ```
-
 </div>
 
 <div class="card-command">
@@ -336,7 +335,33 @@ File được tạo nằm trong thư mục ```views/[theme]/core/Validate```
 ```shell
 make:validate:theme [<file_name>]
 ```
+</div>
 
+<div class="card-command">
+
+#### ```make:column:plugin```
+<span class="badge text-bg-pink">v.1.0.2</span> Tạo table column cho một plugin được chỉ định  
+File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/core/Table/Columns```
+
+> **Arguments**
+* plugin_name -  tên thư mục plugin muốn tạo validate <span class="badge text-bg-red">REQUIRED</span>
+* file_name -  tên class column muốn tạo <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:column:plugin [<plugin_name>] [<file_name>]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:column:theme```
+<span class="badge text-bg-pink">v.1.0.2</span> Tạo table column cho theme hiện tại  
+File được tạo nằm trong thư mục ```views/[theme]/core/Table/Columns```
+
+> **Arguments**
+* file_name -  tên class column muốn tạo <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:column:theme [<file_name>]
+```
 </div>
 
 <div class="card-command">
@@ -364,7 +389,6 @@ Tạo cấu trúc cho một widget mới
 ```shell
 make:widget [<folder>] [<class>] [<file>]
 ```
-
 </div>
 
 <div class="card-command">
@@ -380,7 +404,34 @@ Tạo cấu trúc cho một widget sidebar
 ```shell
 make:widget:sidebar [<type>] [<folder>] [<class>] [<file>]
 ```
+</div>
 
+
+<div class="card-command">
+
+#### ```make::taxonomy```
+<span class="badge text-bg-pink">v.1.0.3</span> Tạo cấu trúc cho một taxonomy  
+File được tạo nằm trong thư mục ```views/[theme]/theme-custom/taxonomies```
+> **Arguments**
+* post_type - Tên post type <span class="badge text-bg-red">REQUIRED</span>
+* cate_type? - Tên cate type nếu có <span class="badge text-bg-success">OPTIONAL</span>
+
+```shell
+make:taxonomy [<post_type>] [<cate_type>?]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make::ajax```
+<span class="badge text-bg-pink">v.1.0.3</span> Tạo cấu trúc cho một ajax  
+File được tạo nằm trong thư mục ```views/[theme]/theme-custom/ajax```
+> **Arguments**
+* file - Tên file ajax <span class="badge text-bg-red">REQUIRED</span>
+
+```shell
+make:ajax [<file>]
+```
 </div>
 
 ### Plugin
