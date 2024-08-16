@@ -78,6 +78,22 @@ const config = {
 				},
 			},
 		],
+		[
+			'@docusaurus/plugin-content-docs',
+			{
+				id: 'hooks',
+				path: 'hooks',
+				routeBasePath: 'hooks',
+				sidebarPath: './sidebars-hooks.js',
+				lastVersion: 'current',
+				versions: {
+					current: {
+						label: '1.0.0',
+						path: '1.0.0',
+					},
+				},
+			},
+		]
 	],
 	themeConfig:
 	/** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -114,6 +130,13 @@ const config = {
 						sidebarId: 'ecommerce',
 						docsPluginId: 'ecommerce',
 						label: 'E-commerce',
+					},
+					{
+						type: 'docSidebar',
+						position: 'left',
+						sidebarId: 'hooks',
+						docsPluginId: 'hooks',
+						label: 'Hooks',
 					},
 					/*{
 						type: 'docSidebar',
