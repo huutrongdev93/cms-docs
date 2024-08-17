@@ -134,8 +134,6 @@ function my_custom_admin_post_table_header_buttons($buttons): array
 add_filter('table_post_header_buttons', 'my_custom_admin_post_table_header_buttons', 10);
 ```
 
-
-
 #### table columns
 Chỉnh sữa danh sách table column của post
 

@@ -434,6 +434,38 @@ make:ajax [<file>]
 ```
 </div>
 
+
+<div class="card-command">
+
+#### ```make::table```
+<span class="badge text-bg-pink">v.1.0.4</span> Tạo cấu trúc cho một table  
+File được tạo nằm trong thư mục ```views/[theme]/theme-custom/table```
+> **Arguments**
+* file - Tên file table <span class="badge text-bg-red">REQUIRED</span>
+* class - Tên class table <span class="badge text-bg-red">REQUIRED</span>
+
+```shell
+make:table [<file>] [<class>]
+```
+</div>
+
+
+<div class="card-command">
+
+#### ```make::model```
+<span class="badge text-bg-pink">v.1.0.4</span> Tạo cấu trúc cho một model  
+File được tạo nằm trong thư mục ```views/[theme]/theme-custom/model```
+> **Options**
+* --db - Điền tùy chọn này nếu muốn tạo kèm file database <span class="badge text-bg-green">Optional</span>
+* 
+> **Arguments**
+* file - Tên file model <span class="badge text-bg-red">REQUIRED</span>
+
+```shell
+make:model [<file>] [--db]
+```
+</div>
+
 ### Plugin
 <div class="card-command">
 
