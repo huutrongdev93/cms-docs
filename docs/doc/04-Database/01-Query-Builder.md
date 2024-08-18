@@ -60,7 +60,7 @@ Bạn có thể sử dụng method `where` của `Qr` để thêm mệnh đề "
 $args = Qr::set()->where('votes', '=', 100)->where('age', '>', 35);
 $exm = model('table')->gets($args);
 //hoặc
-$exm = model('table')::where('votes', '=', 100)->where('age', '>', 35)->all();
+$exm = model('table')::where('votes', '=', 100)->where('age', '>', 35)->fetch();
 ```
 
 Để thuận tiện, nếu bạn muốn xác minh rằng một cột là một giá trị nhất định, bạn có thể chuyển giá trị làm đối số thứ hai cho phương thức. Query sẽ giả sử bạn muốn sử dụng toán tử: `=`
@@ -68,7 +68,7 @@ $exm = model('table')::where('votes', '=', 100)->where('age', '>', 35)->all();
 $args = Qr::set()->where('votes', 100);
 $exm = model('table')->gets($args);
 //hoặc
-$exm = model('table')::where('votes', 100)->all();
+$exm = model('table')::where('votes', 100)->fetch();
 ```
 Như đã đề cập trước đây, bạn có thể sử dụng bất kỳ toán tử nào được hệ thống cơ sở dữ liệu của bạn hỗ trợ:
 ```php
@@ -82,7 +82,7 @@ $exm = model('table')->gets($args);
 $exm = model('table')::where('votes', '>=', 100)
     ->where('votes', '<>', 100)
     ->where('name', 'like', 'T%')
-    ->all();
+    ->fetch();
 ```
 ### Or Where Clauses
 
@@ -92,7 +92,7 @@ $args = Qr::set()
     ->orWhere('name', 'John');
 $exm = model('table')->gets($args);
 //hoặc
-$exm = model('table')::where('votes', '>', 100)->orWhere('name', 'John')->all();
+$exm = model('table')::where('votes', '>', 100)->orWhere('name', 'John')->fetch();
 ```
 
 Nếu bạn cần nhóm một điều kiện "hoặc" trong ngoặc đơn, bạn có thể chuyển một Qr làm đối số đầu tiên cho phương thức
@@ -108,7 +108,7 @@ $exm = model('table')->gets($args);
 $exm = model('table')::where('votes', '>', 100)
     ->orWhere(function($query) {
         $query->where('name', 'Abigail')->where('votes', '>', 50); 
-    })->all();
+    })->fetch();
 ```
 
 Ví dụ sẽ tạo mẫu SQL

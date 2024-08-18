@@ -8,20 +8,30 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 
+### version 7.0.3 - public beta - 19.08.2024
+<span class="badge text-bg-red">Fix</span> lỗi logout khi redirect lưu cache triình duyệt
+
+<span class="badge text-bg-red">Fix</span> lỗi review image <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-blue">Change</span> Đổi service lấy danh sách fonts google
+
+<span class="badge text-bg-green">Add</span> Thêm hooks admin_pre_user_update, admin_pre_user_update_meta, admin_user_update_success
+
 ### version 7.0.2 - public beta - 15.08.2024
-<span class="badge text-bg-red">Fix</span> lỗi route khi bật đa ngôn ngữ  
 
-<span class="badge text-bg-red">Fix</span> <span class="badge text-bg-pink">Location</span> lỗi thư viện Location lấy sai tên full_name  
+<span class="badge text-bg-red">Fix</span> lỗi route khi bật đa ngôn ngữ  <span class="badge text-bg-yellow">Dương</span>
 
-<span class="badge text-bg-red">Fix</span> <span class="badge text-bg-pink">Widget</span> lỗi widget kéo thả không cập nhật thứ tự  
+<span class="badge text-bg-red">Fix</span> <span class="badge text-bg-pink">Location</span> lỗi thư viện Location lấy sai tên full_name  <span class="badge text-bg-yellow">Trang</span>
 
-<span class="badge text-bg-red">Fix</span> <span class="badge text-bg-pink">Theme menu</span> lỗi khi edit menu không hiện data đã lưu
+<span class="badge text-bg-red">Fix</span> <span class="badge text-bg-pink">Widget</span> lỗi widget kéo thả không cập nhật thứ tự  <span class="badge text-bg-yellow">Dương</span>
+
+<span class="badge text-bg-red">Fix</span> <span class="badge text-bg-pink">Theme menu</span> lỗi khi edit menu không hiện data đã lưu <span class="badge text-bg-yellow">Dương</span>
 
 ### version 7.0.1 - public beta - 13.08.2024
 
 <span class="badge text-bg-red">Fix</span> lỗi không vào được trang update phiên bản bằng button upload  
 
-<span class="badge text-bg-red">Fix</span> <span class="badge text-bg-pink">Theme menu</span> lỗi thêm menu không xóa cache củ  
+<span class="badge text-bg-red">Fix</span> <span class="badge text-bg-pink">Theme menu</span> lỗi thêm menu không xóa cache củ <span class="badge text-bg-yellow">Dương</span>
 
 <span class="badge text-bg-blue">Change</span> <span class="badge text-bg-pink">Cache</span> Đổi class CacheHandler thành class SkillDo\Cache  
 

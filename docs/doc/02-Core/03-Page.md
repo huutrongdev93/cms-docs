@@ -8,7 +8,7 @@ Method <code>Pages::get</code> trả thông tin Pages theo điều kiện Query 
 ```php
 $page = Pages::where('id', $id)->select('id', 'title', 'excerpt')->first();
 //or
-$page = Pages::gets(Qr::set($id)->select('id', 'title', 'excerpt'));
+$page = Pages::get(Qr::set($id)->select('id', 'title', 'excerpt'));
 ```
 
 #### <code>Pages::gets</code>
