@@ -231,10 +231,9 @@ File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/langua
 
 > **Arguments**
 * plugin_name -  tên thư mục plugin muốn tạo bản dịch <span class="badge text-bg-red">REQUIRED</span>
-* local -  tên ngôn ngữ muốn tạo bản dịch <span class="badge text-bg-red">REQUIRED</span>
 * file_name -  tên file bản dịch muốn tạo <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-make:lang:plugin [<plugin_name>] [<local>] [<file_name>]
+make:lang:plugin [<plugin_name>] [<file_name>]
 ```
 
 </div>
@@ -246,10 +245,9 @@ Tạo bản dịch cho theme hiện tại
 File được tạo nằm trong thư mục ```views/[theme]/language/[local]```
 
 > **Arguments**
-* local -  tên ngôn ngữ muốn tạo bản dịch <span class="badge text-bg-red">REQUIRED</span>
 * file_name -  tên file bản dịch muốn tạo <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-make:lang:theme [<local>] [<file_name>]
+make:lang:theme [<file_name>]
 ```
 
 </div>

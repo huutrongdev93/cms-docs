@@ -8,6 +8,24 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 
+### version 7.0.5 - candidates - 21.08.2024
+
+<span class="badge text-bg-red">Fix</span> lỗi không tạo được gallery trong admin
+
+<span class="badge text-bg-red">Fix</span> lỗi login-as bị chuyển hướng sai khi logout
+
+<span class="badge text-bg-red">Fix</span> <span class="badge text-bg-pink">Location</span> lỗi khi truyền sai dữ liệu lấy địa chỉ
+
+<span class="badge text-bg-blue">Change</span> <span class="badge text-bg-pink">Language</span> Tách bản dịch cho core cms và trang admin thành 2
+
+<span class="badge text-bg-blue">Change</span> Thay đổi giao diện trang admin 404
+
+<span class="badge text-bg-green">Add</span> Thêm bản dịch cho backend/404-error
+
+<span class="badge text-bg-green">Add</span> Thêm bản dịch cho backend/galleries-index
+
+<span class="badge text-bg-green">Update</span> Cập nhật bản dịch cho backend/menu-index
+
 ### version 7.0.4 - public beta - 20.08.2024
 
 <span class="badge text-bg-red">Fix</span> lỗi lưu post không có kết nối với danh mục <span class="badge text-bg-yellow">Trang</span>

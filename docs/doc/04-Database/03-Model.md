@@ -155,14 +155,14 @@ static array $rules = [
     'updated'  => true,
     'user_created'      => true,
     'user_updated'      => true,
-    'language'          => true,
+    'language'          => false,
     'add'               => [
         'takeIt' => [
             'seo_title'         => 'title',
             'seo_description'   => 'excerpt',
         ],
         'require' => [
-            'title' => trans('Tiêu đề trang không được để trống')
+            'title' => 'Tiêu đề trang không được để trống'
         ]
     ],
     'hooks'    => [
