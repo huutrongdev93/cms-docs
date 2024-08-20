@@ -6,10 +6,10 @@ Lớp `Request` của SkillDo dựa trên lớp `Illuminate\Http\Request` của 
 
 ### Sử dụng Request
 
-Trong ajax callback sẽ tự động nhận được request là tham số đầu tiên và bạn cần thêm gợi ý lớp `SkillDo\Request\Request` để sử dụng
+Trong ajax callback sẽ tự động nhận được request là tham số đầu tiên và bạn cần thêm gợi ý lớp `SkillDo\Http\Request` để sử dụng
 ```php
 #[NoReturn]
-function ajaxCallback(SkillDo\Request\Request $request, $model): void
+function ajaxCallback(SkillDo\Http\Request $request, $model): void
 {
     if($request->isMethod('post')) {
     
@@ -23,7 +23,7 @@ function ajaxCallback(SkillDo\Request\Request $request, $model): void
 Hoặc
 
 ```php
-use SkillDo\Request\Request;
+use SkillDo\Http\Request;
 #[NoReturn]
 function ajaxCallback(Request $request, $model): void
 {
@@ -110,7 +110,7 @@ if ($request->isMethod('post')) {
 
 ### Request Headers
 
-Bạn có thể lấy request header từ `SkillDo\Request\Request` bằng cách sử dụng phương thức `header`. Nếu header không có trong request, `null` sẽ được trả về. Tuy nhiên, phương thức `header` chấp nhận một tham số thứ hai tùy chọn sẽ được trả về nếu header không có trong request:
+Bạn có thể lấy request header từ `SkillDo\Http\Request` bằng cách sử dụng phương thức `header`. Nếu header không có trong request, `null` sẽ được trả về. Tuy nhiên, phương thức `header` chấp nhận một tham số thứ hai tùy chọn sẽ được trả về nếu header không có trong request:
 
 ```php
 $value = $request->header('X-Header-Name');
@@ -169,7 +169,7 @@ $request->collect('users')->each(function (string $user) {
 
 #### Lấy Giá Trị Dữ liệu Input
 
-Sử dụng một số phương thức đơn giản, bạn có thể truy cập tất cả dữ liệu đầu vào của người dùng từ thể hiện `SkillDo\Request\Request` mà không phải lo lắng về loại HTTP nào được sử dụng cho request. 
+Sử dụng một số phương thức đơn giản, bạn có thể truy cập tất cả dữ liệu đầu vào của người dùng từ thể hiện `SkillDo\Http\Request` mà không phải lo lắng về loại HTTP nào được sử dụng cho request. 
 Bất kỳ loại HTTP nào đi nữa, phương thức `input` có thể sử dụng để lấy dữ liệu input của người dùng:
 
 ```php
