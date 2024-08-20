@@ -8,8 +8,19 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 
-### version 7.0.3 - public beta - 19.08.2024
-<span class="badge text-bg-red">Fix</span> lỗi logout khi redirect lưu cache triình duyệt
+### version 7.0.4 - public beta - 20.08.2024
+
+<span class="badge text-bg-red">Fix</span> lỗi lưu post không có kết nối với danh mục <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-red">Fix</span> lỗi url chuyển hướng trong auth nếu user đã đăng nhập
+
+<span class="badge text-bg-green">Add</span> Thêm hooks user_form_profile
+
+<span class="badge text-bg-blue">Change</span> Optimize code
+
+### version 7.0.3 - public beta - 18.08.2024
+
+<span class="badge text-bg-red">Fix</span> lỗi logout khi redirect lưu cache trình duyệt
 
 <span class="badge text-bg-red">Fix</span> lỗi review image <span class="badge text-bg-yellow">Châu Thạch</span>
 

@@ -466,6 +466,21 @@ make:model [<file>] [--db]
 ```
 </div>
 
+<div class="card-command">
+
+#### ```make::module```
+<span class="badge text-bg-pink">v.1.0.5</span> Tạo cấu trúc cho một module  
+File được tạo nằm trong thư mục ```views/[theme]/theme-custom/modules```
+> **Arguments**
+* module - Tên file module <span class="badge text-bg-red">REQUIRED</span>
+* model - Tên class model <span class="badge text-bg-red">REQUIRED</span>
+* table - Tên table model <span class="badge text-bg-red">REQUIRED</span>
+
+```shell
+make:module [<module>] [<model>] [<table>]
+```
+</div>
+
 ### Plugin
 <div class="card-command">
 
