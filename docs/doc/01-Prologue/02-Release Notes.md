@@ -16,6 +16,8 @@
 
 <span class="badge text-bg-red">Fix</span> <span class="badge text-bg-pink">Location</span> lỗi khi truyền sai dữ liệu lấy địa chỉ
 
+<span class="badge text-bg-red">Fix</span> <span class="badge text-bg-pink">Javascript</span> SkilldoMessage header đa ngôn ngữ <span class="badge text-bg-yellow">Dương</span>
+
 <span class="badge text-bg-blue">Change</span> <span class="badge text-bg-pink">Language</span> Tách bản dịch cho core cms và trang admin thành 2
 
 <span class="badge text-bg-blue">Change</span> Thay đổi giao diện trang admin 404
@@ -25,6 +27,14 @@
 <span class="badge text-bg-green">Add</span> Thêm bản dịch cho backend/galleries-index
 
 <span class="badge text-bg-green">Update</span> Cập nhật bản dịch cho backend/menu-index
+
+<span class="badge text-bg-green">Update</span> Áp dụng Validation (server) khi lưu theme options
+
+<span class="badge text-bg-green">Update</span> Tối ưu hiển thị media review của các trường image trong admin
+
+<span class="badge text-bg-green">Add</span> SkilldoUtil.elementSize lấy width và height của một dom
+
+<span class="badge text-bg-green">Add</span> SkilldoUtil.windowSize lấy width và height của một window hoặc gán function vào sự kiện resize
 
 ### version 7.0.4 - public beta - 20.08.2024
 

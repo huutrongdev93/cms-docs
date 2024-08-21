@@ -42,7 +42,16 @@ Xóa tất cả file cache views
 ```shell
 cache:view
 ```
+</div>
 
+
+<div class="card-command">
+
+#### ```cache:lang```
+<span class="badge text-bg-pink">v.1.0.6</span> Xóa tất cả file cache của bản dịch ngôn ngữ
+```shell
+cache:lang
+```
 </div>
 
 ### Cms
