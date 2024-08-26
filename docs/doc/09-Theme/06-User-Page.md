@@ -39,4 +39,6 @@ function tabRender($user, \SkillDo\Http\Request $request): void
 {
     echo "hello";
 }
+
+add_action('account_template_render_test', 'tabRender', 10, 2);
 ```

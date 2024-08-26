@@ -8,6 +8,20 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 
+### version 7.0.6 - candidates - 26.08.2024
+
+<span class="badge text-bg-red">Fix</span> lỗi input-dimension không hiển thị giá trị khi nhập 0 <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> lỗi input-dimension không cho submit khi nhập số thập phân <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> lỗi text-building kiểu chữ không hiển thị giá trị sau khi lưu <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> lỗi thêm nhiều gallery item một lúc <span class="badge text-bg-yellow">Dương</span>
+
+<span class="badge text-bg-red">Fix</span> lỗi không tạo được column danh mục taxonomy trong table post <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> lỗi function SkilldoUtil.isset
+
 ### version 7.0.5 - candidates - 21.08.2024
 
 <span class="badge text-bg-red">Fix</span> lỗi không tạo được gallery trong admin

@@ -21,8 +21,40 @@ help [<group_name>]
 ```shell
 auth:logout
 ```
-
 </div>
+
+### User
+
+<div class="card-command">
+
+#### ```user:username```
+Thay đổi tên đăng nhập của một user
+> **Arguments**
+* username-current - username của account muốn thay đổi username <span class="badge text-bg-red">REQUIRED</span>
+* username-new -  username mới của người dùng <span class="badge text-bg-red">REQUIRED</span>
+```shell
+user:username [<username-current>] [<username-new>]
+```
+```shell
+user:username hello xinchao 
+```
+</div>
+
+<div class="card-command">
+
+#### ```user:password```
+Thay đổi mật khẩu đăng nhập của một user
+> **Arguments**
+* username-current - username của account muốn thay đổi mật khẩu <span class="badge text-bg-red">REQUIRED</span>
+* password -  password muốn thay đổi <span class="badge text-bg-red">REQUIRED</span>
+```shell
+user:username [<username-current>] [<username-new>]
+```
+```shell
+user:password xinchao 1234Game 
+```
+</div>
+
 
 ### Cache
 <div class="card-command">
@@ -149,7 +181,11 @@ Tạo dữ liệu mẫu
 > **Arguments**
 * number -  số lượng dữ liệu muốn tạo nhỏ nhất 1 và lớn nhất là 50 (mặc định 10) <span class="badge text-bg-success">optional</span>
 ```shell
-db:seed [--module=] [<number>]
+db:seed --module=[<module>] [<number>]
+```
+
+```shell
+db:seed --module=post 20
 ```
 
 </div>
@@ -411,6 +447,17 @@ Tạo cấu trúc cho một widget sidebar
 ```shell
 make:widget:sidebar [<type>] [<folder>] [<class>] [<file>]
 ```
+```shell
+make:widget:sidebar sidebar about
+```
+
+```shell
+make:widget:sidebar sidebar about widget_about_sidebar_style10
+```
+
+```shell
+make:widget:sidebar sidebar about widget_about_sidebar_style_10 about-sidebar-style-10
+```
 </div>
 
 
@@ -426,6 +473,7 @@ File được tạo nằm trong thư mục ```views/[theme]/theme-custom/taxonom
 ```shell
 make:taxonomy [<post_type>] [<cate_type>?]
 ```
+_sau khi nhập `make::taxonomy` bạn có thể **enter** để nhập thông tin cho các arguments_
 </div>
 
 <div class="card-command">
@@ -464,12 +512,18 @@ make:table [<file>] [<class>]
 File được tạo nằm trong thư mục ```views/[theme]/theme-custom/model```
 > **Options**
 * --db - Điền tùy chọn này nếu muốn tạo kèm file database <span class="badge text-bg-green">Optional</span>
-* 
 > **Arguments**
 * file - Tên file model <span class="badge text-bg-red">REQUIRED</span>
 
 ```shell
 make:model [<file>] [--db]
+```
+
+```php
+make:model Books
+```
+```php
+make:model Books --db
 ```
 </div>
 
@@ -486,6 +540,7 @@ File được tạo nằm trong thư mục ```views/[theme]/theme-custom/modules
 ```shell
 make:module [<module>] [<model>] [<table>]
 ```
+_sau khi nhập `make::module` bạn có thể **enter** để nhập thông tin các arguments_
 </div>
 
 ### Plugin

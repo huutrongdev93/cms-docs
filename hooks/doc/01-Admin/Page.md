@@ -1,6 +1,6 @@
 ### Trang danh sách page
 
-#### điều kiện lấy total
+#### Điều kiện lấy total
 Thay đổi điều kiện lấy ra tổng số page dùng cho phân trang
 
 | **Loại Hook**                                          | **Platform** |                                   **Version** |
@@ -23,7 +23,7 @@ add_filter('admin_page_controllers_index_args_before_count', 'my_custom_admin_pa
 ```
 
 
-#### điều kiện lấy list
+#### Điều kiện lấy list
 Thay đổi điều kiện lấy ra danh sách page
 
 | **Loại Hook**                                          | **Platform** |                                   **Version** |
@@ -47,7 +47,7 @@ add_filter('admin_page_controllers_index_args', 'my_custom_admin_page');
 
 
 
-#### danh sách page
+#### Danh sách page
 Thay danh sách page đã lấy ra
 
 | **Loại Hook**                                          | **Platform** |                                   **Version** |
@@ -71,7 +71,7 @@ function my_custom_admin_page_objects($objects, Qr $args): array
 add_filter('admin_page_controllers_index_objects', 'my_custom_admin_page_objects', 10, 2);
 ```
 
-#### table buttons bulk
+#### Table buttons bulk
 Tạo ra danh sách buttons bulk, là những button khi người dùng chọn nhiều row trên table
 
 | **Loại Hook**                                          | **Platform** |                                   **Version** |
@@ -109,7 +109,7 @@ add_filter('table_page_bulk_action_buttons', 'my_custom_admin_page_bulk_action_b
 ```
 
 
-#### table header buttons
+#### Table header buttons
 Tạo ra danh sách buttons trên table, là những button nằm ở header table phía tay phải
 
 | **Loại Hook**                                          | **Platform** |                                   **Version** |
@@ -136,7 +136,7 @@ add_filter('table_page_header_buttons', 'my_custom_admin_page_table_header_butto
 
 
 
-#### table columns
+#### Table columns
 Chỉnh sữa danh sách table column của page
 
 | **Loại Hook**                                          | **Platform** |                                   **Version** |
@@ -164,7 +164,7 @@ function my_custom_admin_page_table_columns($columnHeaders): array
 add_filter('manage_pages_columns', 'my_custom_admin_page_table_columns');
 ```
 
-#### table columns action
+#### Table columns action
 Tạo ra danh sách buttons cho column action
 
 | **Loại Hook**                                          | **Platform** |                                   **Version** |
