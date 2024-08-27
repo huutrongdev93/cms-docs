@@ -1,9 +1,8 @@
-### cle_dashboard_setup
-Dùng đăng ký danh sách widget dashboard  
+#### Đăng ký widget dashboard
 
-| **Loại Hook**                                    | **Platform** |                                   **Version** |
-|--------------------------------------------------|:------------:|----------------------------------------------:|
-| <span class="badge text-bg-red">do_action</span> |     cms      | <span class="badge text-bg-cyan">3.0.0</span> |
+| Hook                  | **Loại Hook**                                 | **Platform** |                                   **Version** |
+|-----------------------|-----------------------------------------------|:------------:|----------------------------------------------:|
+| `cle_dashboard_setup` | <span class="badge text-bg-red">action</span> |     cms      | <span class="badge text-bg-cyan">3.0.0</span> |
 
 **Params**: không có  
 
