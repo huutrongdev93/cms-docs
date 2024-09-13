@@ -8,6 +8,41 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 
+### version 7.1.0 - 13.09.2024
+
+<span class="badge text-bg-red">Fix</span> Lỗi router account <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi bản dịch thông báo javascript
+
+<span class="badge text-bg-red">Fix</span> Lỗi bulkAction sau khi delete hoặc restore không xóa các column đã chọn
+
+<span class="badge text-bg-red">Fix</span> Lỗi bulkAction xóa nhiều bài viết không hoạt động <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi sai đường dẫn logout trong trang account <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Delete</span> Xóa nhật ký hoạt động củ tách thành plugin log mới (chuẩn bị ra mắt)
+
+<span class="badge text-bg-red">Delete</span> Loại bỏ MY_Model
+
+<span class="badge text-bg-red">Delete</span> Xóa thư viện Security thay thế bằng Middleware
+
+<span class="badge text-bg-blue">Change</span> Thay đổi core thư viện cache (loại bỏ thư viện cache của codeigniter)
+
+<span class="badge text-bg-green">Update</span> Tối ưu lại thư viện Storage
+
+<span class="badge text-bg-green">Update</span> Thay đổi sâu nhiều thành phần Model
+
+<span class="badge text-bg-green">Add</span> Thêm Model Event vào Model
+
+<span class="badge text-bg-green">Add</span> Thêm Model SoftDelete vào Model
+
+<span class="badge text-bg-green">Add</span> SkillDo/Log thư viện ghi log mới
+
+<span class="badge text-bg-green">Add</span> Tự động ghi toàn bộ log error vào thư mục logs
+
+<span class="badge text-bg-green">Add</span> Thêm chức năng Middleware vào cms
+
+
 ### version 7.0.6 - candidates - 26.08.2024
 
 <span class="badge text-bg-red">Fix</span> lỗi input-dimension không hiển thị giá trị khi nhập 0 <span class="badge text-bg-yellow">Châu Thạch</span>
