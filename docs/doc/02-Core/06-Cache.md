@@ -18,7 +18,7 @@ SkillDo\Cache::get(string $key, mixed $default)
 
 ```php
 $value = SkillDo\Cache::get('key', function () {
-    return get_post();
+    return SkillDo\Model\Post::gets();
 });
 ```
 
@@ -58,7 +58,13 @@ SkillDo\Cache::save(string $key, mixed $value, int $time): boolean
 | $value | mixed  |                   Giá trị của cache sẽ lưu | bắt buộc |
 | $time  |  int   | Thời gian cache được lưu trữ (millisecond) | 30 ngày  |
 
-
+#### <code>Cache::remember</code>
+Đôi khi bạn có thể muốn lấy data từ cache nhưng data không tồn tại thì bạn muốn lưu lại giá trị vào cache. Ví dụ: bạn có thể muốn truy xuất tất cả người dùng từ bộ đệm hoặc nếu họ không tồn tại, hãy truy xuất họ từ cơ sở dữ liệu và thêm họ vào bộ đệm. Bạn có thể thực hiện việc này bằng phương thức Cache::remember:
+```php
+$value = Cache::remember('users', $seconds, function () {
+    return DB::table('users')->get();
+});
+```
 #### <code>Cache::delete</code>
 Method <code>SkillDo\Cache::delete</code> xóa một hoặc nhiều item khỏi bộ nhớ đệm bằng cách sử dụng phương pháp delete.
 > **Tham số bao gồm:**

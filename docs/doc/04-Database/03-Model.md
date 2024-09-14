@@ -454,3 +454,242 @@ Khôi phục nhiều đối tượng model
 ```php
 ExModel::whereKey([1,2,3,4,5])->where('trash', 1)->restore();
 ```
+### Events
+Các event trong Model cho phép bạn tham gia vào các giai đoạn khác nhau trong vòng đời của một Model chẳng hạn như khi được tạo, cập nhật hoặc xóa.
+#### retrieved
+Khi một bản ghi được truy xuất từ database
+
+```php
+class Post extends Model
+{
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::retrieved(function ($post) {
+            if(!empty($post->content) && Str::isHtmlspecialchars($post->content)) {
+                $post->content = htmlspecialchars_decode($post->content);
+            }
+        });
+    }
+}
+```
+
+#### creating
+Trước khi một model được tạo (chưa lưu vào database).
+
+```php
+class Post extends Model
+{
+    protected static function booted()
+    {
+        static::creating(function ($post) {
+            \SkillDo\SkillDo\Log::info('A new post is being created: ' . $post->title);
+        });
+    }
+}
+```
+
+#### created
+Sau khi một model được tạo (đã lưu vào database).
+
+```php
+class Post extends Model
+{
+    protected static function boot(): void
+    {
+        parent::boot();
+        
+        static::created(function ($post) {
+            \SkillDo\SkillDo\Log::info('A new post was created: ' . $post->id);
+        });
+    }
+}
+```
+
+#### updating
+Trước khi một model được cập nhật.
+
+```php
+class Post extends Model
+{
+    protected static function boot(): void
+    {
+        parent::boot();
+        
+        static::updating(function ($post) {
+            \SkillDo\Log::info('A post is being updated: ' . $post->id);
+        });
+    }
+}
+```
+
+#### updated
+Sau khi một model được cập nhật.
+
+```php
+class Post extends Model
+{
+    protected static function boot(): void
+    {
+        parent::boot();
+        
+        static::updated(function ($post) {
+            \SkillDo\Log::info('A post is updated: ' . $post->id);
+        });
+    }
+}
+```
+
+#### saving
+Trước khi một model được lưu (bao gồm cả tạo và cập nhật).
+
+```php
+class Post extends Model
+{
+    protected static function boot(): void
+    {
+        parent::boot();
+        
+        static::saving(function ($post, $action) {
+            if($action == 'add') {
+                \SkillDo\Log::info('A post is created: ' . $post->title);
+            }
+            if($action == 'update') {
+                \SkillDo\Log::info('A post is updated: ' . $post->id);
+            }
+        });
+    }
+}
+```
+
+#### saved
+Sau khi một model được lưu (bao gồm cả tạo và cập nhật).
+
+```php
+class Post extends Model
+{
+    protected static function boot(): void
+    {
+        parent::boot();
+        
+        static::saved(function ($post, $action) {
+            if($action == 'add') {
+                \SkillDo\Log::info('A post is created: ' . $post->id);
+            }
+            if($action == 'update') {
+                \SkillDo\Log::info('A post is updated: ' . $post->id);
+            }
+        });
+    }
+}
+```
+
+#### deleting
+Trước khi một model bị xóa.
+
+```php
+class Post extends Model
+{
+    protected static function boot(): void
+    {
+        parent::boot();
+        
+        static::deleting(function ($post, $listRemoveId, $objects) {
+            foreach ($listRemoveId as $id) {
+                \SkillDo\Log::info('A post is being deleted: ' . $id);
+            }
+        });
+    }
+}
+```
+
+#### deleted
+Sau khi một model bị xóa.
+
+```php
+class Post extends Model
+{
+    protected static function boot(): void
+    {
+        parent::boot();
+        
+        static::deleted(function ($post, $listRemoveId, $objects) {
+            foreach ($listRemoveId as $id) {
+                \SkillDo\Log::info('A post is deleted: ' . $id);
+            }
+        });
+    }
+}
+```
+
+#### trashing
+Trước khi một model bị xóa mềm (chỉ áp dụng cho models sử dụng SoftDeletes).
+
+```php
+class Post extends Model
+{
+    protected static function boot(): void
+    {
+        parent::boot();
+        
+        static::trashing(function ($post) {
+            \SkillDo\Log::info('A post is being trashed: ' . $post->id);
+        });
+    }
+}
+```
+
+#### trashed
+Sau khi một model bị xóa mềm (chỉ áp dụng cho models sử dụng SoftDeletes).
+
+```php
+class Post extends Model
+{
+    protected static function boot(): void
+    {
+        parent::boot();
+        
+        static::trashed(function ($post) {
+            \SkillDo\Log::info('A post is trashed: ' . $post->id);
+        });
+    }
+}
+```
+
+#### restoring
+Trước khi một model bị khôi phục (chỉ áp dụng cho models sử dụng SoftDeletes).
+
+```php
+class Post extends Model
+{
+    protected static function boot(): void
+    {
+        parent::boot();
+        
+        static::restoring(function ($post) {
+            \SkillDo\Log::info('A post is being restored: ' . $post->id);
+        });
+    }
+}
+```
+
+#### restored
+Sau khi một model bị khôi phục (chỉ áp dụng cho models sử dụng SoftDeletes).
+
+```php
+class Post extends Model
+{
+    protected static function boot(): void
+    {
+        parent::boot();
+        
+        static::restored(function ($post) {
+            \SkillDo\Log::info('A post is restored: ' . $post->id);
+        });
+    }
+}
+```

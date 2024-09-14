@@ -57,7 +57,24 @@ Bạn cũng có thể chấp nhận nhiều method HTTP trong một route bằng
 ```php
 Route::match(['GET', 'POST'], 'path', 'controller@method', [ (...) ]);
 ```
-
+### Name
+Thêm prefix cho tên các route trong một nhóm
+```php
+Route::name('books.')->group(function () {
+    Route::get('books', 'books@index', ['namespace' => 'frontend'])->name('index'); //name is books.index
+    Route::get('books/add', 'books@add', ['namespace' => 'frontend'])->name('add'); //name is books.add
+    Route::get('books/edit/{id}', 'books@edit', ['namespace' => 'frontend'])->name('edit'); //name is books.edit
+});
+```
+### Prefix
+Thêm prefix cho đường dẫn các route trong một nhóm
+```php
+Route::prefix('books')->group(function () {
+    Route::get('/', 'books@index', ['namespace' => 'frontend'])->name('books.index');
+    Route::get('add', 'books@add', ['namespace' => 'frontend'])->name('books.add');
+    Route::get('edit/{id}', 'books@edit', ['namespace' => 'frontend'])->name('books.edit');
+});
+```
 ### Namespaces
 
 Thuộc tính **Namespaces** tên cho CMS biết **thư mục** con chứa controller:

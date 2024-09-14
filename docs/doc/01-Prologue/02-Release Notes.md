@@ -7,6 +7,11 @@
 |      5      | 8.0.x - 8.1.x | 10/12/2021 | `Dừng hỗ trợ `  |
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
+### version 7.1.1 - 16.09.2024
+
+<span class="badge text-bg-green">Update</span> Cập nhật sửa đổi trait SoftDelete của Model
+
+<span class="badge text-bg-green">Add</span> Thêm method `now` và `carbon` hỗ trợ xử lý dữ liệu thời gian
 
 ### version 7.1.0 - 13.09.2024
 

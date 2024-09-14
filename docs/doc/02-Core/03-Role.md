@@ -15,8 +15,8 @@ Mặt định cms skilldo cung cấp các role
 ### Thêm chức vụ
 Để thêm một chức vụ mới trong cms bạn sử dụng method `add` của class SKD_Roles
 ```php
-Role::make()->add($roleKey1, $roleName1);
-Role::make()->add($roleKey2, $roleName2);
+Role::add($roleKey1, $roleName1);
+Role::add($roleKey2, $roleName2);
 //hoặc
 $role = Role::make();
 $role->add($roleKey1, $roleName1);
@@ -27,7 +27,7 @@ method nhận vào 2 tham số, role key là id của chức vụ và role name 
 ### Cập nhật chức vụ
 Để cập nhật thông tin một chức vụ trong cms bạn sử dụng method `update` của class SKD_Roles
 ```php
-Role::make()->update($roleKey, $roleName, $capabilities);
+Role::update($roleKey, $roleName, $capabilities);
 //hoặc
 $role = Role::make();
 $role->update($roleKey, $roleName, $capabilities);
@@ -40,8 +40,8 @@ method nhận vào 3 tham số,
 ### Xóa chức vụ
 Để xóa một chức vụ trong cms bạn sử dụng method `remove` của class SKD_Roles
 ```php
-Role::make()->remove($roleKey1);
-Role::make()->remove($roleKey2);
+Role::remove($roleKey1);
+Role::remove($roleKey2);
 //hoặc
 $role = Role::make();
 $role->remove($roleKey1);
@@ -54,13 +54,13 @@ method nhận vào role key là id của chức vụ muốn xóa
 #### Lấy chức vụ
 Để thao tác với chức vụ bạn cần lấy chức vụ đó bằng method `get`
 ```php
-$role = Role::make()->get('customer');
+$role = Role::get('customer');
 ```
 
 #### Kiểm tra quyền
 Để kiểm tra một chức vụ có một quyền nào đó chưa bạn sử dụng method `has`
 ```php
-if(Role::make()->get('customer')->has('loggin_admin')) {
+if(Role::get('customer')->has('loggin_admin')) {
     //
 }
 ```
@@ -68,17 +68,17 @@ if(Role::make()->get('customer')->has('loggin_admin')) {
 #### Lấy danh sách quyền
 Để lấy danh sách quyền của một chức vụ bạn sử dụng method `getCapabilities`
 ```php
-$capabilities = Role::make()->get('customer')->getCapabilities();
+$capabilities = Role::get('customer')->getCapabilities();
 ```
 
 #### Thêm quyền vào chức vụ
 Để thêm quyền của một chức vụ bạn sử dụng method `add`
 ```php
-Role::make()->get('customer')->add('loggin_admin');
+Role::get('customer')->add('loggin_admin');
 ```
 
 #### Xóa quyền của chức vụ
 Để xóa quyền của một chức vụ bạn sử dụng method `remove`
 ```php
-Role::make()->get('customer')->remove('loggin_admin');
+Role::get('customer')->remove('loggin_admin');
 ```

@@ -5,16 +5,11 @@ Nó có thể được sử dụng với `model` để thực hiện hầu hết
 Để sử dụng query builder bạn có thể dùng `Qr::set()` để khởi tạo query builder
 
 ```php
-$args = Qr::set();
-//Các tham số truyền vào set tương ứng với điều kiện where
-$args = Qr::set($column, $operator, $value);
-//Truyền vào number tương đương với where('id', $number)
-$args =  Qr::set($number);
+use SkillDo\DB;
 
-$user = model('users')->get($args);
+$users = DB::table('users')->get();
 
-//hoặc
-$user = model('users')::where('id', $id)->first();
+$user = DB::table('users')->where('id', $id)->first();
 ```
 
 ### Select
@@ -22,93 +17,71 @@ $user = model('users')::where('id', $id)->first();
 Bạn có thể không phải lúc nào cũng muốn chọn tất cả các cột từ bảng cơ sở dữ liệu. Sử dụng phương pháp này, bạn có thể chỉ định mệnh đề "select" tùy chỉnh cho truy vấn:select
 
 ```php
-$args = Qr::set()->select('id', 'name');
+$users = DB::table('users')->select('id', 'name')->get();
 
-$user = model('users')->get($args);
-
-//hoặc
-$user = model('users')::select('id', 'name')->first();
+$user = DB::table('users')->select('id', 'name')->first();
 ```
 
 Đôi khi bạn có thể cần chèn một chuỗi tùy ý vào một truy vấn. Để tạo biểu thức chuỗi thô, bạn có thể sử dụng phương thức được cung cấp
 
 ```php
-use Illuminate\Database\Capsule\Manager as DB;
-$args = Qr::set()->select(DB::raw('count(*) as user_count, status'));
-$user = model('users')->get($args);
-//hoặc sử dụng
-$args = Qr::set()->selectRaw('price * ? as price_with_tax', [1.0825]);
-$product = model('products')->get($args);
+use SkillDo\DB;
 
-//hoặc sử dụng
-$product = model('products')::selectRaw('price * ? as price_with_tax', [1.0825])->first();
+$users = DB::table('users')->select(DB::raw('count(*) as user_count, status'))->get();
+
+$products = DB::table('products')->selectRaw('price * ? as price_with_tax', [1.0825])->get();
+
+$product = DB::table('products')->selectRaw('price * ? as price_with_tax', [1.0825])->first();
 ```
 
 ### Joins
 ```php
-Inner Join Clause
-Qr::set()->join('contacts', 'users.id', '=', 'contacts.user_id')
-Left Join / Right Join Clause
-Qr::set()->leftJoin('posts', 'users.id', '=', 'posts.user_id')
-Qr::set()->rightJoin('posts', 'users.id', '=', 'posts.user_id')
+//Inner Join Clause
+DB::table('users')->join('contacts', 'users.id', '=', 'contacts.user_id')->get();
+
+//Left Join / Right Join Clause
+DB::table('users')->leftJoin('posts', 'users.id', '=', 'posts.user_id')->get();
+
+DB::table('users')->rightJoin('posts', 'users.id', '=', 'posts.user_id')->get();
 ```
 ### Where Clauses
 Bạn có thể sử dụng method `where` của `Qr` để thêm mệnh đề "where" vào truy vấn. Cuộc gọi cơ bản nhất đến phương thức yêu cầu ba đối số. 
 Đối số đầu tiên là tên của cột. Đối số thứ hai là một toán tử, có thể là bất kỳ toán tử nào được hỗ trợ của cơ sở dữ liệu. Đối số thứ ba là giá trị để so sánh với giá trị của cột
 
 ```php
-$args = Qr::set()->where('votes', '=', 100)->where('age', '>', 35);
-$exm = model('table')->gets($args);
-//hoặc
-$exm = model('table')::where('votes', '=', 100)->where('age', '>', 35)->fetch();
+$exm = DB::table('table')->where('votes', '=', 100)->where('age', '>', 35)->get();
 ```
 
 Để thuận tiện, nếu bạn muốn xác minh rằng một cột là một giá trị nhất định, bạn có thể chuyển giá trị làm đối số thứ hai cho phương thức. Query sẽ giả sử bạn muốn sử dụng toán tử: `=`
 ```php
-$args = Qr::set()->where('votes', 100);
-$exm = model('table')->gets($args);
-//hoặc
-$exm = model('table')::where('votes', 100)->fetch();
+$exm = DB::table('table')->where('votes', 100)->get();
 ```
 Như đã đề cập trước đây, bạn có thể sử dụng bất kỳ toán tử nào được hệ thống cơ sở dữ liệu của bạn hỗ trợ:
 ```php
-$args = Qr::set()
+$exm = DB::table('table')
     ->where('votes', '>=', 100)
     ->where('votes', '<>', 100)
-    ->where('name', 'like', 'T%');
-$exm = model('table')->gets($args);
-
-//hoặc
-$exm = model('table')::where('votes', '>=', 100)
-    ->where('votes', '<>', 100)
     ->where('name', 'like', 'T%')
-    ->fetch();
+    ->get();
 ```
 ### Or Where Clauses
 
 ```php
-$args = Qr::set()
+$exm = DB::table('table')
     ->where('votes', '>', 100)
     ->orWhere('name', 'John');
-$exm = model('table')->gets($args);
-//hoặc
-$exm = model('table')::where('votes', '>', 100)->orWhere('name', 'John')->fetch();
+    ->get();
 ```
 
 Nếu bạn cần nhóm một điều kiện "hoặc" trong ngoặc đơn, bạn có thể chuyển một Qr làm đối số đầu tiên cho phương thức
 
 ```php
-$args = Qr::set()
-    ->where('votes', '>', 100)
-    ->orWhere(function($query) { $query->where('name', 'Abigail')->where('votes', '>', 50); });
-
-$exm = model('table')->gets($args);
-
-//hoặc
-$exm = model('table')::where('votes', '>', 100)
-    ->orWhere(function($query) {
-        $query->where('name', 'Abigail')->where('votes', '>', 50); 
-    })->fetch();
+$exm = DB::table('table')
+        ->where('votes', '>', 100)
+        ->orWhere(function($query) { 
+            $query->where('name', 'Abigail')->where('votes', '>', 50); 
+        })
+        ->get();
 ```
 
 Ví dụ sẽ tạo mẫu SQL
@@ -123,22 +96,22 @@ where votes > 100 or (name = 'Abigail' and votes > 50)
 Phương thức xác minh rằng giá trị của một cột đã cho được chứa trong mảng đã cho
 
 ```php
-$args = Qr::set()->whereIn('id', [1, 100])
-$args = Qr::set()->whereNotIn('id', [1, 100])
+$args = DB::table('table')->whereIn('id', [1, 100])
+$args = DB::table('table')->whereNotIn('id', [1, 100])
 ```
 
 #### whereBetween / orWhereBetween
 Phương pháp xác minh rằng giá trị của một cột nằm giữa hai giá trị
 
 ```php
-$args = Qr::set()->whereBetween('votes', [1, 100])
+$args = DB::table('table')->whereBetween('votes', [1, 100])
 ```
 
 #### whereNotBetween / orWhereNotBetween
 Phương pháp xác minh rằng giá trị của một cột không nằm giữa hai giá trị
 
 ```php
-$args = Qr::set()->whereNotBetween('votes', [1, 100])
+$args = DB::table('table')->whereNotBetween('votes', [1, 100])
 ```
 
 
@@ -147,31 +120,44 @@ $args = Qr::set()->whereNotBetween('votes', [1, 100])
 #### Ordering
 Phương pháp này cho phép bạn sắp xếp kết quả của truy vấn theo một cột nhất định. Đối số đầu tiên được chấp nhận bởi phương thức phải là cột bạn muốn sắp xếp theo, trong khi đối số thứ hai xác định cách sắp xếp
 ```php
-$args = Qr::set()
+$exm = DB::table('table')
     ->orderBy('name', 'desc')
-    ->orderBy('email', 'asc');
-$exm = model('table')->gets($args);
-
-$args = Qr::set()
-    ->orderByDesc('name');
-$exm = model('table')->gets($args);
+    ->orderBy('email', 'asc')
+    ->get();
 ```
 
 #### Grouping
 Như bạn mong đợi, các phương thức `groupBy` và `having` có thể được sử dụng để nhóm các kết quả truy vấn. phương thức `having` tương tự như phương thức Where:
 ```php
-$args = Qr::set()
+$exm = DB::table('table')
     ->groupBy('account_id')
-    ->having('account_id', '>', 100);
-$exm = model('table')->gets($args);
+    ->having('account_id', '>', 100)
+    ->get();
 ```
 
 #### Limit & Offset
 Bạn có thể sử dụng các phương thức `limit` và `offset` để set số lượng kết quả được trả về từ truy vấn:
 
 ```php
-$args = Qr::set()
+$exm = DB::table('table')
     ->offset(10)
-    ->limit(5);
-$exm = model('table')->gets($args);
+    ->limit(5)
+    ->get();
+```
+
+### Delete Statements
+Method `delete` của Query builder có thể được sử dụng để xóa các bản ghi khỏi bảng.
+Method `delete` trả về số lượng hàng bị ảnh hưởng. 
+Bạn có thể hạn chế các câu lệnh xóa bằng cách thêm mệnh đề "where" trước khi gọi phương thức xóa:
+
+```php
+$deleted = DB::table('users')->delete();
+ 
+$deleted = DB::table('users')->where('votes', '>', 100)->delete();
+```
+
+Nếu bạn muốn xóa toàn bộ bảng, thao tác này sẽ xóa tất cả bản ghi khỏi bảng và đặt lại auto-incrementing ID về 0, bạn có thể sử dụng phương thức `truncate`:
+
+```php
+DB::table('users')->truncate();
 ```
