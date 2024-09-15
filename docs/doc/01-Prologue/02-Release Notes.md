@@ -9,9 +9,15 @@
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 ### version 7.1.1 - 16.09.2024
 
+<span class="badge text-bg-red">Fix</span> Lỗi theme/menu và gallery hiển thị sai dữ liệu <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi theme/menu không hiển thị location đã chọn <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-green">Update</span> Cải thiện trình hiển thị lỗi ở các file view
+
 <span class="badge text-bg-green">Update</span> Cập nhật sửa đổi trait SoftDelete của Model
 
-<span class="badge text-bg-green">Add</span> Thêm method `now` và `carbon` hỗ trợ xử lý dữ liệu thời gian
+<span class="badge text-bg-green">Add</span> Thêm method `now` và `carbon` hỗ trợ xử lý dữ liệu thời gian ([#document](/7.1.0/doc/Helper/DateTime))
 
 ### version 7.1.0 - 13.09.2024
 
