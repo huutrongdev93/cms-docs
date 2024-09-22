@@ -13,7 +13,7 @@ Lấy toàn bộ danh mục sắp xếp theo thứ tự level
 <Tabs groupId="ProductCategory-categoryType-tree" queryString>
     <TabItem value="code" label="Code">
         ```php
-        ProductCategory::categoryType('tree')->select('id', 'name', 'level')->fetch()
+        ProductCategory::select('id', 'name', 'level')->tree()
         ```
     </TabItem>
     <TabItem value="result" label="Result">
@@ -58,7 +58,7 @@ Lấy toàn bộ danh mục theo cây thư mục cha con
 <Tabs groupId="ProductCategory-categoryType-multilevel" queryString>
     <TabItem value="code" label="Code">
         ```php
-        ProductCategory::categoryType('multilevel')->select('id', 'name', 'level')->fetch()
+        ProductCategory::select('id', 'name', 'level')->multilevel()
         ```
     </TabItem>
     <TabItem value="result" label="Result">
@@ -120,7 +120,7 @@ Lấy toàn bộ doanh mục theo cây thư mục dạng option
 <Tabs groupId="ProductCategory-categoryType-options" queryString>
     <TabItem value="code" label="Code">
         ```php
-        ProductCategory::categoryType('options')->select('id', 'name', 'level')->fetch()
+        ProductCategory::select('id', 'name', 'level')->options()
         ```
     </TabItem>
     <TabItem value="result" label="Result">
