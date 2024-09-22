@@ -82,3 +82,51 @@ Role::get('customer')->add('loggin_admin');
 ```php
 Role::get('customer')->remove('loggin_admin');
 ```
+
+
+### Quyền hạn thành viên
+
+#### <code>UserRole::hasCap</code>
+Method <code>UserRole::hasCap</code> kiểm tra user có quyền sử dụng chức năng không, nếu có quyền trả về true ngược lại là false
+```php
+if(UserRole::hasCap($userId, 'edit_post')) {
+    //permission successfully
+}
+```
+#### <code>UserRole::getCap</code>
+Method <code>UserRole::getCap</code> trả về các quyền user có thể sử dụng
+```php
+dd(UserRole::getCap($userId))
+/**
+    "loggin_admin" => true
+    "switch_themes" => true
+    "edit_themes" => true
+   ...
+ */
+```
+
+#### <code>UserRole::get</code>
+Method <code>UserRole::get</code> trả về key nhóm (chức vụ) của user
+```php
+dd(UserRole::get($userId))
+//["customer"]
+```
+
+#### <code>UserRole::getName</code>
+Method <code>UserRole::getName</code> trả về tên nhóm (chức vụ) của user
+```php
+dd(UserRole::getName($userId))
+//Khách hàng
+```
+
+#### <code>UserRole::add</code>
+Method <code>UserRole::add</code> set user vào nhóm (chức vụ) mới
+```php
+dd(UserRole::add($userId, 'administrator'))
+```
+
+#### <code>UserRole::remove</code>
+Method <code>UserRole::remove</code> xóa nhóm (chức vụ) khỏi user
+```php
+dd(UserRole::remove($userId, 'administrator'))
+```

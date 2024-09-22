@@ -8,10 +8,10 @@ let button = document.getElementById('buttonLoading')
 let loading = SkilldoUtil.buttonLoading(button)
 
 //bắt đầu hiển thị loading
-button.loading()
+button.start()
 
 //kết thúc loading
-button.success()
+button.stop()
 ```
 
 ### uniqId

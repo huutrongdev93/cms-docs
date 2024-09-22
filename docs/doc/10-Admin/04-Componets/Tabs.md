@@ -8,13 +8,13 @@
 $tabs = [
     'tabId1' => [
         'label'   => 'Tiêu đề tab 1', //Tiêu đề của tab
-        'content' => Theme::makeView('views/tab-exam-1'), //Nội dung của tab
+        'content' => Theme::partial('views/tab-exam-1'), //Nội dung của tab
         'classLi' => 'tab-class-li', //class sẽ được chèn vào thẻ ul > li của riêng tab này
         'classItem' => 'tab-class-a', //class sẽ được chèn vào thẻ ul > li > a của riêng tab này
     ],
     'tabId2' => [
         'label'   => 'Tiêu đề tab 2',
-        'content' => Theme::makeView('views/tab-exam-1')
+        'content' => Theme::partial('views/tab-exam-1')
     ],
     'tabId2' => [
         'label' => 'Tiêu đề tab 2',

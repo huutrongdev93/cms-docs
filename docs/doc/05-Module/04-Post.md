@@ -152,7 +152,7 @@ Method <code>update</code> cập nhật một hoặc nhiều post theo điều k
 $pageNew = [
    'title' => 'example title page',
 ]
-Posts::whereIn('id', [1,2,3,4])->update($pageNew);
+Posts::whereKey([1,2,3,4])->update($pageNew);
 ```
 
 #### <code>delete / remove</code>
@@ -170,7 +170,7 @@ Method <code>delete</code> xóa toàn bộ thông tin một hoặc nhiều Page 
 ```php
 Posts::delete($id);
 //or
-Posts::where('id', $id)->remove();
+Posts::whereKey($id)->remove();
 ```
 
 ### Post MetaData

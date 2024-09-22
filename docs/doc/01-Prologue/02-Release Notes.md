@@ -7,6 +7,20 @@
 |      5      | 8.0.x - 8.1.x | 10/12/2021 | `Dừng hỗ trợ `  |
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
+### version 7.1.2 - 18.09.2024
+
+<span class="badge text-bg-red">Fix</span> Lỗi module không truy cập được page add, edit <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi post không thêm xóa danh mục <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi sẵp xếp thứ tự theme/menu
+
+<span class="badge text-bg-green">Add</span> Thêm Middleware `RateLimit` quản lý số lượt request / khoản thời gian
+
+<span class="badge text-bg-green">Add</span> Thêm Middleware `SecurityAgents` kiểm tra và block request có Agents không hợp lệ
+
+<span class="badge text-bg-green">Update</span> Cải thiện Auth::check
+
 ### version 7.1.1 - 16.09.2024
 
 <span class="badge text-bg-red">Fix</span> Lỗi theme/menu và gallery hiển thị sai dữ liệu <span class="badge text-bg-yellow">Trang</span>

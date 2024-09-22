@@ -6,20 +6,20 @@ Class <b>User</b> cung cấp cho bạn các method thao tác với data của ng
 #### <code>User::get</code>
 Method <code>User::get</code> trả thông tin user theo điều kiện Query Builder, Nếu truy vấn của bạn có nhiều hơn một user, method chỉ trả về hàng đầu tiên. Kết quả được trả về như một đối tượng.
 ```php
-$user = User::get(Qr::set($id)->select('id', 'username'))
+$user = User::whereKey($id)->select('id', 'username')->first();
 ```
 
 #### <code>User::gets</code>
 Method <code>User::gets</code> trả về danh sách user theo điều kiện Query Builder
 ```php
-$users = User::gets(Qr::set('status', 'public')->select('id', 'username'))
+$users = User::where('status', 'public')->select('id', 'username')->fetch();
 ```
 
 #### <code>User::count</code>
 Method <code>User::count</code> trả về số lượng user theo điều kiện Query Builder
 
 ```php
-$usersNumber = User::count(Qr::set('status', 'public'))
+$usersNumber = User::where('status', 'public')->amount();
 ```
 
 #### <code>User::insert</code>
@@ -107,44 +107,4 @@ Method <code>User::deleteMeta</code> xóa metadata của user khỏi database
 
 ```php
 User::deleteMeta($userId, 'address');
-```
-
-### Phân quyền
-#### <code>User::hasCap</code>
-Method <code>User::hasCap</code> kiểm tra user có quyền sử dụng chức năng không, nếu có quyền trả về true ngược lại là false
-```php
-if(User::hasCap($userId, 'edit_post')) {
-    //permission successfully
-}
-```
-#### <code>User::getCap</code>
-Method <code>User::getCap</code> trả về các quyền user có thể sử dụng
-```php
-dd(User::getCap($userId))
-/**
-    "loggin_admin" => true
-    "switch_themes" => true
-    "edit_themes" => true
-   ...
- */
-```
-
-#### <code>User::getRole</code>
-Method <code>User::getRole</code> trả về key nhóm (chức vụ) của user
-```php
-dd(User::getRole($userId))
-//["customer"]
-```
-
-#### <code>User::getRoleName</code>
-Method <code>User::getRoleName</code> trả về tên nhóm (chức vụ) của user
-```php
-dd(User::getRoleName($userId))
-//Khách hàng
-```
-
-#### <code>User::setRole</code>
-Method <code>User::setRole</code> set user vào nhóm (chức vụ) mới
-```php
-dd(User::setRole($userId, 'administrator'))
 ```

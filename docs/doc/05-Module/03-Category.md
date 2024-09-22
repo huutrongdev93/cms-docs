@@ -20,29 +20,11 @@ $categories = PostCategory::gets(Qr::set('trash', 0)->select('id', 'title'));
 $categories = PostCategory::where('trash', 0)->select('id', 'title')->fetch();
 ```
 
-Trong Query Builder sử dụng phương thức categoryType để lấy các danh mục theo các loại khác nhau
-
-| Params     |                                     Description |
-|------------|------------------------------------------------:|
-| tree       |              Lấy và sắp sếp danh mục theo level |
-| multilevel |                    Trả về cây thư mục lồng nhau |
-| options    | Trả về cây thư mục phẳng theo dạng key => value |
-
-> Ví dụ có cây thư mục sau
-```md
-post_categories
-├── Blog (level 1)
-│   ├── Blog 1 (level 2)
-│   └── Blog 2 (level 2)
-├── Projects (level 1)
-├── Jobs (level 1)
-│   ├── Jobs HCM (level 2)
-│   └── Jobs HN (level 2)
-```
-
-
+Lấy và sắp sếp danh mục theo level
 ```php
-$categories = PostCategory::gets(Qr::set()->categoryType('tree')->select('name', 'level'));
+$categories = PostCategory::select('name', 'level')->tree();
+```
+```php
 /* Array
 (
     [0] => stdClass Object (
@@ -75,9 +57,11 @@ $categories = PostCategory::gets(Qr::set()->categoryType('tree')->select('name',
     )
 ) */
 ```
-
+Trả về cây thư mục lồng nhau
 ```php
-$categories = PostCategory::gets(Qr::set()->categoryType('multilevel')->select('name'));
+$categories = PostCategory::select('name')->multilevel();
+```
+```php
 /* Array
 (
     [0] => stdClass Object (
@@ -112,9 +96,11 @@ $categories = PostCategory::gets(Qr::set()->categoryType('multilevel')->select('
     )
 ) */
 ```
-
+Trả về cây thư mục phẳng theo dạng key => value
 ```php
-$categories = PostCategory::gets(Qr::set()->categoryType('options')->select('id', 'name', 'level'));
+$categories = PostCategory::select('id', 'name', 'level')->options();
+```
+```php
 /* Array
 (
     [0] => Chọn danh mục
