@@ -7,6 +7,33 @@
 |      5      | 8.0.x - 8.1.x | 10/12/2021 | `Dừng hỗ trợ `  |
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
+
+### version 7.1.5 - 28.09.2024
+
+<span class="badge text-bg-red">Fix</span> Lỗi xem trang thông tin thành viên root trong admin <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi upload ảnh trùng tên bị đè mất ảnh <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi lấy attribute của menu item <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi nhận diện css cho widget sidebar
+
+<span class="badge text-bg-blue">Change</span> Thay đổi hiển thị js widget loại bỏ `$({})` mặc định
+
+<span class="badge text-bg-blue">Change</span> Thay đổi method `make` của model thành `query`
+
+<span class="badge text-bg-blue">Change</span> Thay đổi `WidgetSidebar::add` nếu không truyền loại widget sẽ tự động đăng ký cho tất cả loại
+
+### version 7.1.4 - 25.09.2024
+
+<span class="badge text-bg-red">Fix</span> Trùng class widget và heading widget <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi chức năng login as <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-blue">Change</span> Thay đổi service tải dữ liệu update
+
+<span class="badge text-bg-green">Update</span> Tối ưu code
+
 ### version 7.1.3 - 22.09.2024
 
 <span class="badge text-bg-red">Fix</span> Lỗi thêm danh mục taxonomy <span class="badge text-bg-yellow">Dương</span>

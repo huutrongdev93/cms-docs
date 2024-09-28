@@ -10,14 +10,13 @@ Method lấy danh sách sản phẩm liên quan theo tiêu chí cùng danh mục
 Product::related(1)->limit(10)->fetch()
 
 //or
-Product::select('id', 'title')->related(1)->limit(10)->fetch()
+Product::select('id', 'title')->limit(10)->related(1)
 ```
 
 Lấy ra ngẫu nhiên
 ```php
 Product::select('id', 'title')
-                            ->related(1)
                             ->limit(10)
                             ->orderByRaw('rand()')
-                            ->fetch()
+                            ->related(1)
 ```

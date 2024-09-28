@@ -702,7 +702,7 @@ Thành phần của Text Building bao gồm:
 
 | Params             | Type |                                       Description | Default |
 |--------------------|:----:|--------------------------------------------------:|:-------:|
-| txt                | bool |                          Hiển thị field nhập text |  true   |
+| txtInput           | bool |                          Hiển thị field nhập text |  true   |
 | fontFamily         | bool |                   Hiển thị field chọn font family |  true   |
 | fontSize           | bool |                     Hiển thị field nhập font size |  true   |
 | fontSizeResponsive | bool | nếu true font size sẽ là chọn lựa theo kích thước |  true   |
@@ -721,7 +721,7 @@ Thành phần của Text Building bao gồm:
 ```php
 //Sử dụng phương thức `động`
 $form->textBuilding('field_name', ['label' => 'Label Field', 'customInput' => [
-    'txt' => false,
+    'txtInput' => false,
     'colorHover' => false,
 ]]);
 ```
