@@ -581,6 +581,36 @@ plugin:deactivate [<plugin_name>]
 ```
 </div>
 
+### Role
+
+<div class="card-command">
+
+#### ```role:list```
+<span class="badge text-bg-pink">v.1.1.0</span> Lệnh lấy danh sách chức vụ có trong cms
+
+```shell
+role:list
+```
+</div>
+
+<div class="card-command">
+
+#### ```role:cap```
+<span class="badge text-bg-pink">v.1.1.0</span> Lệnh lấy danh sách quyền của một chức vụ có trong cms
+
+> **Arguments**
+* role_name - Tên chức vụ muốn xem quyền <span class="badge text-bg-red">REQUIRED</span>
+
+```shell
+role:cap [<role_name>]
+```
+
+```php
+role:cap administrator
+```
+</div>
+
+
 ### Theme
 
 <div class="card-command">
@@ -594,6 +624,5 @@ Khi chạy lệnh này cms sẽ copy thư mục hoặc file đưa vào thư mụ
 ```shell
 theme:child:copy [<path>]
 ```
-
 </div>
 

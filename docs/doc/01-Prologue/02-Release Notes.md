@@ -8,6 +8,20 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 
+### version 7.1.6 - 04.10.2024
+
+<span class="badge text-bg-red">Fix</span> Lỗi không lấy được margin, padding trong css tablet, mobile của cssText <span class="badge text-bg-yellow">Tâm</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi không lấy được bài viết liên quan taxonomy <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi truy cập hệ thống > thông tin hệ thống <span class="badge text-bg-yellow">Dương</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi bảo mật hệ thống <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi không tạo được các loại ảnh thumb, medium,...  <span class="badge text-bg-yellow">Tâm</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi softDelete không nhận điều kiện  <span class="badge text-bg-yellow">Châu Thạch</span>
+
 ### version 7.1.5 - 28.09.2024
 
 <span class="badge text-bg-red">Fix</span> Lỗi xem trang thông tin thành viên root trong admin <span class="badge text-bg-yellow">Châu Thạch</span>
