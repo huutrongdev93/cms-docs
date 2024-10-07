@@ -1,5 +1,6 @@
 # Create Api
-Để tạo một api mới bạn tạo một plugin mới ví dụ `api-blogs`  
+Để tạo api mới bạn tạo một plugin mới ví dụ `api-blogs`  
+
 Trong plugin `api-blogs` bạn sẽ tạo các file và thư mục có cấu trúc:
 - <span class="badge text-bg-blue">folder</span> **controllers** - chứa danh sách các controller
 - <span class="badge text-bg-green">file</span> **routes/api.php** - chứa danh sách route của plugin
@@ -17,7 +18,14 @@ Route::prefix('api/blog')->name('api.blogs.')->middleware(AuthApi::class)->group
 });
 ```
 Bạn thấy route đang dùng một middleware có tên là `AuthApi::class`, middleware này có nhiệm vụ kiểm tra xem
-khi user gửi dữ liệu từ client lên server có đáng ứng authentication không, đối với các các api không cần kiểm tra authentication bạn cần gở middleware này khỏi route đó.
+khi user gửi dữ liệu từ client lên server có đáp ứng authentication jwt không, đối với các các api không cần kiểm tra authentication bạn cần gở middleware này khỏi route đó.  
+
+File route như trên sẽ tạo cho bạn các api như sau:  
+
+<pre><span class="badge text-bg-green">GET</span> `{{BASE_URL}}`/api/blog</pre>
+<pre><span class="badge text-bg-yellow">POST</span> `{{BASE_URL}}`/api/blog/`${id}`</pre>
+<pre><span class="badge text-bg-blue">PUT</span> `{{BASE_URL}}`/api/blog/`${id}`</pre>
+<pre><span class="badge text-bg-red">DELETE</span> `{{BASE_URL}}`/api/blog/`${id}`</pre>
 
 ### Tạo Controller
 

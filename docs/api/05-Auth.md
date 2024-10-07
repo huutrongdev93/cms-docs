@@ -187,7 +187,7 @@ Cập nhật mật khẩu user theo token
 
 **Service Endpoint**
 
-<pre><span class="badge text-bg-red">DELETE</span> `{{BASE_URL}}`/api/auth/block</pre>
+<pre><span class="badge text-bg-yellow">POST</span> `{{BASE_URL}}`/api/auth/block</pre>
 
 **Header**
 
@@ -210,7 +210,7 @@ Thoát tài khoản theo token
 
 **Service Endpoint**
 
-<pre><span class="badge text-bg-red">DELETE</span> `{{BASE_URL}}`/api/auth/logout</pre>
+<pre><span class="badge text-bg-yellow">POST</span> `{{BASE_URL}}`/api/auth/logout</pre>
 
 **Header**
 

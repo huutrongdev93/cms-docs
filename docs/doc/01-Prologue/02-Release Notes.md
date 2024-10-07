@@ -8,6 +8,22 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 
+### version 7.2.0 - 08.10.2024
+
+<span class="badge text-bg-red">Fix</span> Sử dụng widget giống nhau trong cùng 1 screen load chồng config
+
+<span class="badge text-bg-blue">Update</span> Hỗ trợ việc load controller từ plugin
+
+<span class="badge text-bg-blue">Update</span> Hỗ trợ việc load route api từ plugin
+
+<span class="badge text-bg-blue">Update</span> Hỗ trợ việc load Middleware từ plugin
+
+<span class="badge text-bg-blue">Update</span> Tối ưu Rest, Route hỗ trợ việc tạo api
+
+<span class="badge text-bg-blue">Update</span> Model đã hỗ trợ việc tạo macro
+
+<span class="badge text-bg-green">Add</span> Thêm thư viện Firebase JWT
+
 ### version 7.1.6 - 04.10.2024
 
 <span class="badge text-bg-red">Fix</span> Lỗi không lấy được margin, padding trong css tablet, mobile của cssText <span class="badge text-bg-yellow">Tâm</span>
@@ -37,6 +53,12 @@
 <span class="badge text-bg-blue">Change</span> Thay đổi method `make` của model thành `query`
 
 <span class="badge text-bg-blue">Change</span> Thay đổi `WidgetSidebar::add` nếu không truyền loại widget sẽ tự động đăng ký cho tất cả loại
+
+<span class="badge text-bg-red">Fix</span> Lỗi widget field col không trigger sựu kiện change <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-blue">Update</span> Tối ưu cơ chế load widget studio tăng tốc độ tải widget
+
+<span class="badge text-bg-green">Add</span> Thêm search cho widget studio
 
 ### version 7.1.4 - 25.09.2024
 
