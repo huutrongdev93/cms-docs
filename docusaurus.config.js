@@ -93,10 +93,9 @@ const config = {
 					},
 				},
 			},
-		]
+		],
 	],
 	themeConfig:
-	/** @type {import('@docusaurus/preset-classic').ThemeConfig} */
 		({
 			colorMode: {
 				defaultMode: 'dark',
@@ -138,13 +137,13 @@ const config = {
 						docsPluginId: 'hooks',
 						label: 'Hooks',
 					},
-					/*{
+					{
 						type: 'docSidebar',
 						position: 'left',
 						sidebarId: 'api',
 						label: 'API',
 					},
-					{
+					/*{
 						to: 'blog',
 						label: 'Blog',
 						position: 'left'
