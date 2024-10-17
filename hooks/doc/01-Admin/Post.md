@@ -70,6 +70,31 @@ function my_custom_admin_post_objects($objects, Qr $args): array
 }
 add_filter('admin_post_post_controllers_index_objects', 'my_custom_admin_post_objects', 10, 2);
 ```
+##### admin_post_action_bar_heading
+Tạo ra danh sách buttons dưới tiêu đề trang
+
+| **Loại Hook**                                    | **Platform** |                                   **Version** |
+|--------------------------------------------------|:------------:|----------------------------------------------:|
+| <span class="badge text-bg-red">do_action</span> |     cms      | <span class="badge text-bg-cyan">6.0.0</span> |
+
+```php
+do_action('admin_post_{postType}_action_bar_heading');
+```
+**Return**: mã html
+
+```php
+function my_custom_admin_post_buttons_heading($buttons): array
+{
+    echo Admin::button('white', [
+        'text' => 'Button Demo',
+        'icon' => '<i class="fa-light fa-calendar-clock"></i>'
+    ]);
+            
+    return $buttons;
+}
+add_action('admin_post_post_action_bar_heading', 'my_custom_admin_post_buttons_heading', 10);
+```
+
 
 #### table buttons bulk
 Tạo ra danh sách buttons bulk, là những button khi người dùng chọn nhiều row trên table

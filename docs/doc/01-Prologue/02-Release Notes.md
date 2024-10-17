@@ -8,6 +8,22 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 
+### version 7.2.1 - 16.10.2024
+
+<span class="badge text-bg-red">Fix</span> Không xóa được dữ liệu trong thùng rác <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi up hình ảnh định dạng webp <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi widget bị lệch vị trí khi chọn box `in-container` <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi không edit được post khi tắt hiển thị
+
+<span class="badge text-bg-red">Fix</span> Lỗi không kiểm tra được ssl của cloudflare
+
+<span class="badge text-bg-green">Add</span> Thêm cấu hình namespace cho một nhóm route
+
+<span class="badge text-bg-green">Add</span> Thêm method `provinceName`, `districtName`, `wardName` lấy tên local bằng id
+
 ### version 7.2.0 - 08.10.2024
 
 <span class="badge text-bg-red">Fix</span> Sử dụng widget giống nhau trong cùng 1 screen load chồng config
@@ -109,7 +125,7 @@
 
 <span class="badge text-bg-green">Update</span> Cập nhật sửa đổi trait SoftDelete của Model
 
-<span class="badge text-bg-green">Add</span> Thêm method `now` và `carbon` hỗ trợ xử lý dữ liệu thời gian ([#document](/7.1.0/doc/Helper/DateTime))
+<span class="badge text-bg-green">Add</span> Thêm method `now` và `carbon` hỗ trợ xử lý dữ liệu thời gian
 
 ### version 7.1.0 - 13.09.2024
 

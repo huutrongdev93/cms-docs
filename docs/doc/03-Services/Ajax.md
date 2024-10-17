@@ -9,7 +9,7 @@ $(document).on('click', '.element', function(event) {
         action: 'TestAjax::actionName',
     };
     $.post(ajax, data, function(data) {}, 'json').done(function(response) {
-        SkillDoHelper.messages.response(response)
+        SkilldoMessage.response(response)
     });
 });
 ```
@@ -21,7 +21,7 @@ $(document).on('click', '.element', function(event) {
         action: 'TestAjax::actionName',
     };
     request.post(ajax, data).then(function(response) {
-        SkillDoHelper.messages.response(response)
+        SkilldoMessage.response(response)
     })
 });
 ```
@@ -40,7 +40,7 @@ $(document).on('click', '.element', function(event) {
         _is_lang: 'theme'
     };
     request.post(ajax, data).then(function(response) {
-        SkillDoHelper.messages.response(response)
+        SkilldoMessage.response(response)
     })
 });
 ```
