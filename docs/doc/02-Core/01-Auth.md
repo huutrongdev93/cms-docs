@@ -16,7 +16,9 @@ $user = Auth::user()
 #### <code>Auth::userID</code>
 Method <code>Auth::user</code> trả id user đang đăng nhập nếu không có user đăng nhập method trả về 0
 ```php
-$userId = Auth::userID()
+$userId = Auth::userID();
+//hoặc
+$userId = Auth::id();
 ```
 
 #### <code>Auth::login</code>
@@ -63,10 +65,8 @@ Method <code>Auth::generatePassword</code> tiền hành tạo ra chuổi mật k
 ```php
 $user = Auth::user();
 $password = Auth::generatePassword('new_password', $user->salt);
-User::insert([
-    'id' => $user->id,
-    'password' => $password
-])
+$user->password = $password;
+$user->save();
 ```
 
 ### Phân quyền

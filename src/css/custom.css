@@ -3,15 +3,20 @@
  * bundles Infima by default. Infima is a CSS framework designed to
  * work well for content-centric websites.
  */
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @font-face {
   font-family: "JetBrains Mono Regular";
   src: url('/static/fonts/JetBrainsMono-Regular.woff2') format('woff');
 }
+@font-face {
+  font-family: "Inter var";
+  src: url('https://tailwindcss.com/_next/static/media/InterVariable.ff710c09.woff2') format('woff');
+}
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #852e2e;
+  --ifm-font-family-base: "Inter var", -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --ifm-color-primary: #e33232;
   --ifm-color-primary-dark: #782929;
   --ifm-color-primary-darker: #712727;
   --ifm-color-primary-darkest: #5d2020;
@@ -19,8 +24,9 @@
   --ifm-color-primary-lighter: #993535;
   --ifm-color-primary-lightest: #ad3c3c;
   --ifm-code-font-size: 80%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-h1-font-size:2.5rem;
   --ifm-font-family-monospace: "JetBrains Mono Regular";
+  --docusaurus-highlighted-code-line-bg:#dafbe1;
 }
 html[data-theme='dark'] {
   --ifm-background-color:#03060b;
@@ -35,12 +41,22 @@ html[data-theme='dark'] {
 .menu__link--sublist-caret:after, .menu__caret:before {
   background: var(--ifm-menu-link-sublist-icon) 50% / 1.2rem 1.2rem;
 }
+.markdown h1:first-child {
+  --ifm-h1-font-size:2.5rem;
+  margin-top: 10px;
+}
 pre {
   line-height:2;
 }
 code {
   color:#FF625AFF;
   max-height:43rem;
+}
+code .token.package {
+  color:#f6558c;
+}
+code .token.class-name {
+  color: #246cd3;
 }
 h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
   color:var(--ifm-color-primary);

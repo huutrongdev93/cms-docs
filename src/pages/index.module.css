@@ -2,12 +2,36 @@
  * CSS files with the .module.css suffix will be treated as CSS modules
  * and scoped locally.
  */
-
 .heroBanner {
-  padding: 4rem 0;
+  padding: 6rem 0;
   text-align: center;
   position: relative;
   overflow: hidden;
+  background-image: linear-gradient(135deg,#3775cb 1%,#326bba 8%,#173257 53%,#070e18 85%,#000);
+}
+.lightning {
+  background: url('https://fullcalendar.io/static/waves-2b8ab547b5270e902a1eb8bbcdf5ff84.svg') no-repeat 50% 50%;
+  background-size: cover;
+  flex-shrink: 0;
+  max-width: 1598px;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+}
+.source {
+  max-width: 600px;
+  position: absolute;
+  top: 50px;
+  width: 50%;
+  z-index: 1;
+}
+
+.colorTheme {
+  color:#ff0000;
+}
+[data-theme='dark'] .heroBanner {
   background-color:#03060b;
 }
 

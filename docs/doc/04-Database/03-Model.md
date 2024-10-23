@@ -168,8 +168,11 @@ ExModel::insert([
     'excerpt' => 'đây là mô tả',
 ]);
 ```
+#### Quy tắc
+Để thiết lập các quy định khi add, update, insert data bạn sử dụng thuộc tính rules hoặc các trait
 
-Để thiết lập các quy định khi insert data bạn sử dụng thuộc tính rules
+##### Các ràng buộc
+Các ràng buộc sẽ được quy định trong property rules
 ```php
 use Skilldo\Model\Model;
 
@@ -179,56 +182,17 @@ class ExModel extends Model
     
     protected string $primaryKey = 'ex_modal_id';
     
+    // highlight-start
     protected array $rules = [
         //.. 
     ];
+    // highlight-end
 }
 
 ```
-- `slug`: bạn sẽ khai báo khi model của bạn chứa đối tượng có thể tạo ra đường dẫn mà người dùng có thể truy cập được
 
-| Loại dữ liệu |  Kiểu  |                                            Mô tả                                            |
-|:------------:|:------:|:-------------------------------------------------------------------------------------------:|
-|     type     | string |                                       Module dữ liệu                                        |
-|   callback   | string |    Tên `callback` sẽ hiển thị giao diện khi người dùng truy cập đường dẫn `domain/slug`     |
-|  dependent   | string | Nếu data dùng để thêm mới không chứa column `slug` thì model sẽ dùng column này để tạo slug |
-
-```php
-namespace SkillDo\Model;
-
-class ExModel extends Model
-{
-    protected string $table = 'ex_modal_table';
-    
-    protected string $primaryKey = 'ex_modal_id';
-    
-    protected array $rules = [
-        'slug'              => [
-            'type'          => 'post',
-            'callback'      => 'ThisIsMethodView', 
-            'dependent'     => 'title'
-        ],
-    ];
-}
-```
-
-```php
-function ThisIsMethodView(SkillDo\Http\Request $request, $id) {
-
-    $object = ExModel::find($id);
-    
-    Cms::setData('object', $object);
-    
-    $template = Theme::template();
-    
-    $template->setLayout('layout-file-name');
-    
-    $template->setView('view-file-name');
-}
-```
-
-- `Timestamps` : Theo mặc định, Model sử dụng các cột `created` và `updated` trong bảng cơ sở dữ liệu tương ứng với Model của bạn.
-Model sẽ tự động lưu thời gian vào các cột này khi model tạo hoặc cập nhật dữ liệu. Nếu bạn không muốn các cột này được Model quản lý tự động, bạn nên đặt created, updated trong rules có giá trị `false`:
+- Ràng buộc `Timestamps` : Theo mặc định, Model sử dụng các cột `created` và `updated` trong bảng cơ sở dữ liệu tương ứng với Model của bạn.
+  Model sẽ tự động lưu thời gian vào các cột này khi model tạo hoặc cập nhật dữ liệu. Nếu bạn không muốn các cột này được Model quản lý tự động, bạn nên đặt created, updated trong rules có giá trị `false`:
 
 | Loại dữ liệu |                                    Mô tả                                     |
 |:------------:|:----------------------------------------------------------------------------:|
@@ -255,6 +219,7 @@ class ExModel extends Model
     ];
 }
 ```
+
 - `useraction` : Theo mặc định, Model sử dụng các cột `user_created` và `user_updated` trong bảng cơ sở dữ liệu tương ứng với Model của bạn.
   Model sẽ tự động lưu id user đang login vào các cột này khi model tạo hoặc cập nhật dữ liệu. Nếu bạn không muốn các cột này được Model quản lý tự động, bạn nên đặt user_created, user_updated trong rules có giá trị `false`:
 
@@ -283,42 +248,10 @@ class ExModel extends Model
     ];
 }
 ```
-
-- `language` : Nếu Model của bạn có hỗ trợ đâ ngôn ngữ thì bạn đặt gia trị cho `language` là tên module của bạn. Mặc định cms chỉ hỗ trợ đa ngôn ngữ các column có tên là `title`, `name`, `excerpt`, `content`
-
-```php
-<?php
-namespace SkillDo\Model;
-class ExModel extends Model
-{
-    protected string $table = 'ex_modal_table';
-    
-    protected string $primaryKey = 'ex_modal_id';
-    
-    protected array $rules = [
-        'language'  => 'ExModel',
-    ];
-}
-```
-
-```php
-//Thêm mới
-ExModel::insert([
-    'title' => 'đây là tiêu đề',
-    'excerpt' => 'đây là mô tả',
-    'language' => [
-        'en' => [
-            'title' => 'this is title',
-            'excerpt' => 'this is description',
-        ]
-    ]
-]);
-```
-
 - `hooks` dùng để thay đổi các hook mặc định của method insert
 
   | Loại dữ liệu |  Kiểu  |                                    Mô tả                                     |
-    |:------------:|:------:|:----------------------------------------------------------------------------:|
+      |:------------:|:------:|:----------------------------------------------------------------------------:|
   |   columns    | string |                 Tên hook dùng để cập nhật các trường columns                 |
   |     data     | string | Tên hook dùng để cập nhật các dữ liệu trước khi add hoặc update vào database |
 
@@ -370,7 +303,135 @@ class ExModel extends Model
 }
 ```
 Lúc thêm dữ liệu nếu column `seo_title` không có giá trị sẽ tự động lấy giá trị từ trường `title`  
-Lúc thêm dữ liệu nếu column `seo_description` không có giá trị sẽ tự động lấy giá trị từ trường `excerpt`  
+Lúc thêm dữ liệu nếu column `seo_description` không có giá trị sẽ tự động lấy giá trị từ trường `excerpt`
+
+##### Liên kết route <span class="badge text-bg-pink">7.3.0</span>
+Để tạo liên kết với bảng route giúp đối tượng có thể được truy cập từ giao diện người dùng bạn sử dụng trait `ModelRoute`
+
+```php
+namespace SkillDo\Model;
+
+// highlight-next-line
+use SkillDo\Traits\ModelRoute;
+
+class ExModel extends Model
+{
+    // highlight-next-line
+    use ModelRoute;
+}
+```
+
+Để thiết lập liên kết bạn cần khai báo thông tin liên kết vào property route sau khi thêm `ModelRoute`, property route là một array với các key
+
+|    Key     |  Kiểu  |                                            Mô tả                                            |
+|:----------:|:------:|:-------------------------------------------------------------------------------------------:|
+|    type    | string |                                       Module dữ liệu                                        |
+|  callback  | string |    Tên `callback` sẽ hiển thị giao diện khi người dùng truy cập đường dẫn `domain/slug`     |
+| dependent  | string | Nếu data dùng để thêm mới không chứa column `slug` thì model sẽ dùng column này để tạo slug |
+| controller | string |                      đường dẫn tới controller (nếu không có callback)                       |
+
+```php
+namespace SkillDo\Model;
+
+// highlight-next-line
+use SkillDo\Traits\ModelRoute;
+
+class ExModel extends Model
+{
+    use ModelRoute;
+
+    protected string $table = 'ex_modal_table';
+    
+    protected string $primaryKey = 'ex_modal_id';
+    
+    public function __construct($attributes = [])
+    {
+        // highlight-start
+        $this->route = [
+            'type'          => 'post',
+            'callback'      => 'ThisIsMethodView', 
+            'dependent'     => 'title'
+        ];
+        // highlight-end
+
+        parent::__construct($attributes);
+    }
+}
+```
+
+callback hiển thị giao diện
+
+```php
+function ThisIsMethodView(SkillDo\Http\Request $request, $id) {
+
+    $object = ExModel::find($id);
+    
+    Cms::setData('object', $object);
+    
+    $template = Theme::template();
+    
+    $template->setLayout('layout-file-name');
+    
+    $template->setView('view-file-name');
+}
+```
+
+##### Liên kết ngôn ngữ <span class="badge text-bg-pink">7.3.0</span>
+Để tạo liên kết với bảng language giúp đối tượng có tính đa ngôn ngữ bạn sử dụng trait `ModelRoute`, Mặc định cms chỉ hỗ trợ đa ngôn ngữ các column có tên là `title`, `name`, `excerpt`, `content`
+```php
+<?php
+namespace SkillDo\Model;
+
+use SkillDo\Traits\ModelLanguage;
+
+class ExModel extends Model
+{
+    // highlight-next-line
+    use ModelLanguage;
+    
+    protected string $table = 'ex_modal_table';
+    
+    protected string $primaryKey = 'ex_modal_id';
+}
+```
+Để thiết lập liên kết bạn cần khai báo tên model cần liên kết vào table language bằng property language sau khi thêm `ModelLanguage`
+
+```php
+namespace SkillDo\Model;
+
+use SkillDo\Traits\ModelLanguage;
+
+class ExModel extends Model
+{
+    use ModelLanguage;
+
+    protected string $table = 'ex_modal_table';
+    
+    protected string $primaryKey = 'ex_modal_id';
+    
+    public function __construct($attributes = [])
+    {
+        // highlight-next-line
+        $this->language = 'ExModel';
+
+        parent::__construct($attributes);
+    }
+}
+```
+
+```php
+//Thêm mới
+ExModel::insert([
+    'title' => 'đây là tiêu đề',
+    'excerpt' => 'đây là mô tả',
+    'language' => [
+        'en' => [
+            'title' => 'this is title',
+            'excerpt' => 'this is description',
+        ]
+    ]
+]);
+```
 
 ### Xóa dữ liệu
 
@@ -402,7 +463,7 @@ ExModel::truncate();
 
 Ngoài việc thực sự xóa các bản ghi khỏi cơ sở dữ liệu của bạn, Model còn có thể "soft delete" các model. 
 Khi các model bị xóa mềm, chúng không thực sự bị xóa khỏi cơ sở dữ liệu của bạn. 
-Thay vào đó, column `trash` được đặt trên model cho biết model đã bị "xóa". Để bật tính năng "soft delete" cho một model, hãy thêm trait `SkillDo\Traits\SoftDeletes` vào model:
+Thay vào đó, column `trash` cho biết model đã bị "xóa". Để bật tính năng "soft delete" cho một model, hãy thêm trait `SkillDo\Traits\SoftDeletes` vào model:
 
 ```php
 <?php
@@ -416,7 +477,7 @@ class ExModel extends Model
 }
 ```
 
-Bạn cũng nên thêm cột `trash` vào cơ sở dữ liệu của mình.
+Bạn cũng thêm cột `trash` vào cơ sở dữ liệu của mình.
 
 ```php
 if(!schema()->hasTable('ex_modal_table')) {

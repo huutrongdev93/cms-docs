@@ -57,8 +57,8 @@ class TestAjax {
     #[NoReturn]
     static function actionName(Request $request, $model): void
     {
-        if($request->isMethod('post')) {
-        
+        if($request->all()) 
+        {
             response()->success('thành công!');
         }
         
@@ -72,22 +72,33 @@ class TestAjax {
 Sau khi tạo function callback bạn phải đăng ký với cms đây là function callback của ajax
 
 ##### <code>Ajax::client</code>
-Method <code>Ajax::client</code> sẽ đăng ký ajax với không có điều kiện nào
+Method <code>Ajax::client</code> nhận vào hai tham số  
+- **action**: (string) tên callback sẽ thực thi ajax
+- **methods**: (string|array) danh sách phương thức request (get, post, put, path, delete)
 
 ```php
-Ajax::client('TestAjax::actionName')
+Ajax::client('TestAjax::actionName', 'post');
+Ajax::client('TestAjax::actionName', ['put', 'post']);
 ```
 
 ##### <code>Ajax::login</code>
-Method <code>Ajax::login</code> sẽ đăng ký ajax với điều kiện người dùng đã đăng nhập
+Method đăng ký những ajax chỉ được thực thi khi người dùng đã đăng nhập  
+Method <code>Ajax::login</code> nhận vào hai tham số
+- **action**: (string) tên callback sẽ thực thi ajax
+- **methods**: (string|array) danh sách phương thức request (get, post, put, path, delete)
 
 ```php
-Ajax::login('TestAjax::actionName')
+Ajax::login('TestAjax::actionName', 'post');
+Ajax::login('TestAjax::actionName', ['put', 'post']);
 ```
 
 ##### <code>Ajax::admin</code>
-Method <code>Ajax::admin</code> sẽ đăng ký ajax với điều kiện người dùng đã đăng nhập và người dùng naày phải có quyền login admin
+Method đăng ký những ajax chỉ được thực thi khi người dùng đã đăng nhập và có quyền truy cập vào admin
+Method <code>Ajax::admin</code> nhận vào hai tham số
+- **action**: (string) tên callback sẽ thực thi ajax
+- **methods**: (string|array) danh sách phương thức request (get, post, put, path, delete)
 
 ```php
-Ajax::admin('TestAjax::actionName')
+Ajax::admin('TestAjax::actionName', 'post');
+Ajax::admin('TestAjax::actionName', ['put', 'post']);
 ```

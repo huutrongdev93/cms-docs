@@ -8,6 +8,32 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 
+### version 7.3.0 - 24.10.2024
+
+_`Version này có cập nhật cách viết model`_
+
+<span class="badge text-bg-red">Fix</span> Không sử dụng được bulk button để xóa trang nội dung <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi trang chủ khi sử dụng plugin đa ngôn ngữ <span class="badge text-bg-yellow">Nhàn - Dương</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi trang danh mục, chi tiết bài viết khi sử dụng plugin đa ngôn ngữ <span class="badge text-bg-yellow">Dương</span>
+
+<span class="badge text-bg-green">Update</span> Cải tiến admin menu
+
+<span class="badge text-bg-green">Update</span> Khi đăng ký ajax có thể kèm theo phương thức http request mà ajax sẽ chạy
+
+<span class="badge text-bg-green">Update</span> FormAdmin đã có thể thêm field giống Form
+
+<span class="badge text-bg-green">Update</span> Sử dụng `SoftDeletes` mặc dịnh của Model cho Model User
+
+<span class="badge text-bg-blue">Change</span> Tách hỗ trợ route của Model thành trails `ModelRoute`
+
+<span class="badge text-bg-blue">Change</span> Tách hỗ trợ language của Model thành trails `ModelLanguage`
+
+<span class="badge text-bg-blue">Change</span> Tách hỗ trợ metadata của Model thành trails `ModelMeta`
+
+<span class="badge text-bg-green">Add</span> Thêm method hỗ trợ `storage`, `validate`, `object`, `array`, `date` trong SkilldoUtil
+
 ### version 7.2.1 - 16.10.2024
 
 <span class="badge text-bg-red">Fix</span> Không xóa được dữ liệu trong thùng rác <span class="badge text-bg-yellow">Châu Thạch</span>
@@ -50,9 +76,9 @@
 
 <span class="badge text-bg-red">Fix</span> Lỗi bảo mật hệ thống <span class="badge text-bg-yellow">Châu Thạch</span>
 
-<span class="badge text-bg-red">Fix</span> Lỗi không tạo được các loại ảnh thumb, medium,...  <span class="badge text-bg-yellow">Tâm</span>
+<span class="badge text-bg-red">Fix</span> Lỗi không tạo được các loại ảnh thumb, medium,... <span class="badge text-bg-yellow">Tâm</span>
 
-<span class="badge text-bg-red">Fix</span> Lỗi softDelete không nhận điều kiện  <span class="badge text-bg-yellow">Châu Thạch</span>
+<span class="badge text-bg-red">Fix</span> Lỗi softDelete không nhận điều kiện <span class="badge text-bg-yellow">Châu Thạch</span>
 
 ### version 7.1.5 - 28.09.2024
 
@@ -64,13 +90,13 @@
 
 <span class="badge text-bg-red">Fix</span> Lỗi nhận diện css cho widget sidebar
 
+<span class="badge text-bg-red">Fix</span> Lỗi widget field col không trigger sựu kiện change <span class="badge text-bg-yellow">Châu Thạch</span>
+
 <span class="badge text-bg-blue">Change</span> Thay đổi hiển thị js widget loại bỏ `$({})` mặc định
 
 <span class="badge text-bg-blue">Change</span> Thay đổi method `make` của model thành `query`
 
 <span class="badge text-bg-blue">Change</span> Thay đổi `WidgetSidebar::add` nếu không truyền loại widget sẽ tự động đăng ký cho tất cả loại
-
-<span class="badge text-bg-red">Fix</span> Lỗi widget field col không trigger sựu kiện change <span class="badge text-bg-yellow">Châu Thạch</span>
 
 <span class="badge text-bg-blue">Update</span> Tối ưu cơ chế load widget studio tăng tốc độ tải widget
 
@@ -128,6 +154,8 @@
 <span class="badge text-bg-green">Add</span> Thêm method `now` và `carbon` hỗ trợ xử lý dữ liệu thời gian
 
 ### version 7.1.0 - 13.09.2024
+
+_`Version này cập nhật cách viết model vui lòng đọc lại documnet`_
 
 <span class="badge text-bg-red">Fix</span> Lỗi router account <span class="badge text-bg-yellow">Châu Thạch</span>
 

@@ -1,0 +1,15 @@
+.author {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+.authorName {
+  color:#000;
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+[data-theme='dark'] .authorName {
+  color:#fff;
+}

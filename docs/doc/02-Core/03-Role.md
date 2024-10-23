@@ -1,19 +1,62 @@
 # Phân Quyền
 ### Lấy danh sách chức vụ
-Để lấy tất cả các chức vụ trong cms bạn sử dụng method `all` của class SKD_Roles
+Để lấy tất cả các cấu hình chức vụ trong cms bạn sử dụng method `all` của class SKD_Roles
 ```php
-Role::make()->all()
+Role::make()->all();
 //hoặc
 $role = Role::make();
 $role->all();
+
+//Kết quả
+[
+    "root" => SKD_Role {
+        #key: "root"
+        #name: "Root"
+        #capabilities: [
+            "loggin_admin" => true
+            "switch_themes" => true
+            "edit_themes" => true
+            ...
+        ]
+        #roles: SKD_Roles {
+            roles: array:4 [▶]
+            roleObjects: array:4 [▶]
+            roleNames: array:4 [▶]
+            roleKey: "user_roles"
+            useDb: true
+        }
+    }
+    "administrator" => SKD_Role {
+        ...
+    }
+    "subscriber" => SKD_Role {
+        ...
+    }
+]
+
 ```
 Mặt định cms skilldo cung cấp các role
 - administrator
 - subscriber : chức vụ mặc định của khách hàng đăng ký khi website không có thương mại
 - customer: chức vụ mặc định của khách hàng đăng ký khi website có mua bán
 
+Để lấy tất cả tên chức vụ trong cms bạn sử dụng method `getNames` của class SKD_Roles
+
+```php
+Role::make()->getNames();
+
+//Kết quả
+[
+    "root" => "Root"
+    "administrator" => "Administrator"
+    "subscriber" => "Subscriber"
+    "customer" => "Khách hàng"
+]
+```
+
 ### Thêm chức vụ
 Để thêm một chức vụ mới trong cms bạn sử dụng method `add` của class SKD_Roles
+
 ```php
 Role::add($roleKey1, $roleName1);
 Role::add($roleKey2, $roleName2);
