@@ -198,7 +198,29 @@ Build file json language từ plugin và theme
 ```shell
 lang:build
 ```
+</div>
 
+### License
+<div class="card-command">
+
+#### ```license```
+<span class="badge text-bg-pink">v.1.1.2</span> Hiên thị thông tin license hiện đang lưu của cms
+```shell
+license
+```
+</div>
+
+### License:change
+<div class="card-command">
+
+#### ```license:change```
+<span class="badge text-bg-pink">v.1.1.2</span> Hiên thị thông tin license hiện đang lưu của cms
+> **Arguments**
+* key - mã key license <span class="badge text-bg-red">REQUIRED</span>
+* secret - mã secret license <span class="badge text-bg-red">REQUIRED</span>
+```shell
+license:change {key} {secret}
+```
 </div>
 
 ### Make

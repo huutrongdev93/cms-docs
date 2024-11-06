@@ -8,6 +8,20 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 
+### version 7.3.1 - 06.10.2024
+
+<span class="badge text-bg-red">Fix</span> Lỗi load bản dịch sau một số cài đặt <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Một số lỗi lấy ngôn ngữ khi build sql
+
+<span class="badge text-bg-green">Add</span> Thêm channel Log `single` hỗ trợ tạo log theo file
+
+<span class="badge text-bg-green">Add</span> Thêm hook `admin_user_table_column_username`
+
+<span class="badge text-bg-green">Add</span> Thêm method `notLang` vào model để loại bỏ lấy dữ liệu language khi cần
+
+<span class="badge text-bg-green">Add</span> Thêm method `withTrashed`, `onlyTrashed` vào model để lấy dữ liệu softDelete
+
 ### version 7.3.0 - 24.10.2024
 
 _`Version này có cập nhật cách viết model`_
