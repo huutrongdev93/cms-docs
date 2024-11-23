@@ -462,7 +462,7 @@ ExModel::truncate();
 ### Soft Deleting
 
 Ngoài việc thực sự xóa các bản ghi khỏi cơ sở dữ liệu của bạn, Model còn có thể "soft delete" các model. 
-Khi các model bị xóa mềm, chúng không thực sự bị xóa khỏi cơ sở dữ liệu của bạn. 
+Khi các model bị xóa, chúng sẽ không thực sự bị xóa khỏi cơ sở dữ liệu của bạn. 
 Thay vào đó, column `trash` cho biết model đã bị "xóa". Để bật tính năng "soft delete" cho một model, hãy thêm trait `SkillDo\Traits\SoftDeletes` vào model:
 
 ```php
@@ -473,7 +473,9 @@ use SkillDo\Traits\SoftDeletes;
 
 class ExModel extends Model
 {
+    // highlight-start
     use SoftDeletes;
+    // highlight-end
 }
 ```
 
@@ -500,21 +502,36 @@ Cho nhiều đối tượng model vào thùng rác
 ExModel::whereKey([1,2,3,4,5])->trash();
 ```
 
+#### withTrashed <span class="badge text-bg-pink">7.3.2</span>
+Theo mặc định, bất kỳ Model nào có bật `SoftDeletes` cấu truy vẫn sẽ loại trừ các bản ghi bị xóa mềm. 
+Tuy nhiên, có những trường hợp bạn có thể muốn bao gồm chúng. Để truy xuất cả bản ghi bị xóa mềm và không bị xóa trong một truy vấn, method `withTrashed()` được sử dụng.
+
+```php
+SkillDo\Model\Post::withTrashed()->where('id', 12)->fetch();
+```
+#### onlyTrashed <span class="badge text-bg-pink">7.3.2</span>
+Method `onlyTrashed()` làm ngược lại với `withTrashed()` Nó chỉ truy xuất các bản ghi bị xóa mềm. Phương pháp này hữu ích trong trường hợp bạn muốn quản lý hoặc khôi phục các mục bị xóa mềm.
+
+```php
+SkillDo\Model\Post::onlyTrashed()->where('id', 12)->fetch();
+```
+
 #### Restore
 
-Đôi khi bạn có thể muốn "bỏ xóa" một object đã xóa mềm. Để khôi phục một model đã bị xóa tạm thời, bạn có thể gọi phương thức `restore`  
+Đôi khi bạn có thể muốn "bỏ xóa" một object đã xóa mềm. Để khôi phục một model đã bị xóa tạm thời, bạn có thể gọi phương thức `restore`
 
 Khôi phục một đối tượng model
 
 ```php
-$object = ExModel::where('trash', 1)->first();
+$object = ExModel::onlyTrashed()->first();
 $object->restore();
 ```
 Khôi phục nhiều đối tượng model
 
 ```php
-ExModel::whereKey([1,2,3,4,5])->where('trash', 1)->restore();
+ExModel::onlyTrashed()->whereKey([1,2,3,4,5])->restore();
 ```
+
 ### Events
 Các event trong Model cho phép bạn tham gia vào các giai đoạn khác nhau trong vòng đời của một Model chẳng hạn như khi được tạo, cập nhật hoặc xóa.
 #### retrieved

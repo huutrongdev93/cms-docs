@@ -8,6 +8,22 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 
+### version 7.3.3 - 23.11.2024
+
+<span class="badge text-bg-red">Fix</span> Lỗi hiển thị với widget ở chế độ in-container
+
+<span class="badge text-bg-green">Add</span> Thêm class `Image` thao tác hiển thị image
+
+### version 7.3.2 - 15.11.2024
+
+<span class="badge text-bg-red">Fix</span> Lỗi mất slug <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-green">Add</span> Thêm `namespace` vào table routes
+
+<span class="badge text-bg-green">Update</span> Tối ưu components `Admin::btnConfirm` bổ sung callback
+
+<span class="badge text-bg-green">Update</span> Tối ưu lại class table
+
 ### version 7.3.1 - 06.10.2024
 
 <span class="badge text-bg-red">Fix</span> Lỗi load bản dịch sau một số cài đặt <span class="badge text-bg-yellow">Châu Thạch</span>
