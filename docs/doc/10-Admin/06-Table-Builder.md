@@ -5,7 +5,13 @@
 ```php
 class DemoTable extends SKDObjectTable
 {
-    function get_columns()
+    protected string $module = 'demo'; //Tên module
+
+    protected mixed $model = SkillDo\Model\Demo::class; //class model
+
+    protected bool $trash = false; //Model có sử dụng softDelete hay không, mặc định false
+    
+    function getColumns()
     {
         return $this->_column_headers;
     }
@@ -24,6 +30,18 @@ class DemoTable extends SKDObjectTable
     {
         return $form;
     }
+    
+    public function queryFilter(Qr $query, \SkillDo\Http\Request $request): Qr
+    {
+        return $query;
+    }
+
+    public function queryDisplay(Qr $query, \SkillDo\Http\Request $request, $data = []): Qr
+    {
+        $query = parent::queryDisplay($query, $request, $data);
+
+        return $query;
+    }
 }
 ```
 
@@ -31,11 +49,13 @@ class DemoTable extends SKDObjectTable
 - `actionButton` trả về danh sách button ở ô action
 - `headerSearch` trả về form tìm kiếm hiển thị
 - `headerFilter` trả về form tìm kiếm ẩn
+- `queryFilter` xử lý query lọc dữ liệu (các điều kiện where, whereIn...)
+- `queryDisplay` xử lý query hiển thị dữ liệu (order, limit...)
 
 ### Header & Column
 Khởi tạo một column
 ```php
-function get_columns()
+function getColumns()
 {
     $this->_column_headers = [
         'cb'        => 'cb',

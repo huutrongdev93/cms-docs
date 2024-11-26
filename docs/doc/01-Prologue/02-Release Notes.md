@@ -8,11 +8,25 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
 
-### version 7.3.3 - 23.11.2024
+### version 7.3.3 - 25.11.2024
 
 <span class="badge text-bg-red">Fix</span> Lỗi hiển thị với widget ở chế độ in-container
 
+<span class="badge text-bg-red">Fix</span> Lỗi popoverAdvance trong repeater không hiển thị giá trị sau khi chọn
+
+<span class="badge text-bg-red">Fix</span> Lỗi hiển thị sai số lượng data public và trash table ở admin
+
+<span class="badge text-bg-green">Update</span> Có thể truyền Query build vào method `withTrashed`, `onlyTrashed`
+
+<span class="badge text-bg-green">Update</span> Model Hỗ trợ sử dụng `count` với arrow (Post::withTrashed()->count())
+
+<span class="badge text-bg-green">Update</span> Model Hỗ trợ sử dụng `delete` với arrow (Post::onlyTrashed()->delete())
+
 <span class="badge text-bg-green">Add</span> Thêm class `Image` thao tác hiển thị image
+
+<span class="badge text-bg-green">Add</span> module hỗ trợ ajax load mặc định không cần tự tạo
+
+<span class="badge text-bg-green">Add</span> Thêm method `queryFilter`, `queryDisplay` vào class table hỗ trợ lọc dữ liệu table
 
 ### version 7.3.2 - 15.11.2024
 
