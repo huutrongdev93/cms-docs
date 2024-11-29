@@ -7,6 +7,25 @@
 |      5      | 8.0.x - 8.1.x | 10/12/2021 | `Dừng hỗ trợ `  |
 |      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
+### version 7.3.5 - 28.11.2024
+
+<span class="badge text-bg-red">Fix</span> Lỗi không xóa được danh mục post categories <span class="badge text-bg-yellow">Dương</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi lưu post chuyển hướng bị sai <span class="badge text-bg-yellow">Trang - Hòa</span>
+
+<span class="badge text-bg-red">Fix</span> Không hiển thị ảnh cho widget field container box <span class="badge text-bg-yellow">Tâm</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi Validate\Unique
+
+### version 7.3.4 - 27.11.2024
+
+<span class="badge text-bg-red">Fix</span> Lỗi không load lại cache khi cập nhật trang nội dung <span class="badge text-bg-yellow">Nhàn</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi cập nhật thứ tự table <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi hiển thị hình ảnh layout <span class="badge text-bg-yellow">Hòa</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi hiển thị admin menu <span class="badge text-bg-yellow">Dương</span>
 
 ### version 7.3.3 - 25.11.2024
 

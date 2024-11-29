@@ -547,6 +547,8 @@ class Post extends Model
      */
     protected static function booted()
     {
+        parent::boot();
+        
         static::retrieved(function ($post) {
             if(!empty($post->content) && Str::isHtmlspecialchars($post->content)) {
                 $post->content = htmlspecialchars_decode($post->content);
@@ -564,6 +566,8 @@ class Post extends Model
 {
     protected static function booted()
     {
+        parent::boot();
+    
         static::creating(function ($post) {
             \SkillDo\SkillDo\Log::info('A new post is being created: ' . $post->title);
         });
