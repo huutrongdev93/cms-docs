@@ -1,12 +1,23 @@
 ### Phiên bản hỗ trợ
 
-| Cms Version |  PHP Support  |  Release   |     Support     |
-|:-----------:|:-------------:|:----------:|:---------------:|
-|      7      | 8.2.x - 8.3.x | 10/08/2024 |   Đang hỗ trợ   |
-|      6      | 8.0.x - 8.1.x | 25/07/2022 | Cập nhật vá lỗi |
-|      5      | 8.0.x - 8.1.x | 10/12/2021 | `Dừng hỗ trợ `  |
-|      4      | 7.0.x - 7.3.x | 29/09/2020 |  `Dừng hỗ trợ`  |
-|      3      |      5.6      | 18/09/2019 |  `Dừng hỗ trợ`  |
+| Cms Version |  PHP Support  |  Release   |    Support    |
+|:-----------:|:-------------:|:----------:|:-------------:|
+|      7      | 8.2.x - 8.3.x | 10/08/2024 |  Đang hỗ trợ  |
+|      6      | 8.0.x - 8.1.x | 25/07/2022 | Hỗ trợ vá lỗi |
+|      5      | 8.0.x - 8.1.x | 10/12/2021 | `Dừng hỗ trợ` |
+|      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
+|      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
+
+### version 7.3.6 - 04.12.2024
+
+<span class="badge text-bg-red">Fix</span> Lỗi load sai layout trong post <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-green">Update</span> Cập nhật js load table dễ sử dụng và cải thiện tốc độ
+
+<span class="badge text-bg-green">Add</span> Thêm method `dataDisplay` vào class table hỗ trợ custom dữ liệu hiển thị
+
+<span class="badge text-bg-green">Add</span> Method `defer` thực hiện các function sau khi response được gửi đến client
+
 ### version 7.3.5 - 28.11.2024
 
 <span class="badge text-bg-red">Fix</span> Lỗi không xóa được danh mục post categories <span class="badge text-bg-yellow">Dương</span>
