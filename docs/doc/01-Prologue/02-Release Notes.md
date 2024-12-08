@@ -8,15 +8,27 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
 
+### version 7.4.0 - 09.12.2024
+
+<span class="badge text-bg-green">Add</span> Thêm hook autoload hỗ trợ việc autoload class
+
+<span class="badge text-bg-green">Update</span> Gở bỏ helper mặc định `url`, `cookie`, `date`
+
+<span class="badge text-bg-green">Update</span> Tôi ưu code
+
 ### version 7.3.6 - 04.12.2024
 
 <span class="badge text-bg-red">Fix</span> Lỗi load sai layout trong post <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi route có thể bị trùng lặp trong trường hợp đặc biệt
 
 <span class="badge text-bg-green">Update</span> Cập nhật js load table dễ sử dụng và cải thiện tốc độ
 
 <span class="badge text-bg-green">Add</span> Thêm method `dataDisplay` vào class table hỗ trợ custom dữ liệu hiển thị
 
 <span class="badge text-bg-green">Add</span> Method `defer` thực hiện các function sau khi response được gửi đến client
+
+<span class="badge text-bg-green">Update</span> Tối ưu code tăng hiệu xuất
 
 ### version 7.3.5 - 28.11.2024
 
