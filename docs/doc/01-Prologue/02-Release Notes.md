@@ -10,11 +10,21 @@
 
 ### version 7.4.0 - 09.12.2024
 
-<span class="badge text-bg-green">Add</span> Thêm hook autoload hỗ trợ việc autoload class
+<span class="badge text-bg-red">Fix</span> Bị lặp lại hook ở components/page-default/page-save.blade.php <span class="badge text-bg-yellow">Châu Thạch</span>
 
-<span class="badge text-bg-green">Update</span> Gở bỏ helper mặc định `url`, `cookie`, `date`
+<span class="badge text-bg-red">Delete</span> Gở bỏ helper phiên bản 2.0 (`url`, `cookie`, `date`, `session`)
 
-<span class="badge text-bg-green">Update</span> Tôi ưu code
+<span class="badge text-bg-red">Delete</span> Gở bỏ thư mục language củ
+
+<span class="badge text-bg-red">Delete</span> Gở bỏ thư viện HMVC
+
+<span class="badge text-bg-green">Update</span> Trang update cms luôn kiểm tra và lấy version mới nhất
+
+<span class="badge text-bg-green">Update</span> Tối ưu code cải thiện tốc độ load admin
+
+<span class="badge text-bg-green">Add</span> Thêm hook `cms_class_autoloader_map` hỗ trợ việc autoload class
+
+<span class="badge text-bg-green">Add</span> `Dark mode` chế độ tối cho giao diện admin
 
 ### version 7.3.6 - 04.12.2024
 

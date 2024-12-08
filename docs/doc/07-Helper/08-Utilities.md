@@ -23,3 +23,13 @@ defer(fn () => User::where('status', 'public')->update(['status' => 'pending']),
 
 defer()->forget('uploadUser');
 ```
+
+### isAjax
+Kiểm tra request có phải là cuộc gọi ajax hay không, nếu đúng method trả về `true` ngược lại là `false`
+
+```php
+if(isAjax())
+{
+    //ajax
+}
+```
