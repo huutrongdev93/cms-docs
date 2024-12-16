@@ -83,9 +83,9 @@ Hàm `Url::account` trả về url trang thông tin tài khoản (frontend) .
 
 ```php
 Url::account()
-// domain/tai-khoan/
+// account
 Url::account('order')
-// domain/tai-khoan/order
+// domain/account/order
 ```
 
 ### `Url::register`

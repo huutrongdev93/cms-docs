@@ -8,6 +8,26 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
 
+### version 7.4.1 - 13.12.2024
+
+<span class="badge text-bg-red">Fix</span> Lỗi load bản dịch ngôn ngữ ở admin <span class="badge text-bg-yellow">Tâm - Hòa</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi load bản dịch khi chỉ có duy nhất 1 ngôn ngữ không phải tiếng việt <span class="badge text-bg-yellow">Tâm</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi load bản dịch cho menu <span class="badge text-bg-yellow">Hòa</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi xóa gallery item bị mất toàn bộ item <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-green">Add</span> Thêm các hooks `plugin_active`, `plugin_update`, `plugin_deactivate`, `plugin_delete`
+
+<span class="badge text-bg-green">Add</span> Kiểm tra thông tin server có đầy đủ để chạy cms không
+
+<span class="badge text-bg-green">Add</span> Thêm trung tâm hỗ trợ
+
+<span class="badge text-bg-blue">Update</span> Thay đổi tên session theo từng dự án khác nhau
+
+<span class="badge text-bg-blue">Update</span> Method `find` trong Model có thể chạy event
+
 ### version 7.4.0 - 09.12.2024
 
 <span class="badge text-bg-red">Fix</span> Bị lặp lại hook ở components/page-default/page-save.blade.php <span class="badge text-bg-yellow">Châu Thạch</span>
