@@ -8,13 +8,29 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
 
+### version 7.4.5 - 01.01.2025
+
+<span class="badge text-bg-red">Fix</span> Lỗi ký tự ø trong slug <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi hình ảnh watermark <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi xóa bài viết thư viện kèm theo bị xóa sai <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi css khi sử dụng widget ở nhiều trang khác nhau <span class="badge text-bg-yellow">Thạch</span>
+
+### version 7.4.2 - 19.12.2024
+
+<span class="badge text-bg-red">Fix</span> Lỗi load bản dịch cho menu <span class="badge text-bg-yellow">Hòa</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi input fontIcon <span class="badge text-bg-yellow">Dương</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi trang system info <span class="badge text-bg-yellow">Tâm</span>
+
 ### version 7.4.1 - 13.12.2024
 
 <span class="badge text-bg-red">Fix</span> Lỗi load bản dịch ngôn ngữ ở admin <span class="badge text-bg-yellow">Tâm - Hòa</span>
 
 <span class="badge text-bg-red">Fix</span> Lỗi load bản dịch khi chỉ có duy nhất 1 ngôn ngữ không phải tiếng việt <span class="badge text-bg-yellow">Tâm</span>
-
-<span class="badge text-bg-red">Fix</span> Lỗi load bản dịch cho menu <span class="badge text-bg-yellow">Hòa</span>
 
 <span class="badge text-bg-red">Fix</span> Lỗi xóa gallery item bị mất toàn bộ item <span class="badge text-bg-yellow">Trang</span>
 
