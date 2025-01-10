@@ -2,13 +2,23 @@
 
 | Cms Version |  PHP Support  |  Release   |    Support    |
 |:-----------:|:-------------:|:----------:|:-------------:|
-|      7      | 8.2.x - 8.3.x | 10/08/2024 |  Đang hỗ trợ  |
+|      7      | 8.2.x - 8.3.x | 10/08/2024 |  Đang hỗ trợ  |[7.3.2](..%2F..%2F..%2Fbuild%2F7.3.2)
 |      6      | 8.0.x - 8.1.x | 25/07/2022 | Hỗ trợ vá lỗi |
 |      5      | 8.0.x - 8.1.x | 10/12/2021 | `Dừng hỗ trợ` |
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
 
-### version 7.4.5 - 01.01.2025
+### version 7.4.6 - 10.01.2025
+
+<span class="badge text-bg-red">Fix</span> Lỗi validate rule GreaterThan, LessThan <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Lỗi load file validate core
+
+<span class="badge text-bg-blue">Update</span> Hỗ trợ thêm js cho validate custom
+
+<span class="badge text-bg-blue">Update</span> Điều chỉnh giao diện cho repeater
+
+### version 7.4.5 - 03.01.2025
 
 <span class="badge text-bg-red">Fix</span> Lỗi ký tự ø trong slug <span class="badge text-bg-yellow">Châu Thạch</span>
 
