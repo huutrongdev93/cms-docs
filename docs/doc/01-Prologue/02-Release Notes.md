@@ -8,6 +8,43 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
 
+### version 7.5.1 - 17.04.2025
+
+<span class="badge text-bg-green">Add</span> `TableBuilder` bổ sung function `headerButton` tạo button cho header table
+
+<span class="badge text-bg-green">Add</span> `Model` bổ sung function `inserts` tạo nhiều row cùng một lúc
+
+<span class="badge text-bg-green">Add</span> Bổ sung menu mobile cho admin
+
+<span class="badge text-bg-red">Fix</span> `TableBuilder` Sữa lỗi cache page hiện tại khác 1 mà số lượng data chỉ có 1 page làm lỗi không có dữ liệu khi hiển thị table
+
+<span class="badge text-bg-red">Fix</span> Method Str::price clear string tốt hơn với giá tiền có . và , <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Sữa lỗi danh mục dạng cây <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> popover không hiển thị kết quả post có taxonomy <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-red">Fix</span> gallery không hiển ảnh khi là đường link youtube <span class="badge text-bg-yellow">Trang</span>
+
+
+### version 7.5.0 - 12.02.2025
+
+<span class="badge text-bg-red">Fix</span> Sữa lỗi không có quyền truy cập ở danh mục bài viết <span class="badge text-bg-yellow">Dương - Trang</span>
+
+<span class="badge text-bg-red">Fix</span> Sữa lỗi không có quyền xóa thành viên <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-green">Add</span> Thêm phưng thức `reducer` vào thư viện SkilldoUtil (javascript)
+
+<span class="badge text-bg-green">Add</span> Tách Widget footer ra thành mục quản lý riêng
+
+<span class="badge text-bg-green">Add</span> Table Builder bổ sung cơ chế table child
+
+<span class="badge text-bg-blue">Update</span> Filter Background bổ sung blend-mode color cho tùy chọn ảnh nền
+
+<span class="badge text-bg-blue">Change</span> Filter Background Ẩn các tùy chọn nâng cao của tùy chọn ảnh nền
+
+<span class="badge text-bg-blue">Update</span> Mở lại chức năng builder
+
 ### version 7.4.6 - 10.01.2025
 
 <span class="badge text-bg-red">Fix</span> Lỗi validate rule GreaterThan, LessThan <span class="badge text-bg-yellow">Châu Thạch</span>

@@ -272,3 +272,61 @@ Trả về sự khác biệt giữa hai mảng
 ```javascript
 console.log(SkilldoUtil.array.difference([1, 2, 3], [2, 3, 4])); // [1,4]
 ```
+
+### reducer <span class="badge text-bg-pink">7.5.0</span>
+Tạo một object chứa danh sách các item hỗ trợ sẳn các method add, update, delete, empty
+
+```javascript
+const products = SkilldoUtil.reducer();
+```
+##### add
+Thêm một item
+
+```javascript
+products.add({
+    id: 1,
+    name: 'sản phẩm demo'
+})
+```
+
+##### update
+Cập nhật một item dựa vào id
+
+```javascript
+products.update({
+    id: 1,
+    name: 'sản phẩm cập nhật'
+})
+```
+
+##### delete
+Xóa một item dựa vào id
+
+```javascript
+products.delete(1)
+```
+
+##### has
+Kiểm tra một item đã tồn tại hay chưa dựa vào id, kết quả trả về `true` nếu có item
+
+```javascript
+if(products.has(1)) {
+    //to do
+}
+```
+
+##### get
+Lấy thông tin của item dựa vào id
+
+```javascript
+if(products.has(1)) {
+    let item = products.get(1)
+}
+```
+
+##### empty
+Làm rỗng danh sách
+
+```javascript
+products.empty()
+```

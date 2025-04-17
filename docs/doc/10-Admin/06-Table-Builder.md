@@ -31,6 +31,11 @@ class DemoTable extends SKDObjectTable
         return $form;
     }
     
+    function headerButton() {
+        $buttons = [];
+        return $buttons;
+    }
+    
     public function queryFilter(Qr $query, \SkillDo\Http\Request $request): Qr
     {
         return $query;
@@ -42,15 +47,22 @@ class DemoTable extends SKDObjectTable
 
         return $query;
     }
+    
+    public function dataDisplay($objects)
+    {
+        return $objects;
+    }
 }
 ```
 
-- `get_columns` chứa header table và nội dung của column
+- `getColumns` chứa header table và nội dung của column
 - `actionButton` trả về danh sách button ở ô action
 - `headerSearch` trả về form tìm kiếm hiển thị
 - `headerFilter` trả về form tìm kiếm ẩn
+- `headerButton` trả về danh sách button của table
 - `queryFilter` xử lý query lọc dữ liệu (các điều kiện where, whereIn...)
 - `queryDisplay` xử lý query hiển thị dữ liệu (order, limit...)
+- `dataDisplay` xử lý data hiển thị
 
 ### Header & Column
 Khởi tạo một column
@@ -205,4 +217,21 @@ Sau đó bạn có thể sử dụng column mới
 
 ```php
 ColumnCustom::make('name', $item, $args);
+```
+
+### Table child
+
+![img_4.png](img_4.png)
+
+Để khởi tạo table child bạn set giá trị cho biến `tableChild` là một object `SKDObjectTable`
+```php
+class DemoTable extends SKDObjectTable
+{
+    public function __construct($args = [])
+    {
+        parent::__construct($args);
+
+        $this->tableChild = new InventoriesChild();
+    }
+}
 ```

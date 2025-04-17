@@ -62,7 +62,7 @@ function MetaboxBookTestRender($object) {
 * Thêm metabox vào post categories
 ```php
 //Thêm metabox vào category có cate type là category
-Metabox::add('metabox_category_id', 'Metabox test', 'MetaboxTestRender', ['module' => 'category', 'content' => 'leftBottom']);
+Metabox::add('metabox_category_id', 'Metabox test', 'MetaboxTestRender', ['module' => 'post_categories_category', 'content' => 'leftBottom']);
 
 function MetaboxTestRender($object) {
     if(have_post($object)) {
@@ -74,7 +74,7 @@ function MetaboxTestRender($object) {
 }
 
 //Thêm metabox vào category có cate type là books
-Metabox::add('metabox_category_books_id', 'Metabox test', 'MetaboxBookTestRender', ['module' => 'category_books', 'content' => 'leftBottom']);
+Metabox::add('metabox_category_books_id', 'Metabox test', 'MetaboxBookTestRender', ['module' => 'post_categories_books', 'content' => 'leftBottom']);
 
 function MetaboxBookTestRender($object) {
     if(have_post($object)) {
