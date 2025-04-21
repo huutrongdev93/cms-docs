@@ -8,6 +8,16 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
 
+### version 7.5.2 - 21.04.2025
+
+<span class="badge text-bg-blue">Update</span> Cập nhật singleton cho class request
+
+<span class="badge text-bg-blue">Update</span> Thêm lựa chọn rel trong plugin link của tinymce
+
+<span class="badge text-bg-red">Fix</span> Sữa lỗi Language::has
+
+<span class="badge text-bg-red">Fix</span> Sữa lỗi Route default khi đăng ký route api
+
 ### version 7.5.1 - 17.04.2025
 
 <span class="badge text-bg-green">Add</span> `TableBuilder` bổ sung function `headerButton` tạo button cho header table
