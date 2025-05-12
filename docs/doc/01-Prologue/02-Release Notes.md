@@ -8,6 +8,22 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
 
+### version 7.5.4 - 12.05.2025
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi không load wysiwyg khi chỉnh sửa danh mục <span class="badge text-bg-yellow">Tâm - Trang</span>
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi không load wysiwyg khi chỉnh sửa widget <span class="badge text-bg-yellow">Thái</span>
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi không load đúng ngôn ngữ <span class="badge text-bg-yellow">Châu Thạch</span>
+
+### version 7.5.3 - 28.04.2025
+
+<span class="badge text-bg-green">Add</span> Bổ bulk action cho table user (điều chỉnh trạng thái hàng loạt)
+
+<span class="badge text-bg-red">Fix</span> Fix chuyển hướng đăng nhập
+
+<span class="badge text-bg-red">Fix</span> Sữa lỗi lấy request()->query() dính biến index_php <span class="badge text-bg-yellow">Dương</span>
+
 ### version 7.5.2 - 21.04.2025
 
 <span class="badge text-bg-blue">Update</span> Cập nhật singleton cho class request
