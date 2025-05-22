@@ -8,6 +8,20 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
 
+### version 7.5.5 - 21.05.2025
+
+<span class="badge text-bg-green">Add</span> Bổ sung phương thức xác thực request requiredIf
+
+<span class="badge text-bg-green">Add</span> Thêm button ẩn hiện danh mục
+
+<span class="badge text-bg-red">Update</span> Tối ưu việc lưu metadata
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi Theme::isProduct và Theme::isProductCategory chỉ chạy ở root <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi select2 trong dialog model không thể search
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi checkbox khi options chỉ có một giá trị thì giá trị checked không nhận value là array
+
 ### version 7.5.4 - 12.05.2025
 
 <span class="badge text-bg-red">Fix</span> Fix lỗi không load wysiwyg khi chỉnh sửa danh mục <span class="badge text-bg-yellow">Tâm - Trang</span>
@@ -18,7 +32,7 @@
 
 ### version 7.5.3 - 28.04.2025
 
-<span class="badge text-bg-green">Add</span> Bổ bulk action cho table user (điều chỉnh trạng thái hàng loạt)
+<span class="badge text-bg-green">Add</span> Bổ sung bulk action cho table user (điều chỉnh trạng thái hàng loạt)
 
 <span class="badge text-bg-red">Fix</span> Fix chuyển hướng đăng nhập
 

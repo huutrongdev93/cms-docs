@@ -458,6 +458,22 @@ Kiểm tra giá trị nhập vào có nằm trong danh sách giá trị cho trư
 ```php
 Rule::make()->in(['pending', 'confirm', 'cancel']);
 ```
+
+####  `requiredIf`
+Kiểm tra giá trị nhập vào là bắt buộc theo một điều kiện cho trước
+
+**Tham số:**
+
+| Params    |   Type   |      Description | Default |
+|-----------|:--------:|-----------------:|:-------:|
+| $callback | callable | method điều kiện |         |
+
+```php
+Rule::make()->requiredIf(function ($request) {
+    return $request->has('filter1')
+});
+```
+
 ####  `custom`
 Kiểm tra giá trị nhập vào dự theo function custom của bạn
 
