@@ -8,6 +8,24 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
 
+### version 7.5.6 - 16.07.2025
+
+<span class="badge text-bg-green">Add</span> Thêm class Location2 lấy địa chỉ theo đơn vị hành chính mới
+
+<span class="badge text-bg-green">Add</span> Thêm validate rule kiểu array
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi phân trang dính index_php <span class="badge text-bg-yellow">Châu Thạch</span>
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi url current dính index.php <span class="badge text-bg-yellow">Trang</span>
+
+<span class="badge text-bg-red">Fix</span> Fix ẩn hiện bài viết không reset cache
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi count trong Model User lấy query sai
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi api bị chặn options
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi builder download đè lên widget có sẳn
+
 ### version 7.5.5 - 21.05.2025
 
 <span class="badge text-bg-green">Add</span> Bổ sung phương thức xác thực request requiredIf
