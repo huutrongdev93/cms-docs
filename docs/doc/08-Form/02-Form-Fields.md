@@ -291,6 +291,14 @@ $form->gallery('field_name_gallery', ['label' => 'Label Gallery']);
 //Sử dụng phương thức `add`
 $form->add('field_name_gallery', 'gallery', ['label' => 'Label Gallery']);
 ```
+#### Gallery Item
+Tạo thư viện ảnh (chọn được danh sách ảnh thành thư viện)
+
+```php
+//Sử dụng phương thức `động`
+$form->galleryItem('field_name_gallery', ['label' => 'Label list Image']);
+```
+
 
 #### Menu
 Lấy danh sách menu _(Admin > giao diện > menu)_ dưới dạng select2

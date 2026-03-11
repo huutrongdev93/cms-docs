@@ -8,6 +8,10 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
 
+### version 7.5.7 - 28.08.2025
+
+<span class="badge text-bg-red">Fix</span> Fix một số lỗi
+
 ### version 7.5.6 - 16.07.2025
 
 <span class="badge text-bg-green">Add</span> Thêm class Location2 lấy địa chỉ theo đơn vị hành chính mới
