@@ -80,7 +80,7 @@ core/Form/Popover
 Tạo class field của bạn kế thừa lại class `PopoverHandle` của cms
 
 ```php
-use SkillDo\Form\PopoverHandle;
+use SkillDo\Cms\Form\PopoverHandle;
 use SkillDo\Http\Request;
 
 class MyPopover extends PopoverHandle {

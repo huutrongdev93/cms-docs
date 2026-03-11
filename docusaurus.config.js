@@ -33,8 +33,8 @@ const config = {
 					lastVersion: 'current',
 					versions: {
 						current: {
-							label: '7.5.0',
-							path: '7.5.0',
+							label: '8.0.0',
+							path: '8.0.0',
 						},
 					},
 				},
@@ -137,12 +137,12 @@ const config = {
 						docsPluginId: 'hooks',
 						label: 'Hooks',
 					},
-					{
+					/*{
 						type: 'docSidebar',
 						position: 'left',
 						sidebarId: 'api',
 						label: 'API',
-					},
+					},*/
 					/*{
 						to: 'blog',
 						label: 'Blog',
@@ -192,5 +192,9 @@ const config = {
 			},
 		}),
 	staticDirectories: ['static'],
+	markdown: {
+		mermaid: true,
+	},
+	themes: ['@docusaurus/theme-mermaid'],
 }
 export default config;

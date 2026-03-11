@@ -1,13 +1,21 @@
-SkillDo cung cấp thư viện mạnh mẽ để làm việc với Form
+# Form - Khởi tạo và hiển thị
+
+> **File:** `packages/skilldo/cms/src/Form/Form.php`
+> **Namespace:** `SkillDo\Cms\Form\Form`
+> **Helper global:** `form()`
+
+SkillDo CMS cung cấp thư viện mạnh mẽ để tạo và quản lý Form HTML từ PHP.
 
 ### Tạo Form
-Để tạo một Form bạn cần khởi tạo một đối tượng từ class Form
+
+Để tạo một Form bạn cần khởi tạo một đối tượng từ class `Form`:
 
 ```php
-use SkillDo\Form\Form;
+use SkillDo\Cms\Form\Form;
+
 $form = new Form();
 ```
-Hoặc sử dụng function toàn cục `form`
+Hoặc sử dụng function toàn cục `form()` cho ngắn gọn:
 ```php
 $form = form();
 ```

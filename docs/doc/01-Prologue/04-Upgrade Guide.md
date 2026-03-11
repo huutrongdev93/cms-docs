@@ -1,3 +1,5 @@
+# Upgrade Guide
+
 Hướng dẫn này sẽ hướng dẫn bạn qua quá trình nâng cấp các sản phẩm dựa trên CMS SkillDo.
 
 **Lưu ý khi up từ ver `7.0.x` lên phiên bản mới nhất**

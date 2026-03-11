@@ -10,8 +10,8 @@ core/Form/Field
 Tạo class field của bạn kế thừa lại class `InputBuilder` của cms
 
 ```php
-namespace core\Form\Field;
-use SkillDo\Form\InputBuilder;
+namespace PluginMyPlugin\Form\Field;
+use SkillDo\Cms\Form\InputBuilder;
 
 class MyFieldCustom extends InputBuilder {
 

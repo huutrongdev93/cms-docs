@@ -1,12 +1,23 @@
+# Release Notes
+
 ### Phiên bản hỗ trợ
 
 | Cms Version |  PHP Support  |  Release   |    Support    |
 |:-----------:|:-------------:|:----------:|:-------------:|
-|      7      | 8.2.x - 8.3.x | 10/08/2024 |  Đang hỗ trợ  |[7.3.2](..%2F..%2F..%2Fbuild%2F7.3.2)
-|      6      | 8.0.x - 8.1.x | 25/07/2022 | Hỗ trợ vá lỗi |
+|      8      | 8.2.x - 8.5.x | 30/03/2026 |  Đang hỗ trợ  |
+|      7      | 8.2.x - 8.3.x | 10/08/2024 |  Đang hỗ trợ  |
+|      6      | 8.0.x - 8.1.x | 25/07/2022 | `Dừng hỗ trợ` |
 |      5      | 8.0.x - 8.1.x | 10/12/2021 | `Dừng hỗ trợ` |
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
+
+### version 8.0.0 - 30.03.2026
+
+Add triển khai framework hoàn toàn mới trên nền tảng Illuminate components từ Laravel
+Add triển khai cms hoàn toàn mới
+Add hệ thống builder mới
+Add Các lớp bảo mật mới (Cơ chế sinh mật khẩu, Headers, CORS...)
+Add Form - Thêm nhiều Field mới
 
 ### version 7.5.7 - 28.08.2025
 
@@ -87,7 +98,6 @@
 <span class="badge text-bg-red">Fix</span> popover không hiển thị kết quả post có taxonomy <span class="badge text-bg-yellow">Trang</span>
 
 <span class="badge text-bg-red">Fix</span> gallery không hiển ảnh khi là đường link youtube <span class="badge text-bg-yellow">Trang</span>
-
 
 ### version 7.5.0 - 12.02.2025
 
@@ -367,7 +377,6 @@ _`Version này có cập nhật cách viết model`_
 
 <span class="badge text-bg-green">Update</span> Tối ưu model add, save
 
-
 ### version 7.1.2 - 18.09.2024
 
 <span class="badge text-bg-red">Fix</span> Lỗi module không truy cập được page add, edit <span class="badge text-bg-yellow">Châu Thạch</span>
@@ -429,7 +438,6 @@ _`Version này cập nhật cách viết model vui lòng đọc lại documnet`_
 <span class="badge text-bg-green">Add</span> Tự động ghi toàn bộ log error vào thư mục logs
 
 <span class="badge text-bg-green">Add</span> Thêm chức năng Middleware vào cms
-
 
 ### version 7.0.6 - candidates - 26.08.2024
 
@@ -505,11 +513,11 @@ _`Version này cập nhật cách viết model vui lòng đọc lại documnet`_
 
 ### version 7.0.1 - public beta - 13.08.2024
 
-<span class="badge text-bg-red">Fix</span> lỗi không vào được trang update phiên bản bằng button upload  
+<span class="badge text-bg-red">Fix</span> lỗi không vào được trang update phiên bản bằng button upload
 
 <span class="badge text-bg-red">Fix</span> <span class="badge text-bg-pink">Theme menu</span> lỗi thêm menu không xóa cache củ <span class="badge text-bg-yellow">Dương</span>
 
-<span class="badge text-bg-blue">Change</span> <span class="badge text-bg-pink">Cache</span> Đổi class CacheHandler thành class SkillDo\Cache  
+<span class="badge text-bg-blue">Change</span> <span class="badge text-bg-pink">Cache</span> Đổi class CacheHandler thành class SkillDo\Cache
 
 <span class="badge text-bg-blue">Change</span> <span class="badge text-bg-pink">Mail</span> Đổi class Mail thành class SkillDo\Mail
 
