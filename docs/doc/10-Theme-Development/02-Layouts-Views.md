@@ -1,4 +1,4 @@
-# Quản Lý Template, Layouts và Views
+# Template, Layouts và Views
 
 Trong SkillDo CMS v8, giao diện được xây dựng bằng Blade Templating language. **Tuy nhiên, bạn TUYỆT ĐỐI KHÔNG SỬ DỤNG** các cú pháp mặc định của Laravel như `@yield`, `@section`, hay `@extends`.
 

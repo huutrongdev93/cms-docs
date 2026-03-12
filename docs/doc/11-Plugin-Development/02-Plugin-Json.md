@@ -1,4 +1,4 @@
-# Tìm hiểu Cấu trúc và Cách sử dụng `plugin.json` chi tiết
+# Plugin.json
 
 Trong kiến trúc của SkillDo CMS v8, tệp `plugin.json` đóng vai trò là "Trái tim" của mọi Plugin. Hệ thống Không sử dụng `composer.json` cho từng Plugin nội bộ để tránh nặng nề, mà thay vào đó Plugin Loader của CMS sẽ quét tệp `plugin.json` để lấy Meta Data (thông tin hiển thị), nạp các thư viện, Class, Route và Middleware mà không cần lập trình viên phải Include thủ công.
 

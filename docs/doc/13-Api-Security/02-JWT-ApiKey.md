@@ -1,4 +1,4 @@
-# Cấu Hình JWT Token & API Key (API Authentication)
+# JWT Token & API Key
 
 SkillDo CMS v8 được tích hợp sẵn hệ thống API Authentication với **2 phương thức xác thực** độc lập, an toàn và tối giản:
 

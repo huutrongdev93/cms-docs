@@ -1,7 +1,7 @@
 # String
 
-> **Namespace:** `Illuminate\Support\Str`
-> **Alias ngắn:** `\Str`
+> **Namespace:** `Illuminate\Support\Str`  
+> **Alias ngắn:** `\Str`  
 > **Tài liệu tham khảo:** [Laravel String Helpers](https://laravel.com/docs/12.x/strings#strings-method-list)
 
 SkillDo CMS v8 mở rộng `Illuminate\Support\Str` của Laravel, bổ sung thêm các phương thức đặc thù như `Str::clear()`, `Str::price()`, `Str::isSerialized()`. Tất cả gọi bằng alias `Str::`.

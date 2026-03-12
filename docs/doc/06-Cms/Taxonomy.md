@@ -1,7 +1,7 @@
-# Taxonomy — Post Type & Category Type
+# Taxonomy
 
-> **File:** `packages/skilldo/cms/src/Taxonomy/Taxonomy.php`
-> **Namespace:** `SkillDo\Cms\Taxonomy\Taxonomy`
+> **File:** `packages/skilldo/cms/src/Taxonomy/Taxonomy.php`  
+> **Namespace:** `SkillDo\Cms\Taxonomy\Taxonomy`  
 > **Alias ngắn:** `\Taxonomy`
 
 Taxonomy là hệ thống cho phép Plugin **đăng ký các loại nội dung (Post Type)** và **loại danh mục (Category Type)** riêng, tích hợp sẵn vào giao diện Admin của CMS mà không cần viết lại toàn bộ logic.

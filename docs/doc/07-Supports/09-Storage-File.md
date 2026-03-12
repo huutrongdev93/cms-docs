@@ -2,9 +2,9 @@
 
 ## 1. Storage
 
-> **File:** `packages/skilldo/framework/src/Filesystem/Storage.php`
-> **Namespace:** `SkillDo\Filesystem\Storage`
-> **Alias ngắn:** `\Storage`
+> **File:** `packages/skilldo/framework/src/Filesystem/Storage.php`  
+> **Namespace:** `SkillDo\Filesystem\Storage`  
+> **Alias ngắn:** `\Storage`  
 > **Tài liệu tham khảo:** [Laravel Filesystem](https://laravel.com/docs/12.x/filesystem)
 
 `Storage` là một lớp bao bọc Laravel Filesystem, cho phép thao tác với file hệ thống qua các **Disk** đã được cấu hình sẵn. Mỗi disk là một "ổ đĩa ảo" trỏ đến một thư mục cụ thể trên server.
@@ -228,10 +228,10 @@ $config = MyPluginConfig::get();
 
 ## 2. File
 
-> **File:** `packages/skilldo/framework/src/Support/File.php`
-> **Namespace:** `SkillDo\Support\File`
-> **Alias ngắn:** `\File`
-> **Extends:** `Illuminate\Filesystem\Filesystem`
+> **File:** `packages/skilldo/framework/src/Support/File.php`  
+> **Namespace:** `SkillDo\Support\File`  
+> **Alias ngắn:** `\File`  
+> **Extends:** `Illuminate\Filesystem\Filesystem`  
 > **Tài liệu tham khảo:** [Laravel File](https://laravel.com/docs/12.x/helpers#files)
 
 `File` là lớp bao bọc `Illuminate\Filesystem\Filesystem` của Laravel. Khác với `Storage` (dùng **disk ảo** với đường dẫn tương đối), `File` làm việc trực tiếp với **đường dẫn tuyệt đối** trên server.

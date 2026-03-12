@@ -1,4 +1,4 @@
-# Quản Trị Tài Nguyên Assets & Vùng Đầu Trang (Head)
+# Assets & Head
 
 Hệ thống cung cấp cơ chế quản lý thẻ Meta, biến JavaScript toàn cục, biến CSS Root và các tệp tin tĩnh (CSS/JS) rất mạch lạc thông qua hai class lõi `ThemeAssetService` và `ThemeHeadService`. 
 

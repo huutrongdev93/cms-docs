@@ -1,4 +1,4 @@
-# Màn Hình Bảng Điều Khiển (Admin Dashboard)
+# Admin Dashboard
 
 Trang tổng quan (Dashboard) của Admin Panel trong SkillDo CMS V8 được cấu thành từ tập hợp nhiều **Dashboard Widget**. Bạn hoàn toàn có thể nhúng thêm các khối biểu đồ, dữ liệu thống kê, hoặc thanh truy cập nhanh do hệ thống Plugin/Theme của bạn phát triển trực tiếp vào giao diện này.
 

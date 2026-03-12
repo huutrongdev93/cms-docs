@@ -1,7 +1,7 @@
 # Url
 
-> **File:** `packages/skilldo/cms/src/Support/Url.php`
-> **Namespace:** `SkillDo\Cms\Support\Url`
+> **File:** `packages/skilldo/cms/src/Support/Url.php`  
+> **Namespace:** `SkillDo\Cms\Support\Url`  
 > **Alias ngắn:** `\Url`
 
 Class `Url` cung cấp các helper tĩnh để tạo và xử lý URL trong SkillDo CMS v8.

@@ -1,7 +1,4 @@
-# Hook System — Action & Filter
-
-> **File:** `packages/skilldo/cms/src/Hooks/helpers.php`
-> **Loại:** Global functions (dùng trực tiếp, không cần `use` hay namespace)
+# Hook System
 
 Hệ thống Hook của SkillDo CMS v8 được thiết kế theo mô hình **WordPress Hook** (Event-driven). Đây là cơ chế cốt lõi cho phép Plugin và Theme **mở rộng hoặc thay đổi hành vi** của CMS mà không cần sửa code gốc.
 
@@ -9,10 +6,10 @@ Hệ thống Hook của SkillDo CMS v8 được thiết kế theo mô hình **Wo
 
 ## 1. Hai Loại Hook
 
-| Loại | Khi nào dùng | Trả về |
-|---|---|---|
-| **Action** | Thực hiện một hành động tại thời điểm nhất định | Không (void) |
-| **Filter** | Biến đổi/lọc một giá trị trước khi dùng | Giá trị đã được lọc |
+| Loại       | Khi nào dùng                                    | Trả về              |
+|------------|-------------------------------------------------|---------------------|
+| **Action** | Thực hiện một hành động tại thời điểm nhất định | Không (void)        |
+| **Filter** | Biến đổi/lọc một giá trị trước khi dùng         | Giá trị đã được lọc |
 
 > **Quy tắc đơn giản:**
 > - Cần **làm gì đó** (gửi mail, thêm class, xóa cache...) → dùng **Action**

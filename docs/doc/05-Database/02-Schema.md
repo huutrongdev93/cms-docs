@@ -1,7 +1,7 @@
 # Schema Builder
 
-> **Helper:** `schema()` (toàn cục)
-> **Namespace:** `Illuminate\Database\Schema\Builder`
+> **Helper:** `schema()` (toàn cục)  
+> **Namespace:** `Illuminate\Database\Schema\Builder`  
 > **Tài liệu tham khảo:** [Laravel Schema](https://laravel.com/docs/12.x/migrations#creating-tables)
 
 ## 1. Schema Builder là gì?

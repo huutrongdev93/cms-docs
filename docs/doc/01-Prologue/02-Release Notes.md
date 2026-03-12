@@ -13,11 +13,17 @@
 
 ### version 8.0.0 - 30.03.2026
 
-Add triển khai framework hoàn toàn mới trên nền tảng Illuminate components từ Laravel
-Add triển khai cms hoàn toàn mới
-Add hệ thống builder mới
-Add Các lớp bảo mật mới (Cơ chế sinh mật khẩu, Headers, CORS...)
-Add Form - Thêm nhiều Field mới
+<span class="badge text-bg-green">Add</span> triển khai framework hoàn toàn mới trên nền tảng Illuminate components từ Laravel
+
+<span class="badge text-bg-green">Add</span> Triển khai cơ chế loader cms hoàn toàn mới
+
+<span class="badge text-bg-green">Add</span> Hệ thống builder mới tích hợp xâu
+
+<span class="badge text-bg-green">Add</span> Các lớp bảo mật mới (Cơ chế sinh mật khẩu, Headers, CORS...)
+
+<span class="badge text-bg-green">Add</span> Form - Thêm nhiều Field mới
+
+<span class="badge text-bg-green">Add</span> Jquery - Nâng cấp thư viện jquery lên phiên bản 4.0.0
 
 ### version 7.5.7 - 28.08.2025
 

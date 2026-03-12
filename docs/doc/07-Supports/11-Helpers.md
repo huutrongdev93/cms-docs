@@ -1,4 +1,4 @@
-# Các Hàm Trợ Giúp Toàn Cục (Global Helpers)
+# Global Helpers
 
 SkillDo CMS v8 cung cấp một loạt các hàm trợ giúp (helper functions) được khai báo ở phạm vi toàn cục (global scope). 
 Bạn có thể gọi trực tiếp các hàm này ở **bất kỳ đâu** trong dự án của mình (Controllers, Views, Models, Plugins) mà không cần phải `use` hay khởi tạo class phức tạp. Các helper này kết nối thẳng vào những thành phần sâu nhất của Framework.

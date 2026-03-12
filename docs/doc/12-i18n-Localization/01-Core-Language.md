@@ -1,4 +1,4 @@
-# Hệ Thống Ngôn Ngữ Framework & CMS (i18n Core)
+# Hệ Thống Ngôn Ngữ
 
 Hệ thống SkillDo CMS v8 được xây dựng ngay từ đầu với khả năng hỗ trợ **Đa Ngôn Ngữ (Internationalization - i18n)**. Hệ thống quản lý các tệp ngôn ngữ cực kỳ chặt chẽ dựa trên các **Namespace** để phân biệt rõ ràng ngôn ngữ của Core, Theme, Plugin hay Admin.
 

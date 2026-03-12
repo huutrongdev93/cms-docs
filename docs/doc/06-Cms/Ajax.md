@@ -1,7 +1,7 @@
 # Ajax System
 
-> **File:** `packages/skilldo/cms/src/Support/Ajax.php`
-> **Namespace:** `SkillDo\Cms\Support\Ajax`
+> **File:** `packages/skilldo/cms/src/Support/Ajax.php`  
+> **Namespace:** `SkillDo\Cms\Support\Ajax`  
 > **Alias ngắn:** `\Ajax`
 
 ## Tổng Quan
@@ -17,7 +17,7 @@ Frontend (JS) → POST /ajax { action: 'MyAjax::method' }
 Backend (PHP) → Ajax dispatcher → MyAjax::method(Request $request)
                     │
                     ▼
-              response()->success(...) / response()->error(...)
+response()->success(...) / response()->error(...)
 ```
 
 ---
@@ -44,7 +44,7 @@ Ajax::admin('ClassName::methodName', 'post');
 
 ### Đăng ký trong Plugin
 
-```php
+```php title="plugins/my-plugin/bootstrap/ajax.php"
 // plugins/my-plugin/bootstrap/ajax.php
 Ajax::admin('MyPlugin\Ajax\ProductAjax::create', 'post');
 Ajax::admin('MyPlugin\Ajax\ProductAjax::update', 'post');
@@ -56,8 +56,8 @@ Ajax::login('MyPlugin\Ajax\MemberAjax::profile', 'post');
 
 ### Đăng ký trong Theme
 
-```php
-// views/theme-store/bootstrap/ajax.php
+```php title="views/theme-child/bootstrap/ajax.php"
+// views/theme-child/bootstrap/ajax.php
 Ajax::client('Theme\Ajax\ThemeAuthAjax::login', 'post');
 Ajax::client('Theme\Ajax\ThemeAuthAjax::register', 'post');
 Ajax::login('Theme\Ajax\ThemeAccountAjax::profile', 'post');
@@ -89,7 +89,8 @@ class ProductAjax
             'price' => Rule::make('Giá')->notEmpty()->numeric()->greaterThan(0),
         ])->validate();
 
-        if ($validate->fails()) {
+        if ($validate->fails()) 
+        {
             response()->error($validate->errors());
         }
 
@@ -99,7 +100,8 @@ class ProductAjax
             'price' => $request->input('price'),
         ]);
 
-        if (is_skd_error($id)) {
+        if (is_skd_error($id)) 
+        {
             response()->error($id);
         }
 
@@ -144,28 +146,6 @@ CMS tự động inject 2 biến JavaScript:
 | `ajax` | `/ajax` | URL endpoint ajax |
 | `request` | Axios instance | Axios đã cấu hình sẵn CSRF token |
 
-### Gọi bằng jQuery ($.post)
-
-```javascript
-$(document).on('click', '.btn-create', function(e) {
-    e.preventDefault();
-
-    let data = {
-        action: 'MyPlugin\\Ajax\\Admin\\ProductAjax::create',
-        title:  $('#title').val(),
-        price:  $('#price').val(),
-    };
-
-    $.post(ajax, data, function() {}, 'json')
-     .done(function(response) {
-        SkilldoMessage.response(response);
-        if (response.status === 'success') {
-            // Reload table hoặc redirect
-        }
-     });
-});
-```
-
 ### Gọi bằng Axios (request)
 
 ```javascript
@@ -188,22 +168,6 @@ $(document).on('click', '.btn-create', function(e) {
 ```
 
 > `request` là Axios instance đã được cấu hình tự động gửi **CSRF token** và **language headers**.
-
-### GET request
-
-```javascript
-let data = {
-    action: 'MyPlugin\\Ajax\\PublicAjax::load',
-    page:   1,
-};
-
-$.get(ajax, data, function() {}, 'json')
- .done(function(response) {
-    if (response.status === 'success') {
-        $('#container').html(response.data.html);
-    }
- });
-```
 
 ### Xử lý ngôn ngữ
 
@@ -381,11 +345,4 @@ plugins/my-plugin/
     }
 }
 ```
-
-## Xem Thêm
-
-- [Request](../framework/http/request.md)
-- [Response](../framework/http/response.md)
-- [Validation](../framework/validate/validate.md)
-- [Plugin System](./plugin/README.md)
 

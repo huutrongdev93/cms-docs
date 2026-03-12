@@ -4,18 +4,15 @@
  * work well for content-centric websites.
  */
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @font-face {
   font-family: "JetBrains Mono Regular";
   src: url('/static/fonts/JetBrainsMono-Regular.woff2') format('woff');
 }
-@font-face {
-  font-family: "Inter var";
-  src: url('https://tailwindcss.com/_next/static/media/InterVariable.ff710c09.woff2') format('woff');
-}
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-font-family-base: "Inter var", -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --ifm-font-family-base: "Inter", -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   --ifm-color-primary: #e33232;
   --ifm-color-primary-dark: #782929;
   --ifm-color-primary-darker: #712727;
@@ -23,10 +20,15 @@
   --ifm-color-primary-light: #923333;
   --ifm-color-primary-lighter: #993535;
   --ifm-color-primary-lightest: #ad3c3c;
+  --ifm-font-color-base:lab(84.9837% .601262 -2.17986);
+  --ifm-font-color-base-inverse:lab(84.9837% .601262 -2.17986);
   --ifm-code-font-size: 80%;
-  --ifm-h1-font-size:2.5rem;
+  --ifm-font-size-base:0.95rem;
+  --ifm-line-height-base:2;
+  --ifm-h1-font-size:2rem;
   --ifm-font-family-monospace: "JetBrains Mono Regular";
   --docusaurus-highlighted-code-line-bg:#dafbe1;
+  --ifm-hr-background-color:#ffffff1a;
 }
 html[data-theme='dark'] {
   --ifm-background-color:#03060b;
@@ -35,15 +37,35 @@ html[data-theme='dark'] {
 .navbar {
   border-bottom: 1px solid var(--ifm-toc-border-color);
 }
-.menu__list {
+.menu__list
+{
   font-size:14px;
+  font-weight:bold;
+  .menu__list-item-collapsible
+  {}
+  ul {
+    li {
+        font-size:12px;
+        font-weight:500;
+    }
+  }
 }
 .menu__link--sublist-caret:after, .menu__caret:before {
   background: var(--ifm-menu-link-sublist-icon) 50% / 1.2rem 1.2rem;
 }
-.markdown h1:first-child {
-  --ifm-h1-font-size:2.5rem;
-  margin-top: 10px;
+.markdown
+{
+  --ifm-h2-vertical-rhythm-top:1;
+  h1:first-child {
+    --ifm-h1-font-size:2rem;
+    margin-top: 10px;
+  }
+  > h2 {
+    --ifm-h2-font-size:1.5rem;
+  }
+  > h3 {
+      --ifm-h3-font-size:1.25rem;
+  }
 }
 pre {
   line-height:2;
@@ -52,12 +74,25 @@ code {
   color:#FF625AFF;
   max-height:43rem;
 }
-code .token.package {
-  color:#f6558c;
+code {
+  .token.package {
+    color:#f6558c;
+  }
+  .token.class-name {
+    color: #246cd3;
+  }
+  .token.property {
+    color: #7dd3fc;
+  }
+  .token.boolean, .token.constant, .token.symbol, .token.number {
+    color: #fbbf24;
+  }
+  .token.string, .token.char, .token.builtin, .token.inserted {
+  }
 }
-code .token.class-name {
-  color: #246cd3;
-}
+
+
+
 h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
   color:var(--ifm-color-primary);
   padding: 2px 5px;
@@ -78,6 +113,15 @@ h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
   --ifm-color-primary-lighter: #d83232;
   --ifm-color-primary-lightest: #dd4f4f;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  .prism-code {
+    background-color: lab(7.78673% 1.82345 -15.0537) !important; /* Màu đen sâu */
+    font-style: normal!important;
+    border-radius: 12px;
+    border: 1px solid lab(26.9569% -1.47016 -15.6993);
+    span {
+      font-style: normal!important;
+    }
+  }
 }
 
 img {

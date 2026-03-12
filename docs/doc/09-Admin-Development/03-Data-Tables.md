@@ -1,4 +1,4 @@
-# Bảng Dữ Liệu Quản Trị (Data Tables / SKDObjectTable)
+# Admin Tables
 
 Trong trang quản trị, tác vụ phổ biến nhất là hiển thị danh sách dữ liệu dưới dạng một Bảng (Table). Bảng này đòi hỏi phải có các tính năng phức tạp như:
 - Phân trang (Pagination)

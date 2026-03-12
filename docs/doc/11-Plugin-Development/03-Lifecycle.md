@@ -1,4 +1,4 @@
-# Vòng Đời Khởi Tạo Lớp Plugin (Plugin Lifecycle & Bootstrapper)
+# Vòng Đời Khởi Tạo Lớp Plugin
 
 Không giống như một Package thông thường chỉ có dạng Require và Return (Code xong quên). Framework SkillDo phải "theo dõi" toàn bộ Hệ Sinh Thái Plugin trong kho dữ liệu của mình (Bật, Tắt, Xóa, Gỡ Bỏ).
 Nếu một Quản Trị Viên nhấn "Gỡ Bỏ Plugin Bán Hàng", SkillDo sẽ cho Plugin cơ hội Cuối Cùng để tự giác "Dọn Dẹp Rác Của Mình Nơi Hệ Thống (Xóa Data Product, Xóa File DB)". Do đó Plugin được gán Vòng Đời rất sát sao.

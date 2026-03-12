@@ -1,8 +1,44 @@
-# Xây Dựng RESTful API Trong SkillDo CMS
+# Xây Dựng RESTful API
 
 SkillDo CMS v8 hỗ trợ mạnh mẽ việc xây dựng API (Application Programming Interface), cho phép các ứng dụng Mobile App (React Native, Flutter) hoặc Frontend độc lập (SPA bằng Vue/React) có thể giao tiếp và lấy dữ liệu trực tiếp từ hệ thống.
 
 Toàn bộ quá trình định tuyến và phản hồi API đã được chuẩn hóa để trả về định dạng JSON thống nhất.
+
+## API Authentication Flow
+
+```
+┌──────────┐      POST /api/auth/login       ┌──────────┐
+│  Client  │ ──────────────────────────────► │  Server  │
+│  (SPA/   │      {username, password}       │          │
+│  Mobile) │                                 │          │
+│          │ ◄────────────────────────────── │          │
+│          │   {accessToken, refreshToken}   │          │
+│          │                                 │          │
+│          │    GET /api/posts               │          │
+│          │    Authorization: Bearer xxx    │          │
+│          │ ──────────────────────────────► │          │
+│          │                                 │   JWT    │
+│          │ ◄────────────────────────────── │  Verify  │
+│          │          {data}                 │          │
+│          │                                 │          │
+│          │   (token expired)               │          │
+│          │    POST /api/auth/refresh       │          │
+│          │    {refresh_token}              │          │
+│          │ ──────────────────────────────► │          │
+│          │                                 │  Token   │
+│          │ ◄────────────────────────────── │ Rotation │
+│          │   {new accessToken,             │          │
+│          │    new refreshToken}            │          │
+└──────────┘                                 └──────────┘
+
+┌──────────┐      GET /api/posts             ┌──────────┐
+│  Server  │    X-API-Key: sk_xxx...         │  Server  │
+│  (3rd    │ ──────────────────────────────► │          │
+│  party)  │                                 │  HMAC    │
+│          │ ◄────────────────────────────── │  Verify  │
+│          │          {data}                 │          │
+└──────────┘                                 └──────────┘
+```
 
 ---
 

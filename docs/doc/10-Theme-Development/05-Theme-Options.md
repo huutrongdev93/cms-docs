@@ -1,4 +1,4 @@
-# Thiết Kế Theme Options (Cấu Hình Giao Diện Quản Trị)
+# Cấu Hình Giao Diện
 
 Trong v8, CMS đã cung cấp sẵn một hệ thống Theme Options mạnh mẽ tại đường dẫn `Admin → Giao diện → Cấu hình`. Hệ thống này được xây dựng trên Class **`SkillDo\Cms\Support\ThemeOption`**.
 

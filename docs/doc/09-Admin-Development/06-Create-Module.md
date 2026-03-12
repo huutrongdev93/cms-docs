@@ -1,4 +1,4 @@
-# Hướng Dẫn Kéo Sợi: Tạo Một Module Mới Hoàn Chỉnh (Plugin / Theme)
+# Tạo Một Module Mới Hoàn Chỉnh
 
 Bài viết này sẽ hướng dẫn bạn từ đầu đến cuối quy trình để tạo thêm một module chức năng (Ví dụ: **Quản Lý Dự Án - Projects**) vào màn hình Admin thông qua Plugin hoặc Theme trong CMS v8.
 

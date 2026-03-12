@@ -1,7 +1,7 @@
 # Eloquent Model
 
-> **File:** `packages/skilldo/framework/src/Database/Eloquent/Model.php`
-> **Namespace:** `SkillDo\Database\Eloquent\Model`
+> **File:** `packages/skilldo/framework/src/Database/Eloquent/Model.php`  
+> **Namespace:** `SkillDo\Database\Eloquent\Model`  
 > **Tài liệu tham khảo:** [Laravel Eloquent](https://laravel.com/docs/12.x/eloquent)
 
 ## 1. Eloquent Model là gì?
@@ -64,7 +64,7 @@ $bookings = Booking::where('status', 1)->get();
 use MyPlugin\Models\Booking;
 
 // Lấy tất cả
-$bookings = Booking::get();
+$bookings = Booking::all();
 
 // Lấy bản ghi với điều kiện
 $activeBookings = Booking::where('status', 1)->get();

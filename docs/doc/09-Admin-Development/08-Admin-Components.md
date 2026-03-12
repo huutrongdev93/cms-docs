@@ -1,4 +1,4 @@
-# Giao Diện Cấu Phần Kèm Theo Quản Trị Hệ Thống (Admin UI Components)
+# Admin UI Components
 
 Trong môi trường quản trị của SkillDo CMS (Admin Panel), Framework cung cấp rất nhiều lớp (Class Component) để sinh ra nhanh các mã HTML (Nút bấm, Icon, Badge, Bảng điều khiển, Tab) đồng nhất và hiện đại. Việc sử dụng các Component tích hợp trong Core giúp Code của bạn bớt cồng kềnh, chuẩn Responsive và có ngay hiệu ứng xử lý AJAX được làm sẵn.
 

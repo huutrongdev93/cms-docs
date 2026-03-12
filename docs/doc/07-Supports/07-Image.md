@@ -1,7 +1,7 @@
 # Image
 
-> **File:** `packages/skilldo/cms/src/Support/Image.php`
-> **Namespace:** `SkillDo\Cms\Support\Image`
+> **File:** `packages/skilldo/cms/src/Support/Image.php`  
+> **Namespace:** `SkillDo\Cms\Support\Image`  
 > **Alias ngắn:** `\Image`
 
 Class `Image` hỗ trợ việc tạo URL và thẻ HTML `<img>` cho các hình ảnh theo nhiều nguồn khác nhau. Mọi phương thức static đều trả về một `Image` instance, cho phép gọi theo kiểu chuỗi (fluent).
@@ -11,6 +11,21 @@ Class `Image` hỗ trợ việc tạo URL và thẻ HTML `<img>` cho các hình 
 ## 1. Tạo Image Instance
 
 Mỗi phương thức static tạo ra một `Image` instance với kiểu nguồn tương ứng. Bạn cần gọi `.html()` hoặc `.link()` ở cuối để lấy kết quả.
+
+### `Image::make()`
+Tạo ảnh từ một đường dẫn hoặc URL bất kỳ. Hệ thống sẽ tự động xác định kiểu nguồn dựa trên type và đường dẫn.
+
+```php
+// kiểu nguồn 'source'
+$img = Image::make('source', '2026/03/photo.jpg')->html();
+
+// Kiểu medium (tự động thêm thư mục medium/)
+$img = Image::make('medium', '2026/03/photo.jpg')->html();
+
+// Kiểu YouTube (tự động nhận diện URL YouTube)
+$img = Image::make('youtube', 'https://www.youtube.com/watch?v=Lq5GO4M1-Gk')->html();
+
+```
 
 ### `Image::source()`
 Tạo ảnh từ thư mục `uploads/` (nguồn gốc, kích thước gốc).

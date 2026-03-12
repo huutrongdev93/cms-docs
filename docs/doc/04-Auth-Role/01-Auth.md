@@ -1,27 +1,29 @@
-# Xác Thực (Authentication)
+# Authentication
 
 > **File:** `packages/skilldo/framework/src/Support/Auth.php`
+> 
 > **Namespace:** `SkillDo\Support\Auth`
 
-## 1. Auth trong SkillDo là gì?
+## 1. Auth là gì?
 Authentication (Xác thực) là quá trình hệ thống nhận diện việc người dùng tiến hành đăng nhập, kiểm tra thông tin tài khoản hợp lệ, ghi nhớ session, cookies và trả về các thông tin đối tượng User đang thao tác.
 
 Class `SkillDo\Support\Auth` của nền tảng cung cấp một tập hợp các phương thức tĩnh (Facade-like) vô cùng thân thiện giúp bạn thao tác với thông tin của người dùng hiện hành nhanh chóng mà không cần phải gọi qua DB liên tục, vì dữ liệu có cơ chế Cache & Session tối ưu.
 
-## 2. Các Cách Gọi Thường Dùng
+## 2. Cách Gọi Thường Dùng
 Vì các method của Auth được khai báo là tĩnh (`static`), bạn có thể gọi trực tiếp ở bất kỳ tệp Model, Controller, View hay Helper nào.
 
 Ví dụ:
 ```php
 use SkillDo\Support\Auth;
 
-if (Auth::check()) {
+if (Auth::check()) 
+{
     $userName = Auth::user()->username;
     $userId = Auth::id();
 }
 ```
 
-## 3. Danh Sách Phương Thức Của Class Auth
+## 3. Danh Sách Phương Thức
 ### 3.1 Xác thực người dùng
 #### <code>Auth::check</code>
 Method <code>Auth::check</code> Kiểm tra user đã đăng nhập hệ thống hay chưa nếu đã đăng nhập kết quả sẽ là true ngược lại là false
@@ -34,16 +36,14 @@ Method <code>Auth::user</code> trả thông tin user đang đăng nhập nếu k
 $user = Auth::user()
 ```
 
-#### <code>Auth::userID</code>
-Method <code>Auth::user</code> trả id user đang đăng nhập nếu không có user đăng nhập method trả về 0
+#### <code>Auth::id</code>
+Method <code>Auth::id</code> trả id user đang đăng nhập nếu không có user đăng nhập method trả về 0
 ```php
-$userId = Auth::userID();
-//hoặc
 $userId = Auth::id();
 ```
 
 #### <code>Auth::login</code>
-Method <code>Auth::login</code> tiền hành đăng nhập user được chỉ định vào hệ thống
+Method <code>Auth::login</code> đăng nhập user được chỉ định vào hệ thống
 | Credentials Key   |      Type      |  Description |
 |----------|:-------------:|------:|
 | username |  string | <ul style={{textAlign:"left"}}><li>sử dụng username (mặc định)</li><li>sử dụng email (mặc định được bật)</li><li>sử dụng phone (mặc định tắt - chỉ hỗ trợ từ phiên bản 7)</li></ul> |
@@ -88,6 +88,21 @@ $user = Auth::user();
 $password = Auth::generatePassword('new_password', $user->salt);
 $user->password = $password;
 $user->save();
+```
+
+#### <code>Auth::passwordConfirm</code>
+Method <code>Auth::passwordConfirm</code> kiểm tra mật khẩu người dùng nhập vào có khớp với mật khẩu của user đang đăng nhập hay không
+```php
+$passwordConfirm = Auth::passwordConfirm('my_password', $user);
+
+if($passwordConfirm) 
+{
+    echo "Password is correct";
+}
+else 
+{
+    echo "Password is incorrect";
+}
 ```
 
 ### 3.2 Phân quyền người dùng

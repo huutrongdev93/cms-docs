@@ -1,4 +1,4 @@
-# Danh Sách Model Mặc Định của CMS & Framework
+# Model Mặc Định
 
 Đây là toàn bộ các Model được cung cấp sẵn bởi SkillDo CMS và Framework. Bạn có thể sử dụng trực tiếp các Model này trong Plugin hoặc Theme mà không cần khai báo lại.
 

@@ -1,7 +1,7 @@
 # Cache
 
-> **File:** `packages/skilldo/framework/src/Cache/Cache.php`
-> **Namespace:** `SkillDo\Cache\Cache`
+> **File:** `packages/skilldo/framework/src/Cache/Cache.php`  
+> **Namespace:** `SkillDo\Cache\Cache` 
 > **Alias ngắn:** `\Cache`
 
 Cache giúp lưu trữ dữ liệu tốn nhiều thời gian truy vấn vào bộ nhớ đệm để truy xuất nhanh hơn ở các request tiếp theo.

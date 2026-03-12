@@ -1,4 +1,4 @@
-# Quản Trị Hệ Thống Tự Động (Cron & Schedule Jobs)
+# Cron & Schedule Jobs
 
 Trong việc quản trị các Website bán hàng hay Tạp chí, bạn thường xuyên có các vấn đề cần phải xử lý theo định kỳ tự động chạy Không Có Tương Tác Mạng (Ví dụ Xóa Ảnh tạm bị lỗi mỗi ngày 2 giờ sáng, Tính Giảm Giá Hàng Loạt Hằng Giờ, Gửi Email Báo Cáo Sinh Nhật User).
 

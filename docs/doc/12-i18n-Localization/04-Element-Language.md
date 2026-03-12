@@ -1,4 +1,4 @@
-# Thêm Đa Ngôn Ngữ Cho Page Builder Element (Element Language)
+# Đa Ngôn Ngữ Cho Element
 
 SkillDo CMS v8 sở hữu một trình dựng trang (Page Builder) vô cùng linh hoạt được xây dựng xoay quanh các khối hình gọi là **Elements**. Khi người dùng nhấp vào một Element, CMS sẽ hiển thị ra một Bảng Điều Khiển (Form Fields) để người dùng có thể nhập cấu hình (Ví dụ chọn Font, Điều màu nút bấm...).
 

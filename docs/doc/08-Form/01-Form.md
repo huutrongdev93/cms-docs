@@ -1,8 +1,8 @@
-# Form - Khởi tạo và hiển thị
+# Form
 
-> **File:** `packages/skilldo/cms/src/Form/Form.php`
-> **Namespace:** `SkillDo\Cms\Form\Form`
-> **Helper global:** `form()`
+> **File:** `packages/skilldo/cms/src/Form/Form.php`  
+> **Namespace:** `SkillDo\Cms\Form\Form`  
+> **Helper global:** `form()`  
 
 SkillDo CMS cung cấp thư viện mạnh mẽ để tạo và quản lý Form HTML từ PHP.
 

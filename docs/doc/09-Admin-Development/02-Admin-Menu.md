@@ -1,4 +1,4 @@
-# Quản Lý Menu Admin (Admin Menu / Sidebar)
+# Admin Navigation
 
 **Hệ thống Menu Sidebar** của Admin SkillDo CMS cho phép bạn thêm các Mục Điều Hướng (Navigation Items) vô cùng dễ dàng mà không cần phải can thiệp sửa trực tiếp vào file View HTML Layout của Core CMS. Bạn chỉ việc gọi hàm cấu hình bằng Hook Action, CMS sẽ tự động đọc mảng và in Menu trên giao diện Quản Trị của bạn.
 

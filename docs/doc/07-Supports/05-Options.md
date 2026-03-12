@@ -1,7 +1,7 @@
 # Option
 
-> **File:** `packages/skilldo/cms/src/Support/Option.php`
-> **Namespace:** `SkillDo\Cms\Support\Option`
+> **File:** `packages/skilldo/cms/src/Support/Option.php`  
+> **Namespace:** `SkillDo\Cms\Support\Option`  
 > **Alias ngắn:** `\Option`
 
 `Option` là hệ thống lưu trữ **cấu hình toàn cục** của CMS, được lưu trong bảng `system` của database. Ngoài các cấu hình mặc định của CMS, bạn có thể thêm các tùy chọn riêng cho Plugin hoặc Theme.

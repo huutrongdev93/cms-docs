@@ -1,4 +1,4 @@
-# Cấu trúc Đa Ngôn Ngữ Trong Plugins (Plugin Namespace)
+# Đa Ngôn Ngữ Trong Plugins
 
 Trong khi hệ thống CMS Core và Theme có quyền truy cập trực tiếp bằng các từ khóa dạng `trans('tên-file.từ-khóa')` hoặc `trans('theme::')`, thì các Plugin của SkillDo (hiện có 33+) buộc phải sử dụng một phương pháp tách bạch hoàn toàn để tránh những sự xung đột ngoài ý muốn. 
 

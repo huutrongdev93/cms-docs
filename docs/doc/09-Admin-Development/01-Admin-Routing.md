@@ -1,4 +1,4 @@
-# Admin Routing (Bảo vệ Routes Quản Trị)
+# Admin Routing
 
 Mọi trang chức năng dành cho người quản trị trong SkillDo CMS v8 đều được bảo vệ nghiêm ngặt. Hệ thống yêu cầu người dùng phải đăng nhập và sở hữu quyền hạn cấp Quản Trị (Admin Role) thì mới có thể truy cập vào vùng không gian đằng sau `/admin/...`.
 

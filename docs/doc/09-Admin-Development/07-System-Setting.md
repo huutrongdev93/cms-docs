@@ -1,4 +1,4 @@
-# Tích Hợp Cấu Hình Hệ Thống (System Config)
+# Cấu Hình Hệ Thống
 
 Trong trang quản trị (Admin Panel) phần **Hệ Thống (System)** nơi lưu trữ các cài đặt cốt lõi của website, nếu bạn code một Plugin hoặc một Module lớn mới và muốn bổ sung cấu hình (Setting) vào giao diện hệ thống cung cấp sẵn thì SkillDo V8 cung cấp hệ thống Hooks rất tiện lợi cho bạn.
 

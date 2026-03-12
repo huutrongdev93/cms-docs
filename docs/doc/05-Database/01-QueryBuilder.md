@@ -1,7 +1,7 @@
 # Query Builder
 
-> **File:** `packages/skilldo/framework/src/Database/DB.php`
-> **Namespace:** `SkillDo\Database\DB`
+> **File:** `packages/skilldo/framework/src/Database/DB.php`  
+> **Namespace:** `SkillDo\Database\DB`  
 > **Tài liệu tham khảo:** [Laravel Query Builder](https://laravel.com/docs/12.x/queries)
 
 ## 1. Query Builder là gì?

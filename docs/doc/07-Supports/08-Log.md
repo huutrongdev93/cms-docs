@@ -1,7 +1,7 @@
 # Log
 
-> **File:** `packages/skilldo/framework/src/Log/Log.php`
-> **Namespace:** `SkillDo\Log\Log`
+> **File:** `packages/skilldo/framework/src/Log/Log.php`  
+> **Namespace:** `SkillDo\Log\Log`  
 > **Alias ngắn:** `\Log`
 
 Class `Log` cung cấp hệ thống ghi nhật ký (logging) cho SkillDo CMS v8. Log hỗ trợ 2 channel (cách lưu file) và 8 cấp độ log theo chuẩn PSR-3.

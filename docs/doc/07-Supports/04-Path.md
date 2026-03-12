@@ -1,7 +1,7 @@
 # Path
 
-> **File:** `packages/skilldo/framework/src/Support/Path.php`
-> **Namespace:** `SkillDo\Support\Path`
+> **File:** `packages/skilldo/framework/src/Support/Path.php`  
+> **Namespace:** `SkillDo\Support\Path`  
 > **Alias ngắn:** `\Path`
 
 Class `Path` cung cấp các helper tĩnh để lấy **đường dẫn hệ thống tuyệt đối** trên server. Khác với `Url::` (dùng cho URL web), `Path::` dùng để truy cập file trên filesystem.
@@ -92,10 +92,10 @@ Trả về đường dẫn tuyệt đối đến thư mục admin backend.
 
 ```php
 Path::admin()
-// /var/www/html/myproject/views/backend
+// /var/www/html/myproject/views/admin
 
 Path::admin('assets/js/app.js')
-// /var/www/html/myproject/views/backend/assets/js/app.js
+// /var/www/html/myproject/views/admin/assets/js/app.js
 ```
 
 ### `Path::plugin()` *(Macro — đăng ký ở CMS)*

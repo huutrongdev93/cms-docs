@@ -1,4 +1,4 @@
-# Đa Ngôn Ngữ Trong Theme (Theme i18n)
+# Đa Ngôn Ngữ Trong Theme
 
 Đối với phát triển **Giao Diện (Theme)**, việc cho phép người dùng chuyển đổi ngôn ngữ Website mà nút bấm, tiêu đề (Footer, Header, Tin Tức Liên Quan...) tự động thay đổi theo là yếu tố tối thiểu của dự án Enterprise.
 
