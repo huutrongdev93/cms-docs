@@ -157,3 +157,50 @@ add_filter('admin_system_my_plugin_setting_check', function($error)
     return $error;
 });
 ```
+
+## 4. Tự Làm Form Giao Diện Và Logic Lưu Riêng
+
+Trong một số trường hợp với các Module phức tạp, bạn muốn giao diện tab cài đặt hoàn toàn do mình chủ động thiết kế HTML (ví dụ: chia thành nhiều form nhỏ, thiết kế giao diện theo ý muốn) cùng thuật toán lưu dữ liệu riêng thay vì phụ thuộc Form API có sẵn. Bạn có thể vô hiệu hoá Form mặc định của hệ thống bằng cách cấu hình thuộc tính `'form' => false`.
+
+```php
+class MyPluginConfig {
+    static function register($tabs)
+    {
+        $tabs['my-custom-setting'] = [
+            'group'       => 'common', 
+            'label'       => 'Cấu hình Nâng Cao',
+            'callback'    => [self::class, 'render'], 
+            'icon'        => '<i class="fad fa-cogs"></i>',
+            'form'        => false, // Tắt thẻ Form mặc định của hệ thống
+        ];
+        return $tabs;
+    }
+}
+```
+
+### Custom Render View
+
+Trường hợp tham số `form` mang giá trị `false`, hệ thống ngầm hiểu bạn làm chủ giao diện HTML trả ra. Ở bước Render, bạn thường trả về các View riêng thay vì tạo Layout tự động từ biến `$form` của hệ thống.
+
+```php
+class MyPluginConfig {
+    // ...
+    static public function render(\SkillDo\Http\Request $request): void
+    {
+        // Xử lý lấy Data hiển thị...
+        $sampleData = ['item1', 'item2']; 
+
+        // Người dùng có thể tự gọi các file View tuỳ biến 
+        echo view('my-plugin::admin.system-setting', compact('sampleData'));
+    }
+}
+```
+
+### Tự Viết Ajax Lưu Dữ Liệu
+
+**Lưu ý quan trọng:** Hành động tắt Form mặc định (`'form' => false`) đồng nghĩa với việc bạn tự chịu trách nhiệm lưu dữ liệu. Framework sẽ **KHÔNG GÁN** method Save vào hook **`admin_system_{tab_key}_save`** của tab này. 
+
+Do đó, bạn phải tự xử lý toàn bộ luồng lưu vào cơ sở dữ liệu:
+1. Tự thiết kế các thẻ `<form>` bên trong file view HTML của bạn (Ví dụ file `my-plugin::admin.system-setting` ở trên).
+2. Tự viết mã JavaScript để bắt sự kiện Submit.
+3. Bắn Data lên các Endpoint kết nối phía Server mà bạn tự viết riêng (Xây dựng Ajax riêng trong Plugin/Ajax của bạn).

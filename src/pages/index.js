@@ -204,7 +204,6 @@ function HeroBanner() {
                     <Heading as="h1" className={styles.heroTitle}>
                         Hệ thống CMS<br />
                         <span className={styles.heroTitleAccent}>thương mại điện tử</span><br />
-                        <span className={styles.heroTitleSub}>cho thị trường Việt Nam</span>
                     </Heading>
 
                     <p className={styles.heroSubtitle}>

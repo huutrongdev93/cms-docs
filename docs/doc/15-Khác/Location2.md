@@ -5,7 +5,7 @@
 Lấy danh sách Thành phố trực thuộc Trung ương
 
 ```php
-\SkillDo\Location2::provinces()
+\SkillDo\Cms\Location\Location2::provinces()
 ```
 _Kết quả_
 ```json
@@ -34,7 +34,7 @@ _Kết quả_
 #### Options
 Lấy danh sách theo dạng options
 ```php
-\SkillDo\Location2::provincesOptions()
+\SkillDo\Cms\Location\Location2::provincesOptions()
 ```
 _Kết quả_
 ```php
@@ -54,7 +54,7 @@ _Kết quả_
 Lấy chi tiết tỉnh thành phố theo id
 
 ```php
-\SkillDo\Location2::provinces(58)
+\SkillDo\Cms\Location\Location2::provinces(58)
 ```
 
 _Kết quả_
@@ -77,7 +77,7 @@ _Kết quả_
 Lấy tên tỉnh thành phố
 
 ```php
-\SkillDo\Location2::provinceName(58) // TP. Hồ Chí Minh
+\SkillDo\Cms\Location\Location2::provinceName(58) // TP. Hồ Chí Minh
 ```
 ### Phường / Xã / Thị trấn / Thôn / Đội
 
@@ -85,7 +85,7 @@ Lấy tên tỉnh thành phố
 Lấy danh sách Phường xã theo id tỉnh thành
 
 ```php
-\SkillDo\Location2::wards($province_id = null)
+\SkillDo\Cms\Location\Location2::wards($province_id = null)
 ```
 Kết quả
 ```json
@@ -111,7 +111,7 @@ Kết quả
 #### Options
 Lấy danh sách theo dạng options
 ```php
-\SkillDo\Location2::wardsOptions(6440)
+\SkillDo\Cms\Location\Location2::wardsOptions(6440)
 ```
 _Kết quả_
 ```php
@@ -125,7 +125,7 @@ _Kết quả_
 Lấy chi tiết quận huyện theo id
 
 ```php
-\SkillDo\Location2::wards(6440, 83331); //Huyện Bình Chánh
+\SkillDo\Cms\Location\Location2::wards(6440, 83331); //Huyện Bình Chánh
 ```
 kêt quả
 ```json
@@ -142,5 +142,5 @@ kêt quả
 Lấy tên phường xã bằng id tỉnh thành và id phường xã
 
 ```php
-\SkillDo\Location2::wardName(6440, 83331); //Xã Tân Kiên
+\SkillDo\Cms\Location\Location2::wardName(6440, 83331); //Xã Tân Kiên
 ```

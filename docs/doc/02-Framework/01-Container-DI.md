@@ -1,4 +1,4 @@
-# Service Container & Dependency Injection
+# Container & Dependency Injection
 
 SkillDo Framework được xây dựng xoay quanh khái niệm **Service Container** (còn gọi là IoC Container - Inversion of Control Container). Nếu bạn đã quen với Laravel, thì khái niệm này hoàn toàn tương tự. 
 

@@ -71,44 +71,47 @@ Thuộc tính bổ sung
 | multiple |  bool  | Cho phép chọn nhiều đối trượng |      false      |
 
 ### Thêm Field Popover
-#### Create
-Để tạo một field popover mới bạn tạo đường dẫn thư mục như sau (trong theme hiện tại hoặc một plugin cụ thể nào đó):
-```php
-core/Form/Popover
-```
 
-Tạo class field của bạn kế thừa lại class `PopoverHandle` của cms
+#### Bước 1 — Tạo class PopoverHandle
+
+Tạo file PHP trong Plugin của bạn (ví dụ `app/Cms/Form/Popovers/MyPopover.php`) kế thừa class `PopoverHandle`:
 
 ```php
+<?php
+namespace MyPlugin\Cms\Form\Popovers;
+
+use MyPlugin\Models\MyModel;
 use SkillDo\Cms\Form\PopoverHandle;
+use SkillDo\Cms\Support\Image;
 use SkillDo\Http\Request;
 
-class MyPopover extends PopoverHandle {
-
-    public function __construct() 
+class MyPopover extends PopoverHandle
+{
+    public function __construct()
     {
         $this->setModule('myPopover');
     }
-    
+
     public function search(Request $request): array
     {
         $items = [];
 
-        $args = Qr::set()->select('id', 'name', 'image')->limit($this->limit)->offset($this->page* $this->limit);
+        $query = MyModel::select('id', 'name', 'image')
+            ->limit($this->limit)
+            ->offset($this->page * $this->limit);
 
-        if(!empty($this->keyword)) {
-
-            $args->where('name', 'like', '%' . $this->keyword . '%');
+        if (!empty($this->keyword)) {
+            $query->where('name', 'like', '%' . $this->keyword . '%');
         }
 
-        $objects = ModelOfYou::gets($args);
+        $objects = $query->get();
 
-        if(have_posts($objects)) {
+        if (hasItems($objects)) {
             foreach ($objects as $value) {
-                $items[]  = [
-                    'id'        => $value->id,
-                    'name'      => $value->name,
-                    'image'     => Template::imgLink($value->image),
+                $items[] = [
+                    'id'    => $value->id,
+                    'name'  => $value->name,
+                    'image' => Image::medium($value->image)->link(),
                 ];
             }
         }
@@ -120,16 +123,14 @@ class MyPopover extends PopoverHandle {
     {
         $items = [];
 
-        if(have_posts($listId)) {
-
-            $objects = ModelOfYou::gets(Qr::set()->whereIn('id', $listId)->select('id', 'name', 'image'));
+        if (hasItems($listId)) {
+            $objects = MyModel::whereIn('id', $listId)->select('id', 'name', 'image')->get();
 
             foreach ($objects as $value) {
-
-                $items[]  = [
-                    'id'        => $value->id,
-                    'name'      => $value->name,
-                    'image'     => Template::imgLink($value->image),
+                $items[] = [
+                    'id'    => $value->id,
+                    'name'  => $value->name,
+                    'image' => Image::medium($value->image)->link(),
                 ];
             }
         }
@@ -139,66 +140,153 @@ class MyPopover extends PopoverHandle {
 }
 ```
 
-Với method `search` xử lý khi bạn tìm kiếm đối tượng,
-method `value` xử lý hiển thị đối tượng đã được chọn
->
-Nếu ở chế độ DEBUG = false bạn cần xóa cache `core_form_fields_popover_classes` và `core_files_loader` để cập nhật lại danh sách field popover
+- **`search()`** — xử lý truy vấn khi người dùng gõ từ khoá tìm kiếm. Trả về array các item.
+- **`value()`** — truy vấn lại các item theo danh sách ID đã lưu để render lại khi load trang.
+- Mỗi item trả về **bắt buộc** có key `id` và `name`. Key `image` là tuỳ chọn — nếu có thì template img sẽ được dùng.
+
+---
+
+#### Bước 2 — Đăng ký vào `plugin.json`
+
+Mở `plugin.json` của Plugin và thêm key `cms.form.popover`:
+
+```json
+{
+    "cms": {
+        "form": {
+            "popover": {
+                "myPopover": "MyPlugin\\Cms\\Form\\Popovers\\MyPopover"
+            }
+        }
+    }
+}
+```
+
+- **Key** (`"myPopover"`) là định danh dùng ở thuộc tính `search` khi khai báo field.
+- **Value** là Namespace đầy đủ của class vừa tạo (phải được map đúng trong `autoload`).
+
+---
+
+#### Bước 3 — Sử dụng field
 
 ```php
-CacheHandler::delete('core_form_fields_popover_classes')
-CacheHandler::delete('core_files_loader')
-```
-> 
-Sau đó bạn có thể sử dụng field mới bằng cách
-
- ```php
 $form = form();
 $form->popoverAdvance('field_name', [
-    'label'     => 'popover my field',
-    'search'    => 'myPopover',
+    'label'  => 'My Popover Field',
+    'search' => 'myPopover',
 ]);
 ```
 
-#### Template
-Mặt định popover sẽ sử dụng các file giao diện mặc định của cms nếu bạn muốn sử dụng file riêng mình có thể khai bái thêm
-> Khơi tạo id cho các template mới
+---
 
- ```php
+#### Bước 4 — Tuỳ chỉnh Template (Nâng cao)
+
+Mặc định Popover dùng chung 4 file template của CMS:
+
+| Key template  | Dùng khi                                   | File mặc định của CMS                                              |
+|:-------------:|:------------------------------------------:|:------------------------------------------------------------------:|
+| `searchNoImg` | Hiển thị item kết quả tìm kiếm (không ảnh) | `resources/components/popover-advance/template-search.blade.php`   |
+| `searchImg`   | Hiển thị item kết quả tìm kiếm (có ảnh)    | `resources/components/popover-advance/template-search-img.blade.php` |
+| `valueNoImg`  | Hiển thị item đã chọn (không ảnh)          | `resources/components/popover-advance/template-value.blade.php`    |
+| `valueImg`    | Hiển thị item đã chọn (có ảnh)             | `resources/components/popover-advance/template-value-img.blade.php` |
+
+Nếu muốn dùng template riêng, khai báo thêm trong `__construct()` và override các method tương ứng:
+
+```php
 public function __construct()
 {
     $this->setModule('myPopover');
-    //Template review value có hình ảnh
-    $this->setTemplateId('valueImg', 'popover_advance_my_field_load_template');
-    //Template review value không có hình ảnh
-    $this->setTemplateId('valueNoImg', 'popover_advance_my_field_load_template');
-    //Template hiên thị đối tượng khi search có hình ảnh
-    $this->setTemplateId('searchImg', 'popover_advance_my_field_search_template');
-    //Template hiên thị đối tượng khi search không có hình ảnh
-    $this->setTemplateId('searchNoImg', 'popover_advance_my_field_search_template');
-}
-```
-Khai báo file giao diện, function `Theme::makeView` chỉ là demo có thể sử dụng các function khách như `Plugin::makeView` tùy vào vị trí đặt file template
 
-```php
+    // Đặt ID duy nhất cho từng template (tránh trùng với các Popover khác)
+    $this->setTemplateId('valueImg',    'popover_advance_my_field_value_img');
+    $this->setTemplateId('valueNoImg',  'popover_advance_my_field_value');
+    $this->setTemplateId('searchImg',   'popover_advance_my_field_search_img');
+    $this->setTemplateId('searchNoImg', 'popover_advance_my_field_search');
+}
+
+// Dùng Plugin::partial() nếu file template nằm trong Plugin
 public function templateValueImg(): string
 {
-    return Theme::partial('admin/popover/template-popover');
+    return Plugin::partial('myPlugin', 'admin/popover/template-value-img');
 }
 
 public function templateValueNoImg(): string
 {
-    return Theme::partial('admin/popover/template-popover');
+    return Plugin::partial('myPlugin', 'admin/popover/template-value');
 }
 
 public function templateSearchImg(): string
 {
-    return Theme::partial('admin/popover/template-popover');
+    return Plugin::partial('myPlugin', 'admin/popover/template-search-img');
 }
 
 public function templateSearchNoImg(): string
 {
-    return Theme::partial('admin/popover/template-popover');
+    return Plugin::partial('myPlugin', 'admin/popover/template-search');
 }
 ```
 
-_* Tham khảo các file template mặc định để code file template mới cho bạn_
+**Cấu trúc file template:**
+
+File template dùng cú pháp `${key}` để binding dữ liệu từ array item, tương ứng với các key bạn trả về trong `search()` và `value()`.
+
+Template kết quả tìm kiếm (`search`) — phần nội dung bên trong wrapper item:
+```html
+{{-- template-search-img.blade.php --}}
+<div class="item__image"><img src="${image}" alt=""></div>
+<div class="item__name line-clamp-2">${name}</div>
+```
+
+Template item đã chọn (`value`) — phần nội dung bên trong wrapper item (bao gồm nút xoá do CMS tự thêm):
+```html
+{{-- template-value-img.blade.php --}}
+<div class="item__image"><img src="${image}"></div>
+<div class="item__name line-clamp-2">${name}</div>
+```
+
+> Bạn có thể thêm bất kỳ key nào vào array item (ví dụ `price`, `code`...) và dùng `${price}`, `${code}` tương ứng trong template.
+
+---
+
+### Thêm Field Popover Trong Theme
+
+Quy trình tạo class `PopoverHandle` hoàn toàn giống như trong Plugin (xem phần trên). Điểm khác biệt duy nhất là cách **đăng ký** với hệ thống.
+
+Namespace chuẩn của class nên nằm trong thư mục `app/` của theme, ví dụ:
+`views/theme-child/app/Cms/Form/Popovers/MyThemePopover.php` với namespace `Theme\Cms\Form\Popovers\MyThemePopover`.
+
+#### Đăng ký qua `theme-child.json`
+
+Mở (hoặc tạo) file `views/theme-child/theme-child.json` và thêm khối `cms.form.popover`:
+
+```json
+{
+    "cms": {
+        "form": {
+            "popover": {
+                "myThemePopover": "Theme\\Cms\\Form\\Popovers\\MyThemePopover"
+            },
+            "fields": {
+                "myThemeField": {
+                    "class": "Theme\\Cms\\Form\\Field\\MyThemeField"
+                }
+            }
+        }
+    }
+}
+```
+
+- **Key** (`"myThemePopover"`) là định danh dùng ở thuộc tính `search` khi gọi `$form->popoverAdvance(...)`.
+- **Value** là Namespace đầy đủ của class (phải khớp với cấu trúc thư mục trong `views/theme-child/app/`).
+
+#### Sử dụng field
+
+Sau khi đăng ký trong `theme-child.json`, cách dùng hoàn toàn giống Plugin:
+
+```php
+$form->popoverAdvance('field_name', [
+    'label'  => 'My Theme Popover',
+    'search' => 'myThemePopover',
+]);
+```
+

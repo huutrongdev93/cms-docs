@@ -1,6 +1,6 @@
 # Đa Ngôn Ngữ Trong Plugins
 
-Trong khi hệ thống CMS Core và Theme có quyền truy cập trực tiếp bằng các từ khóa dạng `trans('tên-file.từ-khóa')` hoặc `trans('theme::')`, thì các Plugin của SkillDo (hiện có 33+) buộc phải sử dụng một phương pháp tách bạch hoàn toàn để tránh những sự xung đột ngoài ý muốn. 
+Trong khi hệ thống CMS Core và Theme có quyền truy cập trực tiếp bằng các từ khóa dạng `trans('tên-file.từ-khóa')` hoặc `trans('theme::')`, thì các Plugin của SkillDo buộc phải sử dụng một phương pháp tách bạch hoàn toàn để tránh những sự xung đột ngoài ý muốn. 
 
 **Giải pháp của Framework:** SkillDo đăng ký cho Plugin một **Namespace dịch thuật riêng**.
 
