@@ -24,7 +24,7 @@ Model giúp tương tác với cơ sở dữ liệu (`skilldo_projects`).
 ```php
 namespace MyPlugin\Models;
 
-use SkillDo\Database\DB;
+use Illuminate\Support\Facades\DB;
 use SkillDo\Database\Eloquent\Builder;
 
 class Project extends \SkillDo\Cms\Models\Model

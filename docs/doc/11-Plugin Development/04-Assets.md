@@ -1,4 +1,4 @@
-# 04. Quản Lý Assets (CSS & JS) Trong Plugin
+# Quản Lý Assets (CSS & JS)
 
 Trong thư mục plugin bên trong hệ thống CMS V8, Framework hỗ trợ các hook hữu ích để giúp quản lý việc nạp các tệp tĩnh (CSS/JS) vào Frontend (Web), Backend (Admin), đồng thời cho phép tích hợp linh hoạt các biến CSS toàn cục (CSS Variables).
 

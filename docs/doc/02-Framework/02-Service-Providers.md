@@ -8,7 +8,7 @@ Nếu bạn coi ứng dụng của mình như một chiếc xe, thì **Service P
 
 ## 1. Vòng Đời Của Một Provider 
 
-Bất kỳ **Service Provider** nào trong SkillDo CMS (thường đặt ở thư mục `app/Providers/` hoặc `packages/*/src/Providers/`) cũng đều kế thừa từ class abstract `SkillDo\Support\ServiceProvider`.
+Bất kỳ **Service Provider** nào trong SkillDo CMS (đặt ở thư mục `app/Providers/`) cũng đều kế thừa từ class abstract `SkillDo\ServiceProvider`.
 
 Quá trình "boot" (khởi động) ứng dụng luôn đi qua 2 phương thức của Provider theo thứ tự sau:
 
@@ -24,7 +24,7 @@ Quá trình "boot" (khởi động) ứng dụng luôn đi qua 2 phương thức
 ```php
 namespace App\Providers;
 
-use SkillDo\Support\ServiceProvider;
+use SkillDo\ServiceProvider;
 use App\Services\PaymentService;
 
 class CustomServiceProvider extends ServiceProvider {
@@ -49,7 +49,7 @@ Tại đây bạn có thể cấu hình View, Event Listener, Hook, Middleware, 
 ```php
 namespace App\Providers;
 
-use SkillDo\Support\ServiceProvider;
+use SkillDo\ServiceProvider;
 
 class CustomServiceProvider extends ServiceProvider {
 
@@ -141,7 +141,7 @@ SkillDo hỗ trợ **Deferred Provider**. Thay vì nạp trong mọi request, h�
 ```php
 namespace App\Providers;
 
-use SkillDo\Support\ServiceProvider;
+use SkillDo\ServiceProvider;
 
 class PdfReportServiceProvider extends ServiceProvider {
 

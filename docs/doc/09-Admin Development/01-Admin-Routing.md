@@ -74,7 +74,7 @@ Ví dụ, bạn viết code tại class `App\Providers\PluginServiceProvider` c�
 ```php
 namespace App\Providers;
 
-use SkillDo\Support\ServiceProvider;
+use SkillDo\ServiceProvider;
 use SkillDo\Facades\Route;
 
 class GiftPluginServiceProvider extends ServiceProvider {

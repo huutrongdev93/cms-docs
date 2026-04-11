@@ -1,4 +1,4 @@
-# Breadcrumb Trong Admin
+# Admin Breadcrumb
 
 Trong giao diện quản trị (Admin Panel) của SkillDo CMS v8, thanh Breadcrumb giúp người quản trị dễ dàng nhận biết vị trí hiện tại của mình trong hệ thống phân cấp. Breadcrumb cho Admin được quản lý tập trung thông qua Service Container là `app('breadcrumb.admin')`.
 

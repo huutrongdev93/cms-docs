@@ -1,4 +1,4 @@
-# Hệ Thống Form Admin
+# Admin Form
 
 Trong trang Quản trị, ngoài màn hình Danh sách dạng Table, màn hình **Thêm Mới / Cập Nhật** (Ví dụ: Thêm Sản phẩm, Sửa Bài viết) là cực kỳ quan trọng. 
 

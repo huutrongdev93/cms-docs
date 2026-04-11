@@ -178,7 +178,7 @@ class Booking extends Model
         // Chạy SAU khi xóa thành công
         static::deleted(function (Booking $booking, $listIdRemove, $objects) {
             // Dọn dẹp dữ liệu liên quan
-            \SkillDo\Database\DB::table('booking_services')
+            \Illuminate\Support\Facades\DB::table('booking_services')
                 ->whereIn('booking_id', $listIdRemove)
                 ->delete();
         });

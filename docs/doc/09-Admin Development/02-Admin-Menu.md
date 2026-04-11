@@ -4,14 +4,14 @@
 
 ---
 
-## 1. Cơ Khí Hoạt Động Của Menu Admin
+## 1. Cơ Chế Hoạt Động Của Menu Admin
 
-Admin Sidebar trong SkillDo được tạo lên từ class thư viện `SkillDo\Cms\Menu\AdminMenu`. Hệ thống nhận yêu cầu tạo menu thông qua **Hook Action `admin_navigation`** (mượn triết lý của WordPress).
+Admin Sidebar trong SkillDo được tạo lên từ class thư viện `SkillDo\Cms\Menu\AdminMenu`. Hệ thống nhận yêu cầu tạo menu thông qua **Hook Action `admin_navigation`**.
 
 Luồng chạy:
 1. Khi có request duyệt `domain.com/admin`.
 2. Hệ thống gọi Action `admin_navigation` để cho phép TẤT CẢ các Plugin/Theme/Packages đăng ký Menu ảo vào bộ nhớ.
-3. Sau đó `AdminMenu->render()` gọi view và đổ giao diện ra màn hình HTML Sidebar tối sẫm.
+3. Sau đó `AdminMenu->render()` gọi view và đổ giao diện ra màn hình HTML Sidebar.
 
 ---
 

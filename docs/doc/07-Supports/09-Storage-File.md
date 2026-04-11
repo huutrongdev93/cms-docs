@@ -3,7 +3,7 @@
 ## 1. Storage
 
 > **File:** `packages/skilldo/framework/src/Filesystem/Storage.php`  
-> **Namespace:** `SkillDo\Filesystem\Storage`  
+> **Namespace:** `Illuminate\Support\Facades\Storage`  
 > **Alias ngắn:** `\Storage`  
 > **Tài liệu tham khảo:** [Laravel Filesystem](https://laravel.com/docs/12.x/filesystem)
 
@@ -187,7 +187,7 @@ $disk->put('my-theme/partials/my-widget.blade.php', $templateContent);
 ### 1.10 Ví Dụ Thực Tế — Plugin Lưu Cấu Hình Ra File
 
 ```php
-use SkillDo\Filesystem\Storage;
+use Illuminate\Support\Facades\Storage;
 
 class MyPluginConfig
 {

@@ -2,7 +2,7 @@
 
 > **Namespace:** `Illuminate\Support\Arr`  
 > **Alias ngắn:** `\Arr`  
-> **Tài liệu tham khảo:** [Laravel Array Helpers](https://laravel.com/docs/12.x/helpers#arrays-and-objects-method-list)
+> **Tài liệu tham khảo:** [Laravel Array Helpers](https://laravel.com/docs/master/helpers#arrays-and-objects-method-list)
 
 SkillDo CMS v8 sử dụng trực tiếp `Illuminate\Support\Arr` của Laravel. Bạn có thể gọi thẳng bằng alias `Arr::` mà không cần `use`.
 

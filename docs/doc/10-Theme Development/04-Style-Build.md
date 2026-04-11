@@ -1,4 +1,4 @@
-# CSS Building (`ThemeCssBuild`)
+# CSS Building
 
 Trong quá trình phát triển Giao diện hoặc Các Thành Phần Mở Rộng (Element), bạn thường xuyên lấy các giá trị Cấu hình (Config) như padding, margin, màu sắc từ Form builder mà người dùng thiết lập, sau đó chuyển tụi nó thành mã CSS Inline thực tế in ra màn hình.
 

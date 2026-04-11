@@ -1,14 +1,14 @@
 # Query Builder
 
 > **File:** `packages/skilldo/framework/src/Database/DB.php`  
-> **Namespace:** `SkillDo\Database\DB`  
+> **Namespace:** `Illuminate\Support\Facades\DB`  
 > **Tài liệu tham khảo:** [Laravel Query Builder](https://laravel.com/docs/12.x/queries)
 
 ## 1. Query Builder là gì?
 
 Query Builder là một giao diện lập trình linh hoạt và an toàn để tương tác với Database mà không cần viết câu lệnh SQL thuần. Mọi giá trị đầu vào đều được **tự động escaped** (thoát ký tự) để chặn tấn công SQL Injection.
 
-Lớp `SkillDo\Database\DB` là một Wrapper nhẹ của `Illuminate\Database\Query\Builder` (Laravel 12). Tất cả phương thức của Laravel Query Builder đều khả dụng trong SkillDo.
+Lớp `Illuminate\Support\Facades\DB` là một Wrapper nhẹ của `Illuminate\Database\Query\Builder` (Laravel 12). Tất cả phương thức của Laravel Query Builder đều khả dụng trong SkillDo.
 
 ## 2. Khởi Tạo Query
 
@@ -16,7 +16,7 @@ Dùng `DB::table('tên_bảng')` để bắt đầu một Query Builder mới tr
 **Lưu ý:** Hệ thống tự động thêm prefix bảng (vd: `cle_`) vào tên bảng nếu đã cấu hình DB_PREFIX trong `.env`.
 
 ```php
-use SkillDo\Database\DB;
+use Illuminate\Support\Facades\DB;
 
 $query = DB::table('post');
 ```
@@ -263,7 +263,7 @@ DB::table('post_meta')
 Dùng Transaction để đảm bảo toàn vẹn dữ liệu. Nếu bất cứ truy vấn nào trong khối thất bại, toàn bộ sẽ được rollback.
 
 ```php
-use SkillDo\Database\DB;
+use Illuminate\Support\Facades\DB;
 
 DB::beginTransaction();
 

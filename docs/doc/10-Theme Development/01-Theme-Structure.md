@@ -1,4 +1,4 @@
-# Cấu Trúc Thư Mục Của Theme v8
+# Cấu Trúc Theme
 
 Trong SkillDo CMS v8, một Theme không chỉ đơn giản là chứa vài file giao diện HTML thô sơ. V8 đã nâng cấp khái niệm Theme lên thành một "Ứng dụng thu nhỏ" chứa đựng logic, controller, assets và bộ máy dịch thuật riêng biệt.
 
@@ -6,9 +6,9 @@ Trong SkillDo CMS v8, một Theme không chỉ đơn giản là chứa vài file
 
 SkillDo v8 hỗ trợ **2 loại theme**:
 
-| Theme | Thư mục | Mô tả |
-|---|---|---|
-| **theme-store** | `views/theme-store/` | Theme chính — chứa toàn bộ giao diện, logic, services |
+| Theme           | Thư mục              | Mô tả                                                         |
+|-----------------|----------------------|---------------------------------------------------------------|
+| **theme-store** | `views/theme-store/` | Theme chính — chứa toàn bộ giao diện, logic, services         |
 | **theme-child** | `views/theme-child/` | Theme con — chỉ override các file cần thay đổi từ theme-store |
 
 ### Cơ chế ưu tiên

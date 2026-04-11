@@ -1,4 +1,4 @@
-# Widget Block (Sidebar/Footer)
+# Widget Block
 
 > Widget Block là mô hình widget cũ, chủ yếu dành cho các khu vực Sidebar, Footer truyền thống. Nếu bạn muốn sử dụng cho Page Builder, hãy xem tài liệu **Tạo Widget Element**.
 
