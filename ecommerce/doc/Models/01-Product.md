@@ -9,35 +9,35 @@
 
 ## Cấu trúc Cột (Columns)
 
-| Tên Cột | Kiểu | Mặc định | Mô tả |
-|:---|:---|:---|:---|
-| `title` | string | — | Tên sản phẩm |
-| `attribute_label` | string | — | Label biến thể đã chọn (tổng hợp) |
-| `slug` | string | — | Đường dẫn URL |
-| `code` | string | — | Mã SKU (tự sinh: `SP000012`) |
-| `content` | wysiwyg | — | Nội dung mô tả dài |
-| `excerpt` | wysiwyg | — | Mô tả ngắn |
-| `seo_title` | string | — | Tiêu đề SEO |
-| `seo_description` | string | — | Mô tả SEO |
-| `seo_keywords` | string | — | Từ khoá SEO |
-| `price` | price | `0` | Giá gốc (VND) |
-| `price_sale` | price | `0` | Giá khuyến mãi (0 = không KM) |
-| `status` | string | `public` | Trạng thái (public/draft/private) |
-| `status1` | int | `0` | Collection: Yêu thích (1=có) |
-| `status2` | int | `0` | Collection: Bán chạy (1=có) |
-| `status3` | int | `0` | Collection: Hot (1=có) |
-| `image` | image | — | Ảnh đại diện |
-| `public` | int | `1` | Hiển thị công khai (1/0) |
-| `trash` | int | `0` | Đã xóa mềm (1/0) |
-| `order` | int | `0` | Thứ tự sắp xếp |
-| `parent_id` | int | `0` | ID sản phẩm cha (cho biến thể) |
-| `brand_id` | int | `0` | ID thương hiệu |
-| `weight` | int | `0` | Cân nặng (gram) |
-| `long` | int | `0` | Chiều dài (mm) |
-| `width` | int | `0` | Chiều rộng (mm) |
-| `height` | int | `0` | Chiều cao (mm) |
-| `hasVariation` | int | `0` | Có biến thể không (1=có) |
-| `type` | string | `product` | Loại: `product` hoặc `variations` |
+| Tên Cột           | Kiểu    | Mặc định  | Mô tả                             |
+|:------------------|:--------|:----------|:----------------------------------|
+| `title`           | string  | —         | Tên sản phẩm                      |
+| `attribute_label` | string  | —         | Label biến thể đã chọn (tổng hợp) |
+| `slug`            | string  | —         | Đường dẫn URL                     |
+| `code`            | string  | —         | Mã SKU (tự sinh: `SP000012`)      |
+| `content`         | wysiwyg | —         | Nội dung mô tả dài                |
+| `excerpt`         | wysiwyg | —         | Mô tả ngắn                        |
+| `seo_title`       | string  | —         | Tiêu đề SEO                       |
+| `seo_description` | string  | —         | Mô tả SEO                         |
+| `seo_keywords`    | string  | —         | Từ khoá SEO                       |
+| `price`           | price   | `0`       | Giá gốc (VND)                     |
+| `price_sale`      | price   | `0`       | Giá khuyến mãi (0 = không KM)     |
+| `status`          | string  | `public`  | Trạng thái (public/draft/private) |
+| `status1`         | int     | `0`       | Collection: Yêu thích (1=có)      |
+| `status2`         | int     | `0`       | Collection: Bán chạy (1=có)       |
+| `status3`         | int     | `0`       | Collection: Hot (1=có)            |
+| `image`           | image   | —         | Ảnh đại diện                      |
+| `public`          | int     | `1`       | Hiển thị công khai (1/0)          |
+| `trash`           | int     | `0`       | Đã xóa mềm (1/0)                  |
+| `order`           | int     | `0`       | Thứ tự sắp xếp                    |
+| `parent_id`       | int     | `0`       | ID sản phẩm cha (cho biến thể)    |
+| `brand_id`        | int     | `0`       | ID thương hiệu                    |
+| `weight`          | int     | `0`       | Cân nặng (gram)                   |
+| `long`            | int     | `0`       | Chiều dài (mm)                    |
+| `width`           | int     | `0`       | Chiều rộng (mm)                   |
+| `height`          | int     | `0`       | Chiều cao (mm)                    |
+| `hasVariation`    | int     | `0`       | Có biến thể không (1=có)          |
+| `type`            | string  | `product` | Loại: `product` hoặc `variations` |
 
 > **Lưu ý**: Mỗi sản phẩm còn có thể có metadata mở rộng trong bảng `products_metadata` (truy cập qua `Product::getMeta($id, $key, true)`)
 
@@ -47,7 +47,7 @@
 
 ```php
 // Tất cả sản phẩm đang hiển thị (public=1 được áp tự động trên Frontend)
-$products = Product::get();
+$products = Product::all();
 
 // Tìm theo ID
 $product = Product::find(12);
@@ -111,14 +111,14 @@ $related = Product::related($product)->limit(6)->get();
 
 ## Sự kiện Model (Model Events)
 
-| Event | Trigger | Hành động mặc định |
-|:---|:---|:---|
-| `retrieved` | Sau khi lấy từ DB | Gọi filter `products_model_retrieved` |
-| `saving` | Trước khi lưu | Tự điền `seo_title`, `seo_description` nếu trống |
-| `saved` (add) | Sau khi thêm mới | Tự sinh mã `code` (SP000012), lưu categories |
-| `saved` (update) | Sau khi cập nhật | Sync categories, xóa cache |
-| `trashed` | Sau khi xóa mềm | Xóa cache, remove menu items |
-| `deleted` | Sau khi xóa vĩnh viễn | Xóa variations, attributes, gallery, categories, menu |
+| Event            | Trigger               | Hành động mặc định                                    |
+|:-----------------|:----------------------|:------------------------------------------------------|
+| `retrieved`      | Sau khi lấy từ DB     | Gọi filter `products_model_retrieved`                 |
+| `saving`         | Trước khi lưu         | Tự điền `seo_title`, `seo_description` nếu trống      |
+| `saved` (add)    | Sau khi thêm mới      | Tự sinh mã `code` (SP000012), lưu categories          |
+| `saved` (update) | Sau khi cập nhật      | Sync categories, xóa cache                            |
+| `trashed`        | Sau khi xóa mềm       | Xóa cache, remove menu items                          |
+| `deleted`        | Sau khi xóa vĩnh viễn | Xóa variations, attributes, gallery, categories, menu |
 
 ---
 
@@ -184,6 +184,4 @@ foreach ($variations as $variation) {
     echo $variation->attribute_label; // VD: "Đỏ - XL"
 }
 ```
-
-Xem thêm: [04-Other-Models.md](04-Other-Models.md) - phần Variation.
 

@@ -140,12 +140,12 @@ $form->right()
 
 ## 3. Render Form Ra HTML UI (Blade)
 
-Tại file Giao diện View `admin/brands/save.blade.php`: Thay vì phải code hàng chục `<div class="row">`, `LeftTop`, `Right` và lặp form mất thời gian. Core CMS cung cấp sẵn cấu trúc template Component Partial thần kỳ: `resources/components/page-default/page-save`.
+Tại file Giao diện View `admin/brands/save.blade.php`: Thay vì phải code hàng chục `<div class="row">`, `LeftTop`, `Right` và lặp form mất thời gian. Core CMS cung cấp sẵn cấu trúc template Component Partial thần kỳ: `resources/page-default/page-save`.
 
 Bạn KHÔNG CẦN viết HTML ngổn ngang, chỉ một dòng Include gọi Partial là Toàn bộ giao diện Form 2 cột, Nút Lưu AJAX, Ngôn ngữ tự động Render ra đầy đủ:
 
 ```blade
-{!! Admin::partial('resources/components/page-default/page-save', [
+{!! Admin::partial('resources/page-default/page-save', [
     'module'  => $module,                      // Bắt buộc: Chìa khóa để Component tự tìm tới Filter Hook
     'model'   => \Ecommerce\Models\Brands::class, // (Tuỳ chọn: Nếu Class Form chưa dùng setModel)
     'object'  => $object ?? []                 // Bắt buộc: Truyền Data cũ (Hoặc Rỗng nếu là Thêm Mới)

@@ -235,7 +235,7 @@ Cuối cùng, Render mọi thứ bằng Layout View siêu tinh gọn:
 1. **Trang index bảng danh sách:**
 *Đường dẫn: `plugins/my-plugin/views/admin/projects/index.blade.php`*
 ```blade
-{!! Admin::partial('resources/components/page-default/page-index', [
+{!! Admin::partial('resources/page-default/page-index', [
     'module'  => $module,
 ]) !!}
 ```
@@ -243,7 +243,7 @@ Cuối cùng, Render mọi thứ bằng Layout View siêu tinh gọn:
 2. **Trang Thêm/Sửa Form thông tin:**
 *Đường dẫn: `plugins/my-plugin/views/admin/projects/save.blade.php`*
 ```blade
-{!! Admin::partial('resources/components/page-default/page-save', [
+{!! Admin::partial('resources/page-default/page-save', [
     'module'  => $module,
     'model'   => \MyPlugin\Models\Project::class,
     'object'  => $object ?? []

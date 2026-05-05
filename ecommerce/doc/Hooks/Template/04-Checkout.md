@@ -127,5 +127,5 @@ add_filter('checkout_billing_fields', function($fields) {
 });
 ```
 
-> **Xem thêm**: Để tích hợp cổng thanh toán mới, xem [Gateway/01-Payment-Gateway.md](../Gateway/01-Payment-Gateway.md).
-> Để tích hợp đơn vị vận chuyển mới, xem [Gateway/02-Shipping-Gateway.md](../Gateway/02-Shipping-Gateway.md).
+> **Xem thêm**: Để tích hợp cổng thanh toán mới, xem [Gateway/01-Payment-Gateway.md](../../Gateway/01-Payment-Gateway.md).
+> Để tích hợp đơn vị vận chuyển mới, xem [Gateway/02-Shipping-Gateway.md](../../Gateway/02-Shipping-Gateway.md).
