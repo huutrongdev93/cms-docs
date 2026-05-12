@@ -2,7 +2,7 @@
 
 > **File Gốc:** `packages/skilldo/cms/src/Support/Role.php`  
 > **Kế thừa Module (Collection):** `SkillDo\Cms\Roles\RoleCollection`  
-> **Namespace (Core API):** `SkillDo\Cms\Support\Role`  
+> **Namespace:** `SkillDo\Cms\Support\Role`  
 
 Hệ thống phân quyền trên SkillDo CMS v8 được xây dựng xoay quanh 2 khái niệm là Hành động cấp quyền (Capabilities) và Chức vụ chứa các quyền hạn (Roles). Mỗi người dùng có thể sở hữu 1 hay nhiều Chức Vụ khác nhau. 
 

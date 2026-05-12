@@ -1,8 +1,10 @@
 # Routing System
 
-> **File:** `packages/skilldo/framework/src/Support/Facades/Route.php`
-> **Namespace Cấu Trúc:** `SkillDo\Routing`
+> **Namespace:** `SkillDo\Support\Facades\Route`
+>
 > **Facade:** `\Route`
+>
+> **File:** `packages/skilldo/framework/src/Support/Facades/Route.php`
 
 Hệ thống Routing trong SkillDo CMS v8 được thiết kế dựa trên các mô hình framework hiện đại (như Laravel). Nó dùng để định tuyến các URL HTTP tới các xử lý tương ứng trong **Controller** hoặc **Closure**.
 

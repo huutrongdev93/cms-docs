@@ -3,8 +3,10 @@
 Đây là toàn bộ các Model được cung cấp sẵn bởi SkillDo CMS và Framework. Bạn có thể sử dụng trực tiếp các Model này trong Plugin hoặc Theme mà không cần khai báo lại.
 
 Các Model đều nằm trong hai package chính:
-- **CMS:** `packages/skilldo/cms/src/Models/` — Namespace `SkillDo\Cms\Models`
-- **Framework (API):** `packages/skilldo/framework/src/Api/Models/` — Namespace `SkillDo\Api\Models`
+- **CMS:** `packages/skilldo/cms/src/Models/` 
+- **Namespace** `SkillDo\Cms\Models`
+- **Framework (API):** `packages/skilldo/framework/src/Api/Models/`
+- **Namespace** `SkillDo\Api\Models`
 
 ---
 
@@ -12,15 +14,15 @@ Các Model đều nằm trong hai package chính:
 
 ### `Post` — Bài Viết
 
-| Thuộc tính | Giá trị |
-|---|---|
-| **File** | `cms/src/Models/Post.php` |
-| **Namespace** | `SkillDo\Cms\Models\Post` |
-| **Bảng DB** | `{prefix}post` |
-| **Alias ngắn** | `\Post` |
-| **Traits** | `SoftDeletes`, `ModelRoute`, `ModelLanguage` |
-| **Route type** | `post` |
-| **Language type** | `post` |
+| Thuộc tính        | Giá trị                                      |
+|-------------------|----------------------------------------------|
+| **File**          | `cms/src/Models/Post.php`                    |
+| **Namespace**     | `SkillDo\Cms\Models\Post`                    |
+| **Bảng DB**       | `{prefix}post`                               |
+| **Alias ngắn**    | `\Post`                                      |
+| **Traits**        | `SoftDeletes`, `ModelRoute`, `ModelLanguage` |
+| **Route type**    | `post`                                       |
+| **Language type** | `post`                                       |
 
 **Mô tả:** Model quản lý bài viết (blog, tin tức, portfolio...). Hỗ trợ đa ngôn ngữ, URL slug, Soft Delete và phân loại theo `post_type`.
 
