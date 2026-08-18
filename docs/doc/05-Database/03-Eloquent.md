@@ -8,12 +8,20 @@
 
 Eloquent là một ORM (Object-Relational Mapper) - giúp bạn làm việc với bảng Database thông qua các đối tượng PHP (class) thay vì viết SQL thuần.
 
-Class `SkillDo\Database\Eloquent\Model` là phiên bản tùy chỉnh của Eloquent được SkillDo CMS v8 xây dựng lại để bổ sung thêm các tính năng đặc thù như:
-- **ModelEvents** (Hooks tự động: `saving`, `saved`, `deleted`...)
-- **ModelMeta** (Hỗ trợ bảng metadata)
-- **SoftDeletes** (Xóa mềm với cột `trash`)
-- **ModelRoute** (Tự động quản lý URL/Slug)
-- **ModelLanguage** (Đa ngôn ngữ)
+Class `SkillDo\Database\Eloquent\Model` là phiên bản tùy chỉnh của Eloquent được SkillDo CMS v8 xây dựng lại (không kế thừa `Illuminate\Database\Eloquent\Model`).
+
+**Traits tích hợp sẵn** trong Model (namespace `SkillDo\Traits\Eloquent\*`):
+- **ModelStatic** (các phương thức static: `all()`...)
+- **ModelMeta** (đọc/ghi bảng metadata: `getMeta`, `addMeta`, `updateMeta`, `deleteMeta`)
+- **ModelEvent** (Hooks tự động: `saving`, `saved`, `deleted`...)
+- **HasGlobalScopes** (`addGlobalScope`)
+- **HasUniqueIds** (nền tảng cho `HasUuids` / `HasUlids` — primary key UUID/ULID)
+- **HasRelationships** (`hasOne`, `hasMany`, `belongsTo`, `belongsToMany`)
+
+**Traits tùy chọn** (tự khai báo `use` khi cần):
+- **SoftDeletes** (Xóa mềm với cột `trash` kiểu số 0/1)
+- **ModelRoute** (Tự động quản lý URL/Slug qua bảng `routes`)
+- **ModelLanguage** (Đa ngôn ngữ qua bảng `language`)
 
 ## 2. Tạo Model cho Plugin
 
@@ -28,27 +36,28 @@ use SkillDo\Database\Eloquent\Model;
 
 class Booking extends Model
 {
-    // Tên bảng trong database (bắt buộc)
+    // Tên bảng trong database (nếu bỏ qua sẽ suy ra từ tên class dạng snake_case số nhiều)
     protected string $table = 'bookings';
 
-    // Khai báo danh sách cột và kiểu dữ liệu của chúng
-    // Đây là đặc điểm riêng của SkillDo Model (khác Laravel)
+    // Khai báo kiểu dữ liệu cho các cột ĐẶC BIỆT (đặc điểm riêng của SkillDo Model, khác Laravel)
+    // Lưu ý: KHÔNG cần liệt kê hết — hệ thống tự đọc toàn bộ cột + default
+    // từ schema database (cache key `table_columns_{table}`).
+    // Chỉ khai báo cột cần kiểu xử lý đặc biệt: wysiwyg, image, json, array...
+    // hoặc cần default khác với database.
     protected array $columns = [
-        'name'       => ['string'],
-        'phone'      => ['string'],
-        'service_id' => ['int', 0],    // [kiểu, giá_trị_mặc_định]
-        'status'     => ['int', 1],
-        'note'       => ['string'],
+        'note'       => ['wysiwyg'],
+        'options'    => ['json'],
+        'status'     => ['int', 1],    // [kiểu, giá_trị_mặc_định]
     ];
 }
 ```
 
 ### Bước 2: Đăng Ký Alias (Tùy Chọn)
-Mở file `bootstrap/config.php` của Plugin và đăng ký alias để dùng ngắn gọn:
+Mở file `bootstrap/config.php` của Plugin và đăng ký class alias qua `SkillDo\AliasLoader` (cú pháp giống cách CMS đăng ký `SkillDo\Model\*` trong `CmsServiceProvider::aliases()`):
 
 ```php
 // Trong bootstrap/config.php
-app()->alias('Booking', \MyPlugin\Models\Booking::class);
+\SkillDo\AliasLoader::getInstance()->alias('Booking', \MyPlugin\Models\Booking::class);
 
 // Sau đó có thể dùng
 $bookings = Booking::where('status', 1)->get();
@@ -80,11 +89,47 @@ $booking = Booking::where('phone', '0901234567')->first();
 $count = Booking::where('status', 1)->count();
 ```
 
+> [!WARNING]
+> **`Model::get()` gọi TĨNH khác hẳn Laravel.** Trait `ModelStatic` định nghĩa lại `get()` ở dạng static:
+>
+> ```php
+> static function get($id = 0)
+> {
+>     if(is_numeric($id)) return static::query()->find($id);
+>
+>     return static::query()->first();
+> }
+> ```
+>
+> Nghĩa là:
+>
+> | Cách gọi | Trả về |
+> |---|---|
+> | `Booking::get()` | **MỘT** bản ghi đầu tiên (tương đương `first()`) — **không phải** danh sách |
+> | `Booking::get(5)` | Bản ghi có id = 5 (tương đương `find(5)`) |
+> | `Booking::all()` | Collection **tất cả** bản ghi |
+> | `Booking::where(...)->get()` | Collection (đây là `get()` của Query Builder, hoạt động như Laravel) |
+>
+> Muốn lấy danh sách mà không có điều kiện, dùng `Booking::all()` hoặc `Booking::query()->get()`.
+
+### Các static helper riêng của SkillDo
+
+Ngoài API Eloquent chuẩn, trait `ModelStatic` bổ sung:
+
+| Method | Mô tả |
+|---|---|
+| `all()` | Collection tất cả bản ghi |
+| `get($id = 0)` | Một bản ghi (xem cảnh báo trên) |
+| `create($data)` | Thêm mới, trả về `int\|string` id hoặc `SKD_Error` |
+| `insert($data, $oldObject = null)` | Có primary key trong `$data` thì **update**, không có thì **create** |
+| `inserts($data)` | Insert hàng loạt qua Query Builder (không bắn model event) |
+| `updateBatch($values, $index = null, $raw = false)` | Cập nhật nhiều bản ghi trong một câu lệnh |
+| `delete($id = 0)` | Xóa cứng |
+
 ### 3.2 Thêm Mới (Create)
 
-Bạn có hai cách:
+**Chỉ có một cách thêm mới: dùng `create()`** — trả về ID vừa insert (`int|string`) hoặc `SKD_Error` nếu thất bại:
 
-**Cách 1: Dùng `create()` trên Query Builder (khuyến nghị)**
 ```php
 $bookingId = Booking::create([
     'name'       => 'Nguyễn Văn A',
@@ -102,17 +147,7 @@ if (is_skd_error($bookingId)) {
 }
 ```
 
-**Cách 2: Tạo instance rồi gọi `save()`**
-```php
-$booking = new Booking();
-$booking->name       = 'Nguyễn Văn A';
-$booking->phone      = '0901234567';
-$booking->service_id = 3;
-$booking->status     = 1;
-
-// Model sẽ nhận biết đây là INSERT (vì chưa có ID)
-$result = $booking->save();
-```
+> **Lưu ý (khác Laravel):** KHÔNG thể tạo bản ghi mới bằng cách `new Booking()` rồi gọi `save()`. Phương thức `save()` của SkillDo Model **chỉ dành cho UPDATE** — nó trả về `false` ngay nếu model chưa có primary key (`empty($this->getKey())`) hoặc không có thay đổi (`!isDirty()`).
 
 ### 3.3 Cập Nhật (Update)
 
@@ -121,7 +156,7 @@ $result = $booking->save();
 $booking = Booking::find(5);
 $booking->status = 2;
 $booking->note   = 'Đã xác nhận';
-$booking->save();  // Model nhận biết là UPDATE (vì đã có ID)
+$booking->save();  // UPDATE — yêu cầu model đã có ID; trả về ID nếu thành công, false nếu không có gì thay đổi
 ```
 
 **Cách 2: Mass update qua Query Builder**
@@ -132,6 +167,8 @@ Booking::where('status', 0)
 ```
 
 ### 3.4 Xóa (Delete)
+
+`delete()` luôn là **xóa cứng** (xóa thật khỏi DB) — kể cả khi model dùng trait `SoftDeletes` (xóa mềm dùng `trash()`, xem mục 7). Khi xóa thành công, hệ thống tự dọn route (`ModelRoute`), bản dịch (`ModelLanguage`) và metadata liên quan, rồi trả về mảng các ID đã xóa (hoặc `false` nếu không xóa được gì).
 
 ```php
 // Lấy bản ghi rồi xóa
@@ -186,19 +223,24 @@ class Booking extends Model
 }
 ```
 
-**Danh sách Events hỗ trợ:**
+**Danh sách Events hỗ trợ** (trait `SkillDo\Traits\Eloquent\ModelEvent`):
 
 | Event | Thời điểm kích hoạt |
 |---|---|
 | `saving` | Trước khi lưu (Insert hoặc Update) |
-| `saved` | Sau khi lưu thành công |
+| `saved` | Sau khi lưu thành công — callback nhận `($model, $action)` với `$action = 'add'\|'update'` |
 | `creating` | Trước khi Insert mới |
 | `created` | Sau khi Insert thành công |
-| `updating` | Trước khi Update |
+| `updating` | Trước khi Update (mass update qua builder) |
 | `updated` | Sau khi Update thành công |
-| `deleting` | Trước khi Delete |
-| `deleted` | Sau khi Delete thành công |
-| `retrieved` | Sau khi bản ghi được load từ DB |
+| `deleting` | Trước khi Delete — callback nhận `($model, $listId, $objects)` |
+| `deleted` | Sau khi Delete thành công — callback nhận `($model, $listIdRemove, $objects)` |
+| `retrieved` | Sau khi bản ghi được load từ DB (`get()`/`first()`) |
+| `trashing` / `trashed` | Trước / sau khi xóa mềm bằng `trash()` (cần trait `SoftDeletes`) |
+| `restoring` / `restored` | Trước / sau khi khôi phục bằng `restore()` (cần trait `SoftDeletes`) |
+| `booting` / `booted` | Khi model boot lần đầu / sau khi khởi tạo instance |
+| `columnsCreated` / `rulesCreated` | Sau khi build xong danh sách cột / rules từ schema |
+| `setQueryBuilding` / `setQueryBuilt` | Khi query builder của model đang/đã được khởi tạo (dùng để tùy biến query mặc định) |
 
 ---
 
@@ -231,7 +273,7 @@ $bookings = Booking::active()->byService(3)->orderBy('created', 'desc')->get();
 
 ## 6. Relationships (Quan Hệ Giữa Các Bảng)
 
-SkillDo Model hỗ trợ các loại quan hệ Eloquent cơ bản:
+SkillDo Model hỗ trợ các loại quan hệ Eloquent cơ bản qua trait `HasRelationships`: `hasOne()`, `hasMany()`, `belongsTo()`, `belongsToMany()` (các class Relation tương ứng nằm trong namespace `SkillDo\Database\Eloquent\Relations\*`). Hỗ trợ Eager Loading qua `with()` và Lazy Loading khi truy cập thuộc tính trùng tên method relation:
 
 ### hasMany (Một-Nhiều)
 ```php
@@ -272,7 +314,7 @@ echo $booking->user->firstname;
 
 ## 7. Soft Deletes (Xóa Mềm)
 
-SkillDo sử dụng cột `trash` thay vì `deleted_at` (khác Laravel). Khi bảng của bạn có cột `trash`, hãy dùng Trait `SoftDeletes`.
+SkillDo sử dụng cột `trash` kiểu số (`0` = bình thường, `1` = đã xóa mềm) thay vì `deleted_at` (khác Laravel). Khi bảng của bạn có cột `trash`, hãy dùng Trait `SoftDeletes` — trait này đăng ký global scope `SoftDeletingScope` tự động thêm `WHERE trash = 0` vào mọi query.
 
 ```php
 use SkillDo\Database\Eloquent\Model;
@@ -288,33 +330,52 @@ class Booking extends Model
 
 Sau đó, bạn có thể:
 ```php
-// Xóa mềm (cập nhật cột trash = 1, bản ghi vẫn còn trong DB)
-Booking::find(5)->delete();
+// Xóa mềm bằng trash() — cập nhật cột trash = 1, bản ghi vẫn còn trong DB
+// Bắn events: trashing → trashed
+Booking::whereKey(5)->trash();
+
+// LƯU Ý: delete() vẫn là XÓA CỨNG (xóa thật) kể cả khi dùng SoftDeletes
+Booking::whereKey(5)->delete();
 
 // Mặc định, các query đều ẩn bản ghi đã xóa mềm
-$active = Booking::get(); // Chỉ lấy trash = 0
+$active = Booking::all(); // Chỉ lấy trash = 0
 
 // Lấy CẢ bản ghi đã xóa mềm
 $all = Booking::withTrashed()->get();
 
-// Chỉ lấy bản ghi đã xóa mềm
+// Chỉ lấy bản ghi đã xóa mềm (trash = 1)
 $trashed = Booking::onlyTrashed()->get();
+
+// Loại trừ bản ghi đã xóa mềm (tương đương mặc định)
+$active = Booking::withoutTrashed()->get();
+
+// Khôi phục bản ghi đã xóa mềm (trash = 0)
+// Bắn events: restoring → restored
+Booking::onlyTrashed()->whereKey(5)->restore();
 ```
 
 ---
 
 ## 8. Model Meta (Dữ Liệu Mở Rộng)
 
-Nếu bảng của bạn có bảng metadata kèm (vd: `bookings_metadata`), SkillDo Model hỗ trợ sẵn API đọc/ghi metadata:
+Trait `ModelMeta` (tích hợp sẵn trong mọi Model) cung cấp API đọc/ghi metadata, ủy quyền cho `SkillDo\Cms\Support\Metadata`. Dữ liệu được lưu vào bảng `{tên_bảng}_metadata` nếu tồn tại, ngược lại fallback vào bảng dùng chung `metabox` (có cột `object_type`):
 
 ```php
-// Viết meta
+// Thêm meta mới
+Booking::addMeta($bookingId, 'payment_method', 'momo');
+
+// Cập nhật meta (tự thêm mới nếu chưa có)
 Booking::updateMeta($bookingId, 'payment_method', 'momo');
 
 // Đọc meta
 $method = Booking::getMeta($bookingId, 'payment_method', true);
-// true = trả về giá trị đơn, false = trả về tất cả
+// true (mặc định) = trả về giá trị đơn, false = trả về mảng tất cả giá trị
+
+// Xóa meta
+Booking::deleteMeta($bookingId, 'payment_method');
 ```
+
+Ngoài ra, khi gọi `create()`/`save()` mà attributes có key `metadata` (mảng `meta_key => meta_value`), hệ thống tự động tách ra và lưu vào bảng metadata.
 
 ---
 
@@ -370,7 +431,7 @@ class Service extends Model
 
 ### Cơ chế hoạt động
 Khi người dùng đang ở ngôn ngữ **không phải mặc định** (vd: `en`, `jp`...) và ở ngoài khu vực Admin:
-- Mọi câu query `Service::get()` hoặc `Service::where(...)->get()` sẽ tự động **INNER JOIN** bảng `language`
+- Mọi câu query `Service::all()` hoặc `Service::where(...)->get()` sẽ tự động **INNER JOIN** bảng `language`
 - Kết quả trả về: `title`, `name`, `excerpt`, `content` là của ngôn ngữ hiện tại thay vì ngôn ngữ mặc định
 
 ### Lưu dữ liệu đa ngôn ngữ
@@ -455,7 +516,9 @@ class Service extends Model
 | `type` | ✅ | Định danh `object_type` trong bảng `routes`. Phải **unique** toàn hệ thống (không trùng với `post`, `page`, `products`...) |
 | `controller` | ✅ | Class Controller sẽ xử lý khi URL được truy cập |
 | `method` | ✅ | Method trong Controller (thường là `detail`) |
-| `dependent` | ✅ | Cột dữ liệu dùng để tự động tạo `slug` nếu `slug` chưa được nhập (vd: lấy từ `title`) |
+| `dependent` | ✅ | Cột dữ liệu dùng để tự động tạo `slug` nếu `slug` chưa được nhập (vd: lấy từ `title`) — xử lý bởi `SkillDo\Cms\Support\Router::buildSlug()` |
+| `namespace` | ❌ | Namespace của route, mặc định `frontend` |
+| `callback` | ❌ | Nếu khai báo `callback` mà không có `controller`, hệ thống mặc định dùng `App\Controllers\Web\HomeController::page` và lưu callback vào bảng `routes` |
 
 ### Cơ chế hoạt động
 
@@ -466,6 +529,8 @@ Khi gọi `Service::create([...])`:
    - `controller` = class controller đã khai báo
    - `method` = phương thức đã khai báo
    - `object_type` = `services`
+   - `directional` = `services` (trùng `type`)
+   - `namespace` = `frontend` (hoặc giá trị tùy chỉnh)
    - `object_id` = ID vừa tạo
 
 Từ đó khi khách mở URL `https://domain.com/ten-dich-vu`, Router của CMS sẽ tra bảng `routes`, tìm ra `ServiceController@detail` và dispatch request đến đúng hàm xử lý.

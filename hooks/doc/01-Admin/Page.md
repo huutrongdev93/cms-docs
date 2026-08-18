@@ -1,74 +1,17 @@
 ### Trang danh sách page
 
-#### Điều kiện lấy total
-Thay đổi điều kiện lấy ra tổng số page dùng cho phân trang
+> **Thay đổi ở v8:** ba hook `admin_page_controllers_index_args_before_count`, `admin_page_controllers_index_args` và `admin_page_controllers_index_objects` **đã bị gỡ bỏ**. Chúng nhận biến `Qr` — lớp này không còn tồn tại ở v8 (đã chuyển hoàn toàn sang Eloquent Query Builder).
 
-| **Loại Hook**                                          | **Platform** |                                   **Version** |
-|--------------------------------------------------------|:------------:|----------------------------------------------:|
-| <span class="badge text-bg-green">apply_filters</span> |     cms      | <span class="badge text-bg-cyan">7.0.0</span> |
+Muốn can thiệp điều kiện lấy danh sách page, hãy override phương thức `queryFilter()` trong lớp Table của module:
 
 ```php
-$args = apply_filters('admin_page_controllers_index_args_before_count', Qr $args)
-```
-**Params**: biến Qr
+use SkillDo\Database\Eloquent\Builder;
+use SkillDo\Http\Request;
 
-**Return**: biến Qr
-
-```php
-function my_custom_admin_page_count(Qr $args): void
+public function queryFilter(Builder $query, Request $request): Builder
 {
-    return $args;
+    return $query;
 }
-add_filter('admin_page_controllers_index_args_before_count', 'my_custom_admin_page_count');
-```
-
-
-#### Điều kiện lấy list
-Thay đổi điều kiện lấy ra danh sách page
-
-| **Loại Hook**                                          | **Platform** |                                   **Version** |
-|--------------------------------------------------------|:------------:|----------------------------------------------:|
-| <span class="badge text-bg-green">apply_filters</span> |     cms      | <span class="badge text-bg-cyan">4.0.0</span> |
-
-```php
-$args = apply_filters('admin_page_controllers_index_args', Qr $args)
-```
-**Params**: biến Qr
-
-**Return**: biến Qr
-
-```php
-function my_custom_admin_page(Qr $args): void
-{
-    return $args;
-}
-add_filter('admin_page_controllers_index_args', 'my_custom_admin_page');
-```
-
-
-
-#### Danh sách page
-Thay danh sách page đã lấy ra
-
-| **Loại Hook**                                          | **Platform** |                                   **Version** |
-|--------------------------------------------------------|:------------:|----------------------------------------------:|
-| <span class="badge text-bg-green">apply_filters</span> |     cms      | <span class="badge text-bg-cyan">7.0.0</span> |
-
-```php
-$objects = apply_filters('admin_page_controllers_index_objects', array $objects, Qr $args);
-```
-**Params**: 
-* _$objects (array)_ : danh sách page đã lấy được từ database
-* _$args (Qr)_ : điều kiện lấy page từ database
-
-**Return**: $objects
-
-```php
-function my_custom_admin_page_objects($objects, Qr $args): array
-{
-    return $objects;
-}
-add_filter('admin_page_controllers_index_objects', 'my_custom_admin_page_objects', 10, 2);
 ```
 
 #### Table buttons bulk

@@ -61,6 +61,25 @@ echo $currency->rate;      // 1 (hoặc tỉ giá quy đổi)
 echo $currency->decimals;  // 0 (số chữ số thập phân)
 ```
 
+### `Prd::currencyDefault()`
+Lấy đối tượng tiền tệ **mặc định** của hệ thống (bản ghi `currencies` có `isDefault = 1`), bỏ qua lựa chọn của khách trong cookie.
+
+Nếu chưa cấu hình bản ghi mặc định nào, hàm trả về đối tượng dự phòng:
+
+```php
+$currency = Prd::currencyDefault();
+// (object)[
+//     'currency'  => 'VND',
+//     'position'  => 'right',
+//     'rate'      => 1,
+//     'rateFixed' => 0,
+//     'decimals'  => 0,
+//     'symbol'    => 'đ',
+// ]
+```
+
+> Dùng `currencyDefault()` khi cần **tiền tệ cơ sở** (ví dụ khi ghi giá vào DB); dùng `currency()` khi hiển thị theo lựa chọn của khách.
+
 ### `Prd::priceUnit()`
 Lấy ký hiệu đơn vị tiền tệ hiện tại.
 

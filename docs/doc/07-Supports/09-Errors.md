@@ -1,4 +1,7 @@
 > Class **SKD_Error**
+> **File:** `packages/skilldo/framework/src/Support/SKD_Error.php`  
+> **Namespace:** `SkillDo\Support\SKD_Error`  
+> **Alias ngắn:** `\SKD_Error`
 
 SkillDo Error class.
 >
@@ -11,18 +14,18 @@ Chúng ta sẽ tìm hiểu các phương thức lớp có sẵn trong lớp SKD_
 
 #### The `__construct` Method
 
-Đây là phương thức khởi tạo và được sử dụng để khởi tạo đối tượng `SKD_Error`. Nó chấp nhận ba đối số: `$code`, `$message` và `$data`.
+Đây là phương thức khởi tạo và được sử dụng để khởi tạo đối tượng `SKD_Error`. Nó chấp nhận bốn đối số (tất cả tùy chọn): `$code`, `$message`, `$rule` và `$data`. Khi truyền `$rule`, thông báo được lưu với key `$rule` bên trong mã lỗi (dùng cho validation).
 
 ```php
-$errorMessage = new SKD_Error(string $code, string $message);
+$errorMessage = new SKD_Error(int|string $code = '', string $message = '', ?string $rule = null, ?string $data = '');
 ```
 
 #### The `add` Method
 
-Bạn có thể sử dụng để thêm lỗi hoặc thêm thông báo bổ sung vào lỗi hiện có. Nó chấp nhận ba đối số: `$code`, `$message` và `$data`.
+Bạn có thể sử dụng để thêm lỗi hoặc thêm thông báo bổ sung vào lỗi hiện có. Nó chấp nhận bốn đối số giống `__construct`: `$code`, `$message`, `$rule` và `$data`.
 
 ```php
-$errorMessage->add(string $code, string $message);
+$errorMessage->add(int|string $code, string $message);
 ```
 
 
@@ -34,13 +37,28 @@ Bạn có thể sử dụng lấy danh sách toàn bộ mã code error
 $errorMessage->getErrorCodes();
 ```
 
+#### The `getErrorCode` Method
+
+Trả về mã lỗi **đầu tiên** (hoặc chuỗi rỗng nếu không có lỗi nào).
+
+```php
+$errorMessage->getErrorCode();
+```
 
 #### The `getErrorMessages` Method
 
 Method trả về một mảng chứa tất cả các thông báo lỗi có trong đối tượng `SKD_Error`. Nếu bạn chuyển `$code` vào đối số đầu tiên, Method sẽ trả về thông báo lỗi cho mã lỗi đã cho.
 
 ```php
-$errorMessage->getErrorMessages(striing $code);
+$errorMessage->getErrorMessages(int|string $code = '');
+```
+
+#### The `getErrorMessage` Method
+
+Trả về **một** thông báo lỗi đầu tiên của mã lỗi `$code` (nếu không truyền `$code`, dùng mã lỗi đầu tiên).
+
+```php
+$errorMessage->getErrorMessage(int|string $code = '');
 ```
 
 #### The `first` Method
@@ -64,7 +82,25 @@ if($errorMessage->hasErrors()) {
 Method được sử dụng để xóa tất cả các thông báo lỗi liên quan đến mã lỗi đã cho, cùng với mọi dữ liệu lỗi khác cho mã đó.
 
 ```php
-$errorMessage->remove(string $code);
+$errorMessage->remove(int|string $code);
+```
+
+#### The `errors` Method
+
+Trả về toàn bộ mảng `errors` thô (`[code => [message, ...]]`).
+
+```php
+$errorMessage->errors();
+```
+
+#### The `addData` / `getErrorData` Methods
+
+Mỗi mã lỗi có thể đính kèm một dữ liệu bổ sung. `addData($data, $code)` gán dữ liệu cho mã lỗi (nếu không truyền `$code`, dùng mã lỗi đầu tiên); `getErrorData($code)` truy xuất dữ liệu đó.
+
+```php
+$errorMessage->addData(['field' => 'email'], 'invalid');
+$data = $errorMessage->getErrorData('invalid');
+// ['field' => 'email']
 ```
 
 
@@ -87,7 +123,7 @@ SKD_Error Object
                     [0] => my favorite cms is SkillDo
                 )
         )
-    [error_data] => Array
+    [errorData] => Array
         (
         )
 )
@@ -116,7 +152,7 @@ SKD_Error Object
                     [0] => my favorite framework is Laravel
                 )
         )
-    [error_data] => Array
+    [errorData] => Array
         (
         )
 )
@@ -170,7 +206,7 @@ Phương thức first() truy xuất thông báo lỗi đầu tiên
 dd($errorMessage->first());
 /* 
 Output: 
-my favorite cms is SkillDo. ( và 1 lỗi nữa )
+my favorite cms is SkillDo. (và 1 lỗi nữa)
 */
 ```
 
@@ -186,7 +222,7 @@ if ($request->isMethod('post')) {
     if(empty($email)) {
         $error->add('empty', 'Email is required field.');
     }
-    if(!is_email($email)) {
+    if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error->add('invalid', 'Please enter valid email.');
     }
     if(empty($name)) {
@@ -194,7 +230,7 @@ if ($request->isMethod('post')) {
     }
     
     if ($error->hasErrors()) {
-        echo $error->first()
+        echo $error->first();
     } 
     else {
       // continue with the submission data and redirect 

@@ -28,24 +28,33 @@ Hệ thống v8 phân rã cấu trúc tệp dịch thuật thành **5 kiểu Nam
 
 Mọi tệp ngôn ngữ cốt lõi của **Framework Core** (Global) đều được đặt cứng tại thư mục gốc của dự án:
 ```text
-sourcev8/
+<gốc dự án>/
 └── language/
     ├── vi/
-    │   ├── validation.php    // Lỗi validate form
-    │   ├── system.php        // Từ khóa Hệ Thống lỗi
-    │   └── ...
+    │   ├── ajax.php          // Thông báo trả về từ ajax
+    │   ├── alert.php         // Nhãn mức độ thông báo (lỗi, cảnh báo, hoàn thành…)
+    │   ├── auth.php          // Đăng nhập / đăng ký / quên mật khẩu
+    │   ├── button.php        // Chữ trên các nút
+    │   ├── field.php         // Nhãn trường nhập liệu
+    │   ├── form.php          // Thông báo của form
+    │   ├── general.php       // Từ vựng dùng chung (điện thoại, địa chỉ, lưu…)
+    │   ├── lang-js.php       // Chuỗi đẩy xuống JavaScript
+    │   ├── table.php         // Bảng dữ liệu admin
+    │   └── validation.php    // Lỗi validate form
     └── en/
-        ├── validation.php
-        └── system.php
+        └── … (cùng danh sách file)
 ```
 
 Mỗi file ngôn ngữ trả về một mảng:
-`language/vi/system.php`
+`language/vi/alert.php`
 ```php
 <?php
 return [
-    'success' => 'Thao tác thành công.',
-    'error'   => 'Đã xảy ra lỗi hệ thống!',
+    'danger'  => 'Có lỗi',
+    'error'   => 'Có lỗi',
+    'warning' => 'Cảnh báo',
+    'info'    => 'Thông tin',
+    'success' => 'Hoàn thành',
 ];
 ```
 
@@ -57,8 +66,11 @@ return [
 
 ```php
 // 1. Gọi ở dạng Root Global (Không có '::')
-echo trans('system.success'); 
-// Trả về: Thao tác thành công. (Nếu là vi) 
+echo trans('alert.success');
+// Trả về: Hoàn thành (nếu đang là vi)
+
+echo trans('general.phone');
+// Trả về: Điện thoại
 
 // 2. Gọi dạng Admin Namespace
 echo trans('admin::form.button_save');

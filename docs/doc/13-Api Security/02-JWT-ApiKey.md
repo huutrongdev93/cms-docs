@@ -30,6 +30,10 @@ SkillDo\Api\
     └── ApiKeyRepository            # Quản lý API keys
 ```
 
+Thư mục vật lý: `packages/skilldo/framework/src/Api/`.
+
+> **Về config `jwt`:** khác với các file config khác, `jwt.php` **không** nằm trong `packages/skilldo/framework/src/config/` mà ở `packages/skilldo/framework/src/Api/config/jwt.php`, do `ApiServiceProvider` tự nạp bằng `array_merge` (giá trị trong file package **ghi đè** giá trị đã có). Vì vậy tạo `config/jwt.php` ở gốc dự án **không** override được — hãy đổi qua biến `.env` mà file config đọc.
+
 ## 2. Cài Đặt Ban Đầu
 
 Hệ thống yêu cầu cài đặt gói mã hóa JWT và thiết lập môi trường hệ thống.
@@ -105,7 +109,7 @@ Hệ thống sẽ băm ngược chuỗi này theo Khóa bí mật JWT, đối ch
 
 ```php
 // File: routes/api.php
-use SkillDo\Facades\Route;
+use SkillDo\Support\Facades\Route;
 
 // CẤP 1 - MIDDLEWARE "jwt": Chỉ APP LOG-IN/WEB LOG-IN mới được gọi
 Route::middleware('jwt')->group(function () {

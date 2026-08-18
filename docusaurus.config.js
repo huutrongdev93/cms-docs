@@ -175,21 +175,30 @@ const config = {
 				minHeadingLevel: 2,
 				maxHeadingLevel: 5,
 			},
-			algolia: {
-				// The application ID provided by Algolia
-				appId: process.env.ALGOLIA_APP_ID,
+		algolia: {
+			// The application ID provided by Algolia
+			appId: process.env.ALGOLIA_APP_ID,
 
-				// Public API key: it is safe to commit it
-				apiKey: process.env.ALGOLIA_API_KEY,
+			// Public API key: it is safe to commit it
+			apiKey: process.env.ALGOLIA_API_KEY,
 
-				indexName: process.env.ALGOLIA_INDEX_NAME,
+			indexName: process.env.ALGOLIA_INDEX_NAME,
 
-				// Optional: see doc section below
-				contextualSearch: true,
+			// Tắt contextualSearch để tránh xung đột với facetFilters bên dưới
+			contextualSearch: false,
 
-				// Optional: Algolia search parameters
-				searchParameters: {},
+			// Chỉ lấy kết quả từ version hiện tại (8.0.0) của tất cả doc plugin
+			searchParameters: {
+				facetFilters: [
+					[
+						'docusaurus_tag:docs-default-current',
+						'docusaurus_tag:docs-devtool-current',
+						'docusaurus_tag:docs-ecommerce-current',
+						'docusaurus_tag:docs-hooks-current',
+					],
+				],
 			},
+		},
 		}),
 	staticDirectories: ['static'],
 	markdown: {

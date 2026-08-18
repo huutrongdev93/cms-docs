@@ -2,7 +2,7 @@
 
 SkillDo CMS là một hệ thống quản trị nội dung (CMS) được phát triển bởi Sikido — hướng tới việc xây dựng website doanh nghiệp, thương mại điện tử, và blog một cách nhanh chóng, dễ mở rộng. Dự án sử dụng kiến trúc modular với hệ thống Plugin và Theme linh hoạt, lấy cảm hứng từ kiến trúc của Laravel nhưng được tùy biến sâu với framework riêng mang tên SkillDo Framework.
 >
-SkillDo v8 là bản tái kiến trúc toàn diện trên nền tảng Illuminate Components (Laravel 12), tách biệt hoàn toàn hai lớp Framework và CMS thành hai package độc lập thông qua Composer PSR-4 autoload.
+SkillDo v8 là bản tái kiến trúc toàn diện trên nền tảng Illuminate Components (Laravel 12), tách biệt hoàn toàn hai lớp Framework và CMS thành hai package độc lập, được liên kết qua Composer `path` repositories (symlink trong `composer.json`) với PSR-4 autoload.
 
 ## Kiến Trúc Hệ Thống
 
@@ -13,8 +13,9 @@ SkillDo v8 là bản tái kiến trúc toàn diện trên nền tảng Illuminat
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │  ┌─────────────────────┐  ┌──────────────────────────┐  │
-│  │     CMS Package     │  │     API Module           │  │
-│  │  SkillDo\Cms\*      │  │  SkillDo\Api\*           │  │
+│  │     CMS Package     │  │  API Module (nằm trong   │  │
+│  │  SkillDo\Cms\*      │  │  framework: src/Api/)    │  │
+│  │                     │  │  SkillDo\Api\*           │  │
 │  │                     │  │                          │  │
 │  │  • Models (User,    │  │  • JWT Authentication    │  │
 │  │    Post, Page...)   │  │  • API Key Management    │  │
@@ -49,7 +50,8 @@ SkillDo v8 là bản tái kiến trúc toàn diện trên nền tảng Illuminat
 ```
 sourcev8/
 ├── app/                         # Application layer
-│   └──Controllers/
+│   ├── Ajax/                    # Ajax handlers cấp ứng dụng
+│   └── Controllers/
 │      ├── Admin/                # controllers quản trị
 │      ├── Api/                  # API controllers (Auth, ApiKey)
 │      └── Web/                  # controllers frontend
@@ -57,20 +59,19 @@ sourcev8/
 ├── bootstrap/                    # Khởi tạo ứng dụng
 │   ├── app.php                   # Cấu hình Application + Routing + Middleware
 │   ├── autoload.php
-│   └── cache/                    # Config cache, route cache
+│   └── cache/                    # Config cache (config.php), route cache
 │
-├── config/                       # Cấu hình hệ thống
-│   ├── app.php                   # Providers, aliases, timezone, debug
-│   ├── cache.php                 # File / Redis / Memcached
-│   ├── cms.php                   # CMS core: admin, plugin, theme, user, widget
-│   ├── cors.php                  # CORS policy
-│   ├── csrf.php                  # CSRF protection
-│   ├── database.php              # MySQL connection
-│   ├── filesystems.php           # Local disk definitions
-│   ├── language.php              # i18n config (vi, en)
-│   ├── media.php                 # Media settings
-│   ├── request-sanitizer.php     # XSS input sanitization
-│   └── security-headers.php      # CSP, X-Frame, X-XSS headers
+├── config/                       # Tầng OVERRIDE cấu hình (hiện đang rỗng)
+│                                 # Config mặc định nằm trong 2 package:
+│                                 #  - packages/skilldo/framework/src/config/
+│                                 #    (app, cache, cors, csrf, database,
+│                                 #     filesystems, request-sanitizer,
+│                                 #     security-headers)
+│                                 #  - packages/skilldo/cms/src/config/
+│                                 #    (cms, csrf, language, media,
+│                                 #     security-headers)
+│                                 # File cùng tên đặt ở đây sẽ deep-merge đè
+│                                 # lên defaults (app > cms > framework)
 │
 ├── language/                     # Tệp ngôn ngữ
 │   ├── en/

@@ -2,14 +2,165 @@
 
 ### Phiên bản hỗ trợ
 
-| Cms Version |  PHP Support  |  Release   |    Support    |
-|:-----------:|:-------------:|:----------:|:-------------:|
-|      8      | 8.4.x - 8.5.x | 30/03/2026 |  Đang hỗ trợ  |
-|      7      | 8.2.x - 8.3.x | 10/08/2024 |  Đang hỗ trợ  |
-|      6      | 8.0.x - 8.1.x | 25/07/2022 | `Dừng hỗ trợ` |
-|      5      | 8.0.x - 8.1.x | 10/12/2021 | `Dừng hỗ trợ` |
-|      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
-|      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
+| Cms Version |  PHP Support  |  Release   |    Support     |
+|:-----------:|:-------------:|:----------:|:--------------:|
+|      8      | 8.4.x - 8.5.x | 30/03/2026 |  Đang hỗ trợ   |
+|      7      | 8.2.x - 8.3.x | 10/08/2024 | Hỗ trợ hạn chế |
+|      6      | 8.0.x - 8.1.x | 25/07/2022 | `Dừng hỗ trợ`  |
+|      5      | 8.0.x - 8.1.x | 10/12/2021 | `Dừng hỗ trợ`  |
+|      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ`  |
+|      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ`  |
+
+### version 8.1.6 - 17.08.2026
+
+<span class="badge text-bg-red">Fix</span> Page Builder — hiệu ứng khi cuộn (AOS) cho mọi element
+
+<span class="badge text-bg-red">Fix</span> Sửa migration 8.1.5 chưa được chạy
+
+<span class="badge text-bg-red">Fix</span> Menu — Fix lỗi clear slug (vi dụ `/#sosanh` thành `sosanh`)
+
+### version 8.1.5 - 14.08.2026
+
+<span class="badge text-bg-red">Fix</span> Page Builder — thứ tự tab/field không lưu được
+
+<span class="badge text-bg-red">Fix</span> Chống clickjacking không hoạt động
+
+<span class="badge text-bg-red">Fix</span> Bài viết liên quan / breadcrumb rỗng
+
+### version 8.1.4 - 10.08.2026
+
+<span class="badge text-bg-blue">Update</span> CSP — cho phép *.youtube-nocookie.com (nhúng YouTube chế độ không cookie).
+
+<span class="badge text-bg-red">Fix</span> URL thẻ và tìm kiếm trả về đường dẫn tuyệt đối — Url::tag()
+
+<span class="badge text-bg-red">Fix</span> Xoá nhầm cả bảng — 3 lỗi nghiêm trọng ở tầng Eloquent
+
+<span class="badge text-bg-red">Fix</span> Log mất trắng context (LogDaily/LogSingle) khi gặp byte không hợp lệ UTF-8
+
+<span class="badge text-bg-red">Fix</span> Cache menu không được xoá do sai khóa
+
+<span class="badge text-bg-red">Fix</span> Cấu hình hệ thống ghi đè ngược version
+
+<span class="badge text-bg-red">Fix</span> Preview builder trang nội dung mất CSS/JS header–footer
+
+### version 8.1.3 - 06.08.2026
+
+<span class="badge text-bg-green">Add</span> Hệ thống Thẻ (tag) - Thêm tính năng quản lý thẻ (tag) cho bài viết, cho phép người dùng tạo, chỉnh sửa và xóa thẻ, cũng như gán thẻ.
+
+<span class="badge text-bg-blue">Update</span> Hệ thống cập nhật (Update) - Cập nhật cơ chế kiểm tra và cài đặt bản cập nhật mới cho CMS, giúp người dùng dễ dàng nâng cấp hệ thống.
+
+<span class="badge text-bg-red">Fix</span> Template CSS — sửa lỗi gõ nhầm: trạng thái active gọi cssBorder() cho boxShadow <span class="badge text-bg-yellow">Tâm</span>
+
+### version 8.1.2 - 05.08.2026
+
+<span class="badge text-bg-green">Add</span> Element Builder - nạp thêm element đăng ký từ plugin đang active
+
+<span class="badge text-bg-green">Add</span> Routing — Router::gatherRouteMiddleware() nay thật sự tôn trọng withoutMiddleware(): trước đây excluded_middleware được ghi vào action nhưng không nơi nào đọc ra
+
+<span class="badge text-bg-green">Add</span> Trình soạn thảo TinyMCE — AdminHeaderService bỏ lớp nháy kép thừa quanh danh sách plugin và toolbar
+
+<span class="badge text-bg-blue">Update</span> Trường nhập liệu Field\Price thêm cấu hình số lẻ thập phân (mặc định 0, đổi qua filter form_price_decimals hoặc args['decimals']) và đẩy xuống JS bằng data-decimals
+
+<span class="badge text-bg-red">Fix</span> i18n / hook / DB — LanguageServiceProvider sửa điều kiện luôn false và tiền tố cắt sai khiến namespace ngôn ngữ element chưa bao giờ được đăng ký
+
+### version 8.1.1 - 01.08.2026
+
+<span class="badge text-bg-green">Add</span> CSS bundle & đường dẫn tài nguyên: thêm `Support\CssUrl` để viết lại `url()` trong CSS/LESS về đường dẫn tính từ gốc site trước khi gộp vào file bundle.
+
+<span class="badge text-bg-green">Add</span> Thêm Motion Effects ở cấp row
+
+<span class="badge text-bg-blue">Update</span> Tên file bundle theo base path
+
+<span class="badge text-bg-red">Fix</span> Element instance bị dùng chung
+
+<span class="badge text-bg-red">Fix</span> Namespace ngôn ngữ của element không chạy
+
+<span class="badge text-bg-red">Fix</span> Form nhóm lồng nhau làm toàn bộ field bên trong group vắng mặt → mất bước làm sạch dữ liệu khi lưu.
+
+<span class="badge text-bg-red">Fix</span> `DB::select()` / `DB::raw()` — bổ sung `$bindings`, `$useReadPdo` vào chữ ký. Tham số truyền vào trước đây bị nuốt im lặng, câu lệnh có placeholder lỗi "Invalid parameter number".
+
+<span class="badge text-bg-red">Fix</span> WidgetBase xác định thư mục widget theo class con (`ReflectionClass` trên `get_class($this)`) thay vì class cha.
+
+### version 8.1.0 - 27.07.2026
+
+<span class="badge text-bg-green">Add</span> Middleware TrailingSlash. Chuẩn hóa URL, redirect 301 xóa dấu / thừa ở cuối
+
+<span class="badge text-bg-green">Add</span> Quản lý key quyền Builder. Hiển thị key đang sử dụng và bổ sung nút Xóa key
+
+<span class="badge text-bg-blue">Update</span> Page Builder – Vá DOM trực tiếp thay vì reload iframe.
+
+<span class="badge text-bg-blue">Update</span> Cải thiện hiệu năng (Memoize ElementBuilder::getSection() theo phạm vi request, Chỉ đồng bộ MASTER_DATA sau message thực sự đổi dữ liệu)
+
+<span class="badge text-bg-red">Fix</span> Làm sạch nội dung WYSIWYG khi lưu element
+
+<span class="badge text-bg-red">Fix</span> Giới hạn lịch sử builder 20 phiên bản/section
+
+<span class="badge text-bg-red">Fix</span> ButtonBuilding: tab style (normal/hover/active) sửa lỗi trùng id khi trên cùng form có nhiều nút. <span class="badge text-bg-yellow">Nhàn</span>
+
+<span class="badge text-bg-red">Fix</span> xử lý đúng đường dẫn dạng uploads/... (khi URL bị bỏ tên miền) — tránh nối lặp uploads/source/ <span class="badge text-bg-yellow">Tâm</span>
+
+<span class="badge text-bg-red">Fix</span> parse object_type cho post/post_categories dựa trên post_type/cate_type rõ ràng thay vì tách chuỗi theo dấu<span class="badge text-bg-yellow">Tâm</span>
+
+### version 8.0.4 - 15.07.2026
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi không truy cập được route có chữ ký method có nhiều tham số optional <span class="badge text-bg-yellow">Tâm</span>
+
+### version 8.0.3 - 10.07.2026
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi Image::large không lấy đúng image large <span class="badge text-bg-yellow">Tâm</span>
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi chọn layout builder không load taxonomy <span class="badge text-bg-yellow">Tâm</span>
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi Field Time không lấy đúng type <span class="badge text-bg-yellow">Nhàn</span>
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi thêm menu tùy chọn <span class="badge text-bg-yellow">Hòa</span>
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi load file env và cache không đúng
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi Database Column Cleaner đối với các trường có dữ liệu null
+
+<span class="badge text-bg-blue">Update</span> Upload cài đặt font từ máy local
+
+<span class="badge text-bg-blue">Update</span> Upload cài đặt font từ server
+
+### version 8.0.2 - 12.06.2026
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi bảo mật SEC-02 SQLi
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi bảo mật SEC-03, SEC-05 Stored XSS
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi bảo mật SEC-08
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi bảo mật SEC-13
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi SEC-09 - xem được review của builder khi chưa đăng nhập
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi element trong nested row lồng nested row khác không cập nhật được config
+
+<span class="badge text-bg-blue">Update</span> PERF-01 — N+1 metadata khi nạp menu
+
+<span class="badge text-bg-blue">Update</span> PERF-02 — N+1 đệ quy cây danh mục
+
+<span class="badge text-bg-blue">Update</span> PERF-04 — hasTable() không cache (Metadata.php)
+
+
+### version 8.0.1 - 04.06.2026
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi bảo mật LGRT-2026-06
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi bảo mật CSRF-2026-06
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi bảo mật TA-SIB-2026-06
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi bảo mật TA-STE-2026-06
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi bảo mật UT-SE-2026-06
+
+<span class="badge text-bg-blue">Update</span> Tối ưu code cải thiện tốc độ load cache
+
+<span class="badge text-bg-blue">Update</span> Tối ưu code cải thiện tốc độ load theme menu
+
+<span class="badge text-bg-blue">Update</span> Tối ưu code cải thiện tốc độ load của loader
 
 ### version 8.0.0 - 30.03.2026
 
@@ -53,7 +204,7 @@
 
 <span class="badge text-bg-green">Add</span> Thêm button ẩn hiện danh mục
 
-<span class="badge text-bg-red">Update</span> Tối ưu việc lưu metadata
+<span class="badge text-bg-blue">Update</span> Tối ưu việc lưu metadata
 
 <span class="badge text-bg-red">Fix</span> Fix lỗi Theme::isProduct và Theme::isProductCategory chỉ chạy ở root <span class="badge text-bg-yellow">Trang</span>
 
@@ -529,5 +680,5 @@ _`Version này cập nhật cách viết model vui lòng đọc lại documnet`_
 
 <span class="badge text-bg-green">Add</span> Thêm class SkillDo\Location xử lý thông tin địa chỉ
 
-<span class="badge text-bg-green">Add</span> Thêm class SkillDo\ServiceLocation lấy thông tin địa chỉ từ service
+<span class="badge text-bg-green">Add</span> Thêm class SkillDo\Service\ServiceLocation lấy thông tin địa chỉ từ service
 

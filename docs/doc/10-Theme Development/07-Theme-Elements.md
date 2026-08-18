@@ -42,15 +42,17 @@ classDiagram
         +icon() string
         +category() string
         +form() void
-        +widget() void
+        +widget()
     }
 
     class ElementManager {
         <<singleton>>
-        +getWidgets(type) array
-        +getWidget(index) Element
+        +getElements(type, taxonomy) array
+        +getElement(index) Element
         +getCategories() array
-        +getWidgetJsonData() array
+        +getCategory(key) array
+        +getIcon(key) string
+        +jsonData() array
     }
 
     WidgetBase <|-- Element
@@ -60,11 +62,21 @@ classDiagram
 
 ### 1.2 Ba loại Element trong Builder
 
-| Loại                 | Vị trí trong widget.json | Sử dụng                                                |
-|----------------------|--------------------------|--------------------------------------------------------|
-| **Header Elements**  | `elements.header`        | Chỉ dùng trong Header Builder                          |
-| **Footer Elements**  | `elements.footer`        | Chỉ dùng trong Footer Builder                          |
-| **General Elements** | `elements.general`       | Dùng được trong cả Header, Footer và Home/Page Builder |
+Element được khai báo trong file `elements/elements.json` của theme (hoặc plugin). File này có **ba nhóm ở cấp cao nhất**:
+
+| Loại                 | Nhóm trong `elements.json` | Sử dụng                                                |
+|----------------------|----------------------------|--------------------------------------------------------|
+| **Header Elements**  | `header`                   | Chỉ dùng trong Header Builder                          |
+| **Footer Elements**  | `footer`                   | Chỉ dùng trong Footer Builder                          |
+| **General Elements** | `general`                  | Dùng được trong cả Header, Footer và Home/Page Builder |
+
+Thứ tự nạp (cái sau ghi đè cái trước cùng key): plugin đang active → theme cha → theme con.
+
+| Nguồn | Đường dẫn registry |
+|---|---|
+| Plugin | `plugins/<plugin-id>/elements/elements.json` |
+| Theme cha | `views/<theme-cha>/elements/elements.json` |
+| Theme con | `views/<theme-con>/elements/elements.json` |
 
 ### 1.3 Element Methods
 
@@ -363,7 +375,7 @@ Danh sách icon mặc định
 ### 3.1 Cấu trúc chuẩn cho một Element
 
 ```
-views/theme-store/widget/elements/{element-name}/
+views/theme-store/elements/{element-name}/
 ├── {element-name}.widget.php       # Class chính (extends Element)
 ├── views/
 │   └── view.blade.php              # Template hiển thị
@@ -376,7 +388,7 @@ views/theme-store/widget/elements/{element-name}/
 ### 3.2 Ví dụ thực tế
 
 ```
-widget/elements/video/
+elements/video/
 ├── video.widget.php                # VideoWidgetElement class
 ├── views/
 │   └── view.blade.php
@@ -392,7 +404,7 @@ widget/elements/video/
 
 ### Bước 1: Tạo file Widget Class
 
-Tạo file `views/theme-store/widget/elements/my-element/my-element.widget.php`:
+Tạo file `views/theme-store/elements/my-element/my-element.widget.php`:
 
 ```php
 <?php
@@ -471,7 +483,7 @@ class MyElementWidget extends Element
 
 ### Bước 2: Tạo View Template
 
-Tạo file `views/theme-store/widget/elements/my-element/views/view.blade.php`:
+Tạo file `views/theme-store/elements/my-element/views/view.blade.php`:
 
 ```blade
 <div class="my-element-widget">
@@ -485,29 +497,68 @@ Tạo file `views/theme-store/widget/elements/my-element/views/view.blade.php`:
 </div>
 ```
 
-### Bước 3: Đăng ký Element trong widget.json
+### Bước 3: Đăng ký Element trong elements.json
 
-Mở file **views/theme-store/widget/widget.json** và thêm vào mục `elements`:
+Mở file **`views/theme-store/elements/elements.json`** (hoặc của theme con / plugin) và thêm vào nhóm tương ứng:
 
 ```json
 {
-  "elements": {
-    "general": {
-      "MyElementWidget": {
-        "path": "widget/elements/my-element/my-element.widget.php"
-      }
+  "header": {},
+  "footer": {},
+  "general": {
+    "MyElementWidget": {
+      "path": "elements/my-element/my-element.widget.php"
     }
+  }
+}
+```
+
+Element cần đăng ký ajax thì khai thêm khối `ajax`:
+
+```json
+"SearchBarElement": {
+  "path": "elements/search-bar/search-bar.widget.php",
+  "ajax": {
+    "client": "SearchBarElement::search"
   }
 }
 ```
 
 > [!IMPORTANT]
 > **Key trong JSON** (`"MyElementWidget"`) phải **trùng khớp chính xác** với tên class PHP. Hệ thống sử dụng key này để tìm và khởi tạo class.
+>
+> `path` tính từ **gốc theme** (hoặc gốc plugin), luôn bắt đầu bằng `elements/`.
 
 > [!NOTE]
-> - Đăng ký trong `elements.header` → chỉ dùng trong Header Builder
-> - Đăng ký trong `elements.footer` → chỉ dùng trong Footer Builder
-> - Đăng ký trong `elements.general` → dùng được **ở mọi builder** (header, footer, home, page)
+> - Đăng ký trong nhóm `header` → chỉ dùng trong Header Builder
+> - Đăng ký trong nhóm `footer` → chỉ dùng trong Footer Builder
+> - Đăng ký trong nhóm `general` → dùng được **ở mọi builder** (header, footer, home, page)
+>
+> Lõi v8 **không quét thư mục** — tạo file `.widget.php` mà quên khai vào `elements.json` thì element không bao giờ được nạp.
+
+### Element nằm trong plugin
+
+Plugin khai element ở `plugins/<id>/elements/elements.json` (cùng cấu trúc như trên, `path` tính từ
+gốc plugin). Cách viết class **y hệt** element của theme:
+
+```php
+public function widget(): void
+{
+    Theme::view($this->getDir().'views/view', ['options' => $this->options]);
+}
+```
+
+`getDir()` tự nhận ra element nằm ngoài theme và trả về đường dẫn **kèm namespace view của plugin**
+(`travel::elements/tour-search-box/`), nên `Theme::view()` tìm đúng file trong plugin. Thứ tự tìm:
+`views/theme-child/plugins/<id>/` → `views/theme-store/plugins/<id>/` → `plugins/<id>/views/` →
+`plugins/<id>/` — tức theme vẫn ghi đè được view element của plugin.
+
+Hai lưu ý:
+
+- `assets('assets/x.css')` cũng ghép theo thư mục plugin, không cần đường dẫn tuyệt đối.
+- Cần đường dẫn **không kèm namespace** (để `@include` trong blade, hoặc dựng URL) thì dùng
+  `getDirPath()`; cần URL công khai của file trong thư mục element thì dùng `assetUrl('assets/x.png')`
+  thay cho `Url::theme(...)` (element của plugin không nằm trong thư mục theme).
 
 ---
 
@@ -841,7 +892,7 @@ function __construct()
 ```
 
 > [!TIP]
-> Đường dẫn assets là **tương đối** so với thư mục widget element. Ví dụ nếu widget ở `widget/elements/my-element/` thì `assets/style.less` sẽ trỏ tới `widget/elements/my-element/assets/style.less`.
+> Đường dẫn assets là **tương đối** so với thư mục widget element. Ví dụ nếu widget ở `elements/my-element/` thì `assets/style.less` sẽ trỏ tới `elements/my-element/assets/style.less`.
 
 ---
 
@@ -1081,7 +1132,7 @@ $(window).on('elementor/frontend/init', function ()
 ### 8.1 Cấu trúc thư mục
 
 ```
-widget/elements/alert-box/
+elements/alert-box/
 ├── alert-box.widget.php
 ├── views/
 │   └── view.blade.php
@@ -1094,7 +1145,7 @@ widget/elements/alert-box/
 
 ```php
 <?php
-// File: views/theme-store/widget/elements/alert-box/alert-box.widget.php
+// File: views/theme-store/elements/alert-box/alert-box.widget.php
 
 use SkillDo\Cms\Element\Element;
 use SkillDo\Cms\Support\Theme;
@@ -1225,7 +1276,7 @@ class AlertBoxWidgetElement extends Element
 ### 8.3 File Blade View
 
 ```blade
-{{-- File: views/theme-store/widget/elements/alert-box/views/view.blade.php --}}
+{{-- File: views/theme-store/elements/alert-box/views/view.blade.php --}}
 
 @php
     $typeClass = match($options->type ?? 'info') {
@@ -1239,7 +1290,7 @@ class AlertBoxWidgetElement extends Element
 <div class="alert-box {{ $typeClass }}" role="alert">
     @if(!empty($options->icon_image))
         <div class="alert-icon">
-            <img src="{{ Url::image($options->icon_image) }}" alt="{{ $options->title ?? '' }}">
+            {!! Image::source($options->icon_image, $options->title ?? '')->html() !!}
         </div>
     @endif
 
@@ -1264,7 +1315,7 @@ class AlertBoxWidgetElement extends Element
 ### 8.4 File LESS
 
 ```less
-// File: views/theme-store/widget/elements/alert-box/assets/alert-box.less
+// File: views/theme-store/elements/alert-box/assets/alert-box.less
 
 .alert-box {
     display: flex;
@@ -1332,15 +1383,13 @@ class AlertBoxWidgetElement extends Element
 }
 ```
 
-### 8.5 Đăng ký trong widget.json
+### 8.5 Đăng ký trong elements.json
 
 ```json
 {
-    "elements": {
-        "general": {
-            "AlertBoxWidgetElement": {
-                "path": "widget/elements/alert-box/alert-box.widget.php"
-            }
+    "general": {
+        "AlertBoxWidgetElement": {
+            "path": "elements/alert-box/alert-box.widget.php"
         }
     }
 }
@@ -1349,7 +1398,7 @@ class AlertBoxWidgetElement extends Element
 ### 8.6 File JavaScript
 
 ```javascript
-// File: views/theme-store/widget/elements/alert-box/assets/alert-box.js
+// File: views/theme-store/elements/alert-box/assets/alert-box.js
 
 class AlertBoxWidgetElement
 {
@@ -1405,15 +1454,13 @@ $(window).on('elementor/frontend/init', function ()
 Dùng cho elements cần load dữ liệu động (ví dụ: danh sách sản phẩm):
 
 ```json
-// widget.json
+// elements/elements.json
 {
-    "elements": {
-        "general": {
-            "ProductsWidgetElementStyle1": {
-                "path": "widget/elements/products/style1/products-style1.widget.php",
-                "ajax": {
-                    "client": "ProductsWidgetElementStyle1::loadProduct"
-                }
+    "general": {
+        "ProductsWidgetElementStyle1": {
+            "path": "elements/products/style1/products-style1.widget.php",
+            "ajax": {
+                "client": "ProductsWidgetElementStyle1::loadProduct"
             }
         }
     }
@@ -1471,7 +1518,7 @@ Các loại scroll effects hỗ trợ:
 
 ```mermaid
 flowchart TD
-    A["Admin: Kéo thả element\nvào Page Builder"] --> B["ElementManager::getWidget()"]
+    A["Admin: Kéo thả element\nvào Page Builder"] --> B["ElementManager::getElement()"]
     B --> C["Tạo instance Element class"]
     C --> D["form() → Hiển thị form cấu hình"]
     D --> E["User điền thông tin & lưu"]
@@ -1480,7 +1527,7 @@ flowchart TD
     G["Frontend: Render trang"] --> H["ElementBuilder::page(key)"]
     H --> I["Lấy sections từ database"]
     I --> J["ElementBuilder::builderColum()"]
-    J --> K["Với mỗi widget:\n1. getWidget() từ ElementManager\n2. setOption(settings)\n3. default()\n4. widget() → render HTML"]
+    J --> K["Với mỗi widget:\n1. getElement() từ ElementManager\n2. setOption(settings)\n3. default()\n4. widget() → render HTML"]
     K --> L["ElementBuilder::buildAssets()\n→ Build CSS/JS assets"]
     L --> M["ElementBuilder::render()\n→ Output HTML"]
 ```
@@ -1489,7 +1536,7 @@ flowchart TD
 
 ## 11. Checklist Tạo Element Mới
 
-- [ ] **Tạo thư mục** theo cấu trúc: `widget/elements/{name}/`
+- [ ] **Tạo thư mục** theo cấu trúc: `elements/{name}/`
 - [ ] **Tạo class** extends Element, implement 4 methods bắt buộc:
   - [ ] icon() — trả về icon key
   - [ ] category() — trả về category key
@@ -1500,11 +1547,11 @@ flowchart TD
 - [ ] **(Tùy chọn)** Tạo JS trong assets/ theo **class pattern** + đăng ký qua `$this->assets()`, lắng nghe `elementor/frontend/init` và dùng `elementorFrontend.hooks.addAction('frontend/ready/{ClassName}.default', ...)`
 - [ ] **(Tùy chọn)** Override default() cho giá trị mặc định
 - [ ] **(Tùy chọn)** Override cssBuilder() cho CSS động
-- [ ] **Đăng ký** trong widget.json với key = tên class
+- [ ] **Đăng ký** trong `elements/elements.json` (nhóm `header`/`footer`/`general`) với key = tên class
 - [ ] **Kiểm tra** trong Admin → Builder
 
 > [!WARNING]
-> **Key trong widget.json** phải **giống hệt** tên class PHP. Nếu class là `AlertBoxWidgetElement` thì key phải là `"AlertBoxWidgetElement"`, không phải `"alert_box_widget_element"` hay bất kỳ biến thể nào khác.
+> **Key trong `elements.json`** phải **giống hệt** tên class PHP. Nếu class là `AlertBoxWidgetElement` thì key phải là `"AlertBoxWidgetElement"`, không phải `"alert_box_widget_element"` hay bất kỳ biến thể nào khác.
 
 > [!CAUTION]
 > Luôn gọi `parent::form()` ở **cuối** method form(). Nếu không, các field mặc định trong tab Advanced (spacing, scroll effects) sẽ không hoạt động đúng.

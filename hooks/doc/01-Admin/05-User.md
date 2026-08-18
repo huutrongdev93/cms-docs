@@ -1,67 +1,38 @@
 ### Danh sách user
 
-#### Điều kiện lấy total
+> **Thay đổi ở v8:** ba hook `admin_user_controllers_index_args`, `admin_user_controllers_index_args_count` và `admin_user_controllers_index_objects` **đã bị gỡ bỏ**. Chúng nhận biến `Qr` — lớp này không còn tồn tại ở v8 (đã chuyển hoàn toàn sang Eloquent Query Builder).
 
-Thay đổi điều kiện lấy ra tổng số user dùng cho phân trang
-
-| Hooks                                     | **Loại Hook**                                   | **Platform** |                                   **Version** |
-|-------------------------------------------|-------------------------------------------------|:------------:|----------------------------------------------:|
-| `admin_user_controllers_index_args_count` | <span class="badge text-bg-green">filter</span> |     cms      | <span class="badge text-bg-cyan">4.0.0</span> |
+Muốn can thiệp điều kiện lấy danh sách user, hãy override phương thức `queryFilter()` trong lớp Table của module:
 
 ```php
-$args = apply_filters('admin_user_controllers_index_args_count', $args);
-```
-**Params**: biến Qr
+use SkillDo\Database\Eloquent\Builder;
+use SkillDo\Http\Request;
 
-**Return**: biến Qr
-
-#### Điều kiện lấy danh sách user
-Thay đổi điều kiện lấy ra danh sách user
-
-| Hooks                               | **Loại Hook**                                   | **Platform** |                                   **Version** |
-|-------------------------------------|-------------------------------------------------|:------------:|----------------------------------------------:|
-| `admin_user_controllers_index_args` | <span class="badge text-bg-green">filter</span> |     cms      | <span class="badge text-bg-cyan">4.0.0</span> |
-
-```php
-$args = apply_filters('admin_user_controllers_index_args', Qr $args)
-```
-**Params**: biến Qr
-
-**Return**: biến Qr
-
-```php
-function my_custom_admin_user(Qr $args): void
+function queryFilter(Builder $query, Request $request): Builder
 {
-    return $args;
+    if($request->input('vip')) {
+        $query->where('vip', 1);
+    }
+
+    return $query;
 }
-add_filter('admin_user_controllers_index_args', 'my_custom_admin_user');
 ```
 
+Hai hook sau vẫn dùng được để bổ sung field vào form lọc / tìm kiếm của bảng user:
 
-#### Thay đổi danh sách user đã lấy
-Bạn muốn tùy chỉnh lại từng user đã lấy có thể dùng hook `admin_user_controllers_index_objects`
-
-| Hooks                                  | **Loại Hook**                                   | **Platform** |                                   **Version** |
-|----------------------------------------|-------------------------------------------------|:------------:|----------------------------------------------:|
-| `admin_user_controllers_index_objects` | <span class="badge text-bg-green">filter</span> |     cms      | <span class="badge text-bg-cyan">7.0.0</span> |
+| Hooks                          | **Loại Hook**                                   | **Platform** |                                   **Version** |
+|--------------------------------|-------------------------------------------------|:------------:|----------------------------------------------:|
+| `admin_user_table_form_filter` | <span class="badge text-bg-green">filter</span> |     cms      | <span class="badge text-bg-cyan">8.0.0</span> |
+| `admin_user_table_form_search` | <span class="badge text-bg-green">filter</span> |     cms      | <span class="badge text-bg-cyan">8.0.0</span> |
 
 ```php
-$objects = apply_filters('admin_user_controllers_index_objects', array $objects, Qr $args);
-```
-**Params**:
-* _$objects (array)_ : danh sách user đã lấy được từ database
-* _$args (Qr)_ : điều kiện lấy user từ database
-
-**Return**: $objects
-
-```php
-function my_custom_admin_user_objects($objects, Qr $args): array
-{
-    return $objects;
-}
-add_filter('admin_user_controllers_index_objects', 'my_custom_admin_user_objects', 10, 2);
+$form = apply_filters('admin_user_table_form_filter', $form);
+$form = apply_filters('admin_user_table_form_search', $form);
 ```
 
+**Params**: `$form` — đối tượng Form của bảng
+
+**Return**: `$form`
 
 ### Table user
 

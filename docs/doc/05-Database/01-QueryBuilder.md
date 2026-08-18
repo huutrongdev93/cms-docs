@@ -1,14 +1,14 @@
 # Query Builder
 
 > **File:** `packages/skilldo/framework/src/Database/DB.php`  
-> **Namespace:** `Illuminate\Support\Facades\DB`  
+> **Class thực:** `SkillDo\Database\DB` — được alias toàn cục thành `DB`, `SkillDo\DB` **và** `Illuminate\Support\Facades\DB` (xem `SkillDo\Support\Facade::defaultAliases()`)  
 > **Tài liệu tham khảo:** [Laravel Query Builder](https://laravel.com/docs/12.x/queries)
 
 ## 1. Query Builder là gì?
 
 Query Builder là một giao diện lập trình linh hoạt và an toàn để tương tác với Database mà không cần viết câu lệnh SQL thuần. Mọi giá trị đầu vào đều được **tự động escaped** (thoát ký tự) để chặn tấn công SQL Injection.
 
-Lớp `Illuminate\Support\Facades\DB` là một Wrapper nhẹ của `Illuminate\Database\Query\Builder` (Laravel 12). Tất cả phương thức của Laravel Query Builder đều khả dụng trong SkillDo.
+Lớp `SkillDo\Database\DB` là một Wrapper nhẹ chuyển tiếp mọi lời gọi đến Capsule Manager (`app('db')` — Illuminate Database). `DB::table()` trả về `Illuminate\Database\Query\Builder` (Laravel 12), nên tất cả phương thức của Laravel Query Builder đều khả dụng trong SkillDo. Nhờ alias, bạn có thể `use Illuminate\Support\Facades\DB;` như code Laravel quen thuộc — thực chất vẫn gọi vào `SkillDo\Database\DB`.
 
 ## 2. Khởi Tạo Query
 
@@ -118,12 +118,14 @@ $posts = DB::table('post')
 
 ### whereNull / whereNotNull
 ```php
-// Tìm bản ghi chưa được xóa mềm (trash = null)
-DB::table('post')->whereNull('trash')->get();
+// Tìm bản ghi chưa từng được cập nhật (updated = null)
+DB::table('post')->whereNull('updated')->get();
 
-// Tìm bản ghi đã bị xóa mềm
-DB::table('post')->whereNotNull('trash')->get();
+// Tìm bản ghi đã từng được cập nhật
+DB::table('post')->whereNotNull('updated')->get();
 ```
+
+> **Lưu ý:** Xóa mềm trong SkillDo dùng cột `trash` kiểu số (`0` = bình thường, `1` = đã xóa mềm), **không phải** `NULL` như `deleted_at` của Laravel. Khi query thuần bằng Query Builder hãy dùng `where('trash', 0)` / `where('trash', 1)`. Xem chi tiết tại `03-Eloquent.md` mục Soft Deletes.
 
 ### whereBetween (Trong Khoảng)
 ```php
@@ -223,16 +225,16 @@ $avg   = DB::table('orders')->avg('total_price');
 
 ### Insert (Thêm Mới)
 ```php
-// Chèn 1 bản ghi, trả về số hàng bị ảnh hưởng
-DB::table('post_meta')->insert([
-    'post_id'    => 5,
+// Chèn 1 bản ghi (bảng metadata chuẩn CMS dùng cột object_id/meta_key/meta_value)
+DB::table('users_metadata')->insert([
+    'object_id'  => 5,
     'meta_key'   => 'views',
     'meta_value' => 0,
 ]);
 
 // Chèn và lấy ID tự tăng vừa được insert
-$id = DB::table('post_meta')->insertGetId([
-    'post_id'    => 5,
+$id = DB::table('users_metadata')->insertGetId([
+    'object_id'  => 5,
     'meta_key'   => 'featured',
     'meta_value' => 1,
 ]);
@@ -245,14 +247,14 @@ DB::table('post')
     ->update(['status' => 'public', 'title' => 'Tiêu đề mới']);
 
 // Tăng / giảm giá trị số nguyên
-DB::table('post_meta')->where('meta_key', 'views')->increment('meta_value', 1);
-DB::table('post_meta')->where('meta_key', 'stock')->decrement('meta_value', 5);
+DB::table('users_metadata')->where('meta_key', 'views')->increment('meta_value', 1);
+DB::table('users_metadata')->where('meta_key', 'stock')->decrement('meta_value', 5);
 ```
 
 ### Delete (Xóa)
 ```php
-DB::table('post_meta')
-    ->where('post_id', 5)
+DB::table('users_metadata')
+    ->where('object_id', 5)
     ->delete();
 ```
 
@@ -281,7 +283,23 @@ try {
 
 ---
 
-## 11. Debug Câu Lệnh SQL
+## 11. Chạy SQL Thuần
+
+Ngoài `DB::raw()`, lớp `SkillDo\Database\DB` còn khai báo sẵn:
+
+```php
+// SELECT thuần, trả về mảng kết quả
+$rows = DB::select('SELECT * FROM cle_post WHERE status = \'public\'');
+
+// Chạy câu lệnh bất kỳ (DDL, SET...)
+DB::statement('ALTER TABLE cle_post ADD INDEX idx_status (status)');
+```
+
+Mọi phương thức static khác (vd: `DB::getQueryLog()`) được chuyển tiếp đến `app('db')` (Capsule Manager) qua `__callStatic`.
+
+---
+
+## 12. Debug Câu Lệnh SQL
 
 ```php
 // In câu SQL ra màn hình rồi dừng

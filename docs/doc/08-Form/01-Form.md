@@ -83,7 +83,7 @@ hoặc sử dụng thuộc tính động của Form ví dụ như thêm field te
 $form->text('myField', ['label' => 'My Field'], 'value');
 ```
 
-với `$args` bạn có thể thêm các attributes vào field hoặc cấu hình field nếu Form hỗ trợ, sau đây là một số cấu hình chung cho taất cả các field:
+với `$args` bạn có thể thêm các attributes vào field hoặc cấu hình field nếu Form hỗ trợ, sau đây là một số cấu hình chung cho tất cả các field:
 > **`start`** : (string hoặc int) chèn thêm mã html vào đầu field, 
 > nếu giá trị start nhận vào là một số sẽ tự động chèn 
 > 
@@ -96,6 +96,20 @@ với `$args` bạn có thể thêm các attributes vào field hoặc cấu hìn
 >
 
 > **`validations`** : Thêm điều kiện validation cho field
+
+> **`note`** : (string) ghi chú hiển thị dưới field
+>
+
+> **`class`** : (string hoặc array) class css chèn thêm vào field
+>
+
+> **`id`** : (string) id của field, nếu không truyền sẽ tự sinh từ name
+>
+
+> **`condition`** : (array) hiển thị field theo điều kiện giá trị của field khác, dạng `['name' => 'field_khac', 'value' => [...]]`
+>
+
+> **`defaultValue`** : (mixed) giá trị mặc định khi value rỗng
 
 Danh sách Field và thuộc tính của Field xem [**`tại đây`**](Form-Fields)
 
@@ -122,9 +136,9 @@ Tham số `$attributes` chứa một số cấu hình form:
 |------------|:-------------:|-----------------------------------------------------:|---------:|
 | validation |     bool      |         Nếu là true tương đương với setIsValid(true) |          |
 | callback   |    string     |       Tương đương với phương thức setCallbackValidJs |          |
-| class      |     array     |               Danh sách các class chèn thêm vào form |     null |
+| class      | string, array |               Danh sách các class chèn thêm vào form |     null |
 | style      | string, array |                         chèn css inline vào thẻ form |     null |
-| file       |    string     | Nếu true sẽ chèn thêm `multipart/form-data` vào form |    false |
+| file       |     bool      | Nếu true sẽ chèn thêm `multipart/form-data` vào form |    false |
 
 Ngoài ra bạn còn có thể chèn các attribute khác với các cập key/value
 
@@ -138,5 +152,52 @@ $form->open('post', [
 ]);
 ```
 
-Ngoài ra khi method của bạn là `POST`, `PUT` or `DELETE` thì CSRF token sẽ được tự động thêm vào form với 1 trường ẩn dạng hidden
+Ngoài ra CSRF token luôn được tự động thêm vào form với 1 trường ẩn dạng hidden (qua `csrf_field()`) bất kể method của form là gì
+
+### Các Phương Thức Khác
+
+**`setValues`** — gán giá trị hàng loạt cho các field trong form từ một mảng hoặc object (hỗ trợ name dạng nested `items[a][b]`):
+
+```php
+$form->setValues($data);
+```
+
+**`setValue`** — gán giá trị cho một field theo name:
+
+```php
+$form->setValue('myField', 'value');
+```
+
+**`remove`** — xóa field (và validation của field) ra khỏi form theo name:
+
+```php
+$form->remove('myField');
+```
+
+**`addGroup`** — gom một nhóm field (một Form con hoặc Closure) vào form, hỗ trợ params `start`, `end`, `label`:
+
+```php
+$form->addGroup(function(\SkillDo\Cms\Form\Form $group) {
+    $group->text('title', ['label' => 'Tiêu đề', 'start' => 6]);
+    $group->text('subtitle', ['label' => 'Phụ đề', 'start' => 6]);
+}, ['start' => 12, 'label' => 'Nhóm tiêu đề']);
+```
+
+**`addTab`** — thêm một tab chứa Form con, các tab liền kề nhau sẽ tự gom thành nhóm tab:
+
+```php
+$form->addTab(function(\SkillDo\Cms\Form\Form $tab) {
+    $tab->text('title', ['label' => 'Tiêu đề']);
+}, 'tab_general', ['label' => 'Chung', 'active' => true]);
+
+$form->addTab(function(\SkillDo\Cms\Form\Form $tab) {
+    $tab->textarea('note', ['label' => 'Ghi chú']);
+}, 'tab_advanced', ['label' => 'Nâng cao']);
+```
+
+**`addResponsive`** — tạo field theo 3 kích thước (desktop, tablet, mobile), bắt buộc truyền `type` trong args:
+
+```php
+$form->addResponsive('font_size', ['type' => 'number', 'label' => 'Font size']);
+```
 

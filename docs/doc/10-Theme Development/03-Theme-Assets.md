@@ -33,6 +33,27 @@ add_action('theme_custom_assets', function() {
 
 *(Lưu ý: Mọi đường dẫn url sẽ được tính rễ `Base` nằm từ thư mục của Theme Đang Cài. Nếu viết Plugin, hãy cung cấp mã Absolute URL tuyệt đối).*
 
+### 1.1. Đường dẫn `url()` trong CSS bundle
+
+> Có từ phiên bản **8.1.1** — `SkillDo\Cms\Support\CssUrl`
+
+Theme nhúng `<base href="{{ Url::base() }}">` nên đường dẫn tương đối trong HTML và trong `<style>` inline đều phân giải đúng. Nhưng **`<base>` không áp dụng cho file CSS ngoài**: `url()` trong file được phân giải theo vị trí của chính file CSS.
+
+CSS được gộp và ghi ra `views/<theme>/assets/bundle/*.min.css`, nên mọi `url()` tương đối trong đó sẽ thành `/views/<theme>/assets/bundle/uploads/...` → **404**.
+
+Vì vậy trước khi ghi ra file bundle, CMS tự động chạy `CssUrl::rewrite()` để quy mọi `url()` về **đường dẫn tính từ gốc site** (không kèm tên miền), giúp file bundle đã cache vẫn dùng được khi đổi domain hoặc chuyển `http` ↔ `https`.
+
+```php
+use SkillDo\Cms\Support\CssUrl;
+
+CssUrl::rewrite(string $css, string $sourceFile = ''): string
+```
+
+Việc này diễn ra tự động trong `AssetPosition` và `ElementBuilder` — **bạn không cần gọi thủ công**. Chỉ cần biết hai hệ quả:
+
+- Trong file CSS của theme, cứ viết `url(assets/images/bg.jpg)` tương đối như bình thường; hệ thống sẽ tự quy đổi đúng.
+- Tên file bundle có nhúng `Url::pathHash()` (vân tay của base path), nên khi đổi domain hoặc đổi thư mục cài đặt, bundle cũ tự bị bỏ qua thay vì dùng nhầm.
+
 ---
 
 ## 2. Thêm Một Thẻ HTML Meta Mới (SEO/Thuộc tính)
@@ -57,6 +78,13 @@ add_filter('theme_head_meta_tags', function($metas) {
     return $metas;
 });
 ```
+
+Mỗi phần tử là một mảng `thuộc tính => giá trị`, được in nguyên văn thành `<meta ...>`.
+
+Ba thẻ mặc định có sẵn trước khi chạy filter: `charset`, `IE` (X-UA-Compatible), `viewport`.
+
+> [!NOTE]
+> Thẻ `csrf_token` (`<meta name="csrf-value">`) được thêm **sau** khi filter chạy (khi `config('csrf.enable')` bật), nên bạn **không thể xoá hay sửa nó** qua `theme_head_meta_tags`.
 
 ---
 
@@ -83,6 +111,19 @@ add_filter('theme_head_script_variable', function($variables) {
 ```
 Phía Javascript Client bạn gọi thẳng hằng số này để làm tính năng cho UI:
 `console.log("Mã API là: ", my_api_key);`
+
+Mỗi phần tử được in ra đúng dạng `const {key} = {value};` — đó là lý do chuỗi phải tự bọc nháy.
+
+**Các biến có sẵn trước khi filter chạy:**
+
+| Biến | Nội dung |
+|---|---|
+| `domain` | `Url::base()` |
+| `base` | `Url::admin()` |
+| `ajax` | `Url::admin('ajax')` — endpoint ajax admin |
+| `menu_mb_position` | Option `menu_mobile_position` |
+| `language` | Ngôn ngữ hiện tại |
+| `messagesLang` | JSON chuỗi dịch cho JS (đọc từ `storage/cms/json/lang/theme-lang-{locale}.json`) |
 
 ---
 
@@ -115,3 +156,7 @@ Thế là xong! Bây giờ ở File `*.css` thiết kế riêng của Theme, b�
     background-color: var(--custom-box-bg);
 }
 ```
+
+Toàn bộ mảng được in thành một khối `<style>:root { … }</style>` duy nhất.
+
+**Một số biến có sẵn** (đều lấy từ Option, khai trong `ThemeHeadService::styleVariable()`): `--theme-color`, `--theme-color-code` (dạng `r, g, b` để dùng với `rgba()`), `--secondary-color`, `--search-mb-color`, `--menu-mb-color`, `--body-img`, `--font-family`, `--font-header`, `--footer-text-color`, `--footer-bottom-public`, `--footer-bottom-bg`, `--footer-bottom-color`.

@@ -3,7 +3,13 @@
 SkillDo CMS v8 cung cấp một loạt các hàm trợ giúp (helper functions) được khai báo ở phạm vi toàn cục (global scope). 
 Bạn có thể gọi trực tiếp các hàm này ở **bất kỳ đâu** trong dự án của mình (Controllers, Views, Models, Plugins) mà không cần phải `use` hay khởi tạo class phức tạp. Các helper này kết nối thẳng vào những thành phần sâu nhất của Framework.
 
-Tệp nguồn chứa khai báo gốc nằm ở: `packages/skilldo/framework/src/Support/common.php`
+Helper được khai báo ở ba tệp nguồn:
+
+| Tệp | Nội dung |
+|---|---|
+| `packages/skilldo/framework/src/Support/common.php` | Helper của Framework: `app()`, `config()`, `request()`, `response()`, `view()`, `trans()`… |
+| `packages/skilldo/cms/src/Support/helpers.php` | Helper của lớp CMS: `form()`, `template()`, `pagination()`, `asset()`… |
+| `packages/skilldo/cms/src/Hooks/helpers.php` | Helper hệ thống Hook: `add_action()`, `do_action()`, `add_filter()`, `apply_filters()`… (xem [Hooks](../06-Cms/Hooks.md)) |
 
 Dưới đây là danh sách và hướng dẫn sử dụng chi tiết các hàm Helper cốt lõi nhất.
 
@@ -272,3 +278,285 @@ $browser = agent()->browser(); // Kết quả: "Chrome" hoặc "Safari"
 ```
 
 > **Mẹo hữu ích:** SkillDo thường dùng `agent()` trong phần thống kê (Statictics) hoặc Controller để render Giao Diện Mobile độc lập thay vì giao diện Reponsive của Desktop.
+
+---
+
+## 5. Request, Response & View
+
+### `request()`
+Lấy đối tượng Request hiện tại.
+
+**Cú pháp:**
+```php
+request(): \SkillDo\Http\Request
+```
+
+```php
+$keyword = request()->input('keyword');
+$page    = (int)request()->query('page');
+$id      = request()->segment(2);
+
+if(request()->isMethod('post')) { /* ... */ }
+```
+
+### `response()`
+Lấy đối tượng Response hiện tại. Trong handler Ajax, `success()` / `error()` sẽ **kết thúc request ngay**.
+
+**Cú pháp:**
+```php
+response(): \SkillDo\Http\Response
+```
+
+```php
+response()->success('Lưu thành công', ['id' => $id]);
+response()->error('Dữ liệu không hợp lệ');
+
+// Cho phép cache trang ở tầng CDN/proxy
+response()->setPublic();
+response()->setMaxAge(100);
+```
+
+### `view()`
+Render một Blade view thành chuỗi HTML.
+
+**Cú pháp:**
+```php
+view(string $name, array $data = [])
+```
+
+```php
+echo view('my-plugin::admin.page', ['objects' => $objects]);
+```
+
+### `isAjax()`
+Kiểm tra request hiện tại có phải là ajax không.
+
+```php
+if(isAjax()) { /* ... */ }
+```
+
+### `redirect()`
+Chuyển hướng trình duyệt rồi kết thúc request.
+
+**Cú pháp:**
+```php
+redirect($uri = '', $method = 'location', $http_response_code = 302): void
+```
+
+```php
+redirect('gio-hang');                 // 302
+redirect('trang-moi', 'location', 301); // 301 vĩnh viễn
+```
+
+---
+
+## 6. Bảo Mật & Xác Thực
+
+### `csrf_token()` / `csrf_field()`
+Lấy token CSRF, hoặc sinh sẵn thẻ `<input type="hidden">` chứa token.
+
+```php
+$token = csrf_token();
+
+// Trong Blade
+echo csrf_field();
+```
+
+### `auth()`
+Lấy đối tượng người dùng đang đăng nhập.
+
+```php
+$user = auth();
+```
+
+### `html_escape()`
+Escape chuỗi (hoặc mảng chuỗi) trước khi in ra HTML.
+
+```php
+echo html_escape($userInput);
+```
+
+---
+
+## 7. Kiểm Tra Dữ Liệu
+
+### `hasItems()` / `noItems()` / `have_posts()`
+Ba hàm kiểm tra "có dữ liệu hay không", dùng được cho cả mảng, `Collection` và object.
+
+```php
+hasItems($value): bool   // có dữ liệu
+noItems($value): bool    // rỗng
+have_posts($value): bool // alias của hasItems()
+```
+
+```php
+$products = Product::where('public', 1)->get();
+
+if(noItems($products)) {
+    return;
+}
+
+foreach ($products as $product) { /* ... */ }
+```
+
+### `is_skd_error()`
+Kiểm tra kết quả trả về có phải đối tượng lỗi của SkillDo không. **Bắt buộc dùng** sau mỗi lần `Model::create()` / `Model::insert()` — CMS trả về đối tượng lỗi chứ không ném exception.
+
+```php
+$id = Post::create($data);
+
+if(is_skd_error($id)) {
+    response()->error($id);
+}
+```
+
+Xem thêm: [Xử lý lỗi](./09-Errors.md).
+
+---
+
+## 8. Đa Ngôn Ngữ
+
+### `trans()` / `__()`
+Lấy chuỗi đã dịch. `__()` là alias của `trans()`.
+
+**Cú pháp:**
+```php
+trans(string $str, mixed $params = null): string
+```
+
+```php
+echo trans('general.phone');
+echo trans('my-plugin::messages.welcome', ['name' => $user->firstname]);
+echo __('sicommerce::order.status.wait');
+```
+
+Xem thêm: [i18n Localization](../12-i18n%20Localization/01-Core-Language.md).
+
+---
+
+## 9. Helper Của Lớp CMS
+
+Các helper sau khai báo trong `packages/skilldo/cms/src/Support/helpers.php`.
+
+### `form()`
+Khởi tạo một đối tượng Form mới.
+
+```php
+$form = form();
+$form->text('name', ['label' => 'Họ tên']);
+echo $form->html();
+```
+
+### `template()`
+Lấy đối tượng Template đang chạy.
+
+```php
+$template = template();
+```
+
+### `the_content()`
+In nội dung bài viết sau khi chạy qua filter `the_content`.
+
+```php
+the_content($object->content);
+```
+
+### `is_home()`
+Kiểm tra đang ở trang chủ hay không.
+
+```php
+if(is_home()) { /* ... */ }
+```
+
+### `pagination()`
+Sinh đối tượng phân trang. Tự đọc `page` / `paging` từ query string nếu không truyền `$page`.
+
+**Cú pháp:**
+```php
+pagination($total = 10, $url = '', $limit = 10, $page = null): Pagination
+```
+
+```php
+$total = $query->getCountForPagination();
+
+$pagination = pagination($total, Url::base('tin-tuc').'?page={page}', 12);
+
+$query->limit(12)->offset($pagination->offset());
+```
+
+### `asset()`
+Sinh URL cho tài nguyên tĩnh.
+
+```php
+echo asset('uploads/source/logo.png');
+```
+
+### `lessToCss()` / `minifyCss()` / `minifyJs()`
+Biên dịch LESS sang CSS và nén CSS/JS.
+
+```php
+$css = lessToCss(file_get_contents($lessFile));
+$css = minifyCss($css);
+$js  = minifyJs($js);
+```
+
+### `cmsClearCache()` / `cmsClearCacheAutoLoad()`
+Xóa cache của CMS. Thường gọi sau khi thay đổi cấu hình có ảnh hưởng toàn site.
+
+```php
+cmsClearCache();
+```
+
+### `mergeConfig()`
+Gộp mảng config file với mảng config lưu trong CSDL.
+
+**Cú pháp:**
+```php
+mergeConfig(array $config, array $database, $insert = false): array
+```
+
+`$insert = true` thì key mới trong `$database` được **thêm vào**; `false` thì chỉ ghi đè key đã tồn tại.
+
+---
+
+## 10. Tiện Ích Khác
+
+### `appConfig()`
+Đọc config qua container (tương đương `config()` nhưng luôn resolve từ `app('config')`).
+
+```php
+$timezone = appConfig('app.timezone');
+```
+
+### `schema()`
+Lấy Schema Builder để thao tác cấu trúc bảng — dùng trong file migration.
+
+```php
+if(!schema()->hasTable('my_table')) {
+    schema()->create('my_table', function (Blueprint $table) { /* ... */ });
+}
+```
+
+Xem thêm: [Schema](../05-Database/02-Schema.md).
+
+### `session()`
+Đọc/ghi session.
+
+```php
+$cart = session()->get('cart_contents');
+session()->put('cart_contents', $cart);
+```
+
+### `show_r()`
+In biến ra màn hình để debug (bọc `dump()`). Nhận nhiều tham số.
+
+```php
+show_r($product, $order);
+```
+
+### `path_normalize()`
+Chuẩn hóa dấu phân cách đường dẫn theo hệ điều hành.
+
+```php
+$path = path_normalize('views/theme-store/assets/css');
+```

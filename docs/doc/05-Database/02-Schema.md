@@ -1,7 +1,7 @@
 # Schema Builder
 
-> **Helper:** `schema()` (toàn cục)  
-> **Namespace:** `Illuminate\Database\Schema\Builder`  
+> **Helper:** `schema()` (toàn cục — định nghĩa tại `packages/skilldo/framework/src/Support/common.php`, trả về `app('db')::schema()`)  
+> **Kiểu trả về:** `Illuminate\Database\Schema\Builder`  
 > **Tài liệu tham khảo:** [Laravel Schema](https://laravel.com/docs/12.x/migrations#creating-tables)
 
 ## 1. Schema Builder là gì?
@@ -10,9 +10,11 @@ Schema Builder cung cấp các phương thức để **tạo, sửa đổi và x
 
 SkillDo CMS v8 cung cấp hàm global `schema()` (trả về `Illuminate\Database\Schema\Builder`) để bạn gọi nhanh từ bất kỳ đâu.
 
-## 2. File Migration trong Plugin
+## 2. File Migration
 
-Các thao tác Schema trong Plugin thường được đặt trong một file `database/database.php`. File này được gọi tự động khi Plugin **kích hoạt (activate)** hoặc **cập nhật (update)**.
+Migration của CMS core nằm tại `packages/skilldo/cms/database/database.php` và được thực thi bởi `SkillDo\Cms\Update\Migration\MigrationChainRunner` khi **cài đặt** (wizard `/install`) hoặc khi **cập nhật hệ thống**. Runner này `include` file migration và chấp nhận: một object có method `up()` (pattern `return new class () extends Migration`), một `Closure` nhận `$connection`, hoặc một class khai báo trong file.
+
+Với **Plugin**, các thao tác Schema được đặt trong method `active()` (tạo bảng) và `uninstall()` (xóa bảng) của Main Class — xem `11-Plugin Development/03-Lifecycle.md`. Plugin cũng có thể tổ chức schema theo pattern file migration dưới đây rồi tự require trong `active()`.
 
 Cấu trúc file chuẩn:
 
@@ -26,7 +28,7 @@ return new class () extends Migration {
 
     public function up(): void
     {
-        // Code tạo/sửa bảng khi Plugin kích hoạt
+        // Code tạo/sửa bảng
         if (!schema()->hasTable('my_plugin_table')) {
             schema()->create('my_plugin_table', function (Blueprint $table) {
                 // ... định nghĩa các cột
@@ -36,11 +38,13 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        // Code xóa bảng khi Plugin gỡ bỏ
+        // Code xóa bảng khi gỡ bỏ
         schema()->drop('my_plugin_table');
     }
 };
 ```
+
+> **Lưu ý:** `MigrationChainRunner` chỉ gọi `up()`. Method `down()` không được runner gọi tự động — Plugin tự gọi logic xóa bảng trong `uninstall()`.
 
 ---
 
@@ -543,3 +547,7 @@ if (!schema()->hasTable('bookings_metadata')) {
     });
 }
 ```
+
+Các bảng metadata chuẩn có sẵn trong CMS core: `galleries_metadata`, `users_metadata` (cột: `id`, `object_id`, `meta_key`, `meta_value`, `order`, `created`, `updated`).
+
+> **Lưu ý:** Nếu module **không** có bảng `{tên_bảng}_metadata` riêng, hệ thống Metadata (`SkillDo\Cms\Support\Metadata`) sẽ tự động fallback lưu vào bảng dùng chung `metabox` (có thêm cột `object_type` để phân biệt module). Vì vậy việc tạo bảng metadata riêng là **tùy chọn** — chỉ nên tạo khi module có lượng metadata lớn.

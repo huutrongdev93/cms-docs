@@ -48,13 +48,26 @@ add_action('page_products_collections_view', function() {
 }, 5); // Trước khi render lưới (priority 10)
 ```
 
-### 💡 Can Thiệp Query Sản Phẩm Trong Collection
+### 💡 Can Thiệp Dữ Liệu Trang Collection
+
+Hook `product_collection_query` **không tồn tại**. Controller cung cấp ba filter sau:
+
+| Hook | Loại | Tham số | Mô tả |
+|:---|:---|:---|:---|
+| `controllers_products_collections_count` | filter | `$total` | Tổng số sản phẩm dùng cho phân trang |
+| `controllers_products_collections_paging` | filter | `$pagination` | Đối tượng phân trang |
+| `controllers_product_index_objects` | filter | `$objects` | Danh sách sản phẩm trả về (dùng chung với trang danh sách sản phẩm) |
+
 ```php
-add_filter('product_collection_query', function($query, $collection) {
-    // Ví dụ: chỉ lấy sản phẩm đang còn hàng (nếu có plugin stock)
-    $query->where('in_stock', 1);
-    return $query;
-}, 10, 2);
+// Lọc bớt sản phẩm sau khi đã query
+add_filter('controllers_product_index_objects', function($objects) {
+    return $objects->filter(fn($product) => $product->in_stock == 1);
+});
+
+// Đổi tổng số dùng cho phân trang
+add_filter('controllers_products_collections_count', function($total) {
+    return $total;
+});
 ```
 
 ### 💡 Thêm Tiêu Đề Tuỳ Chỉnh Trước Lưới Sản Phẩm

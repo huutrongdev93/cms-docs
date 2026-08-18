@@ -1,12 +1,15 @@
 # Fields
 
-| [Cơ bản](#field-text-password-number-email-tel-url-textarea-hidden) | [Checkbox](#field-checkbox-radio-select) |       [Checkbox Icon](##radio-icon-checkbox-icon)       | [Radio](#field-checkbox-radio-select) | [Radio Icon](##radio-icon-checkbox-icon) | [Select](#field-checkbox-radio-select) |    [Select2](#select2)     |
+| [Cơ bản](#field-text-password-number-email-tel-url-textarea-hidden) | [Checkbox](#field-checkbox-radio-select) |       [Checkbox Icon](#radio-icon-checkbox-icon)       | [Radio](#field-checkbox-radio-select) | [Radio Icon](#radio-icon-checkbox-icon) | [Select](#field-checkbox-radio-select) |    [Select2](#select2)     |
 | :-----------------------------------------------------------------: | :--------------------------------------: | :-----------------------------------------------------: | :-----------------------------------: | :--------------------------------------: | :------------------------------------: | :------------------------: |
 |                     [Wysiwyg](#wysiwyg-editor)                      |     [Wysiwyg short](#wysiwyg-editor)     |                 [Switch](#switch-onoff)                 |            [Color](#color)            |        [Image](#image-file-video)        |       [File](#image-file-video)        | [Video](#image-file-video) |
 |                   [Date ](#date-time-và-datetime)                   |      [Time](#date-time-và-datetime)      |           [Datetime](#date-time-và-datetime)            |       [Date Range](#date-range)       |             [Range](#range)              |         [Repeater](#repeater)          |  [Font Icon](#font-icon)   |
-|                           [Price](#price)                           |           [Gallery](#gallery)            |                      [Menu](#menu)                      |             [Page](#page)             |              [Post](#post)               |     [Post Category](#postcategory)     |  [Font Icon](#font-icon)   |
+|                           [Price](#price)                           |           [Gallery](#gallery)            |                      [Menu](#menu)                      |             [Page](#page)             |              [Posts](#posts)             |     [Post Category](#postcategory)     |  [Font Icon](#font-icon)   |
 |                [Input Responsive](#inputresponsive)                 |    [Input Dimension](#inputdimension)    | [Input Dimension Responsive](#inputdimensionresponsive) |       [background](#background)       |            [border](#border)             |        [box shadow](#boxshadow)        |    [spacing](#spacing)     |
-|                   [Text Building](#text-building)                   |    [Color Building](#color-building)     |              [Box Building](#box-building)              |  [Button Building](#button-building)  |                                          |                                        |                            |
+|                   [Text Building](#text-building)                   |    [Color Building](#color-building)     |              [Box Building](#box-building)              |  [Button Building](#button-building)  |     [Checkbox Tree](#checkbox-tree)      |       [Select Img](#select-img)        |   [Tab](#tab-select-tabs)  |
+|                            [Code](#code)                             | [Post Category Tree](#postcategorytree)  |           [Popover Advance](#popover-advance)            |          [Flexbox](#flexbox)          |       [Text Shadow](#textshadow)         |      [Text Stroke](#textstroke)        | [Typography](#typography)  |
+|                  [Scroll Effects](#scrolleffects)                    |         [Container](#container)          |        [Numeric Selector](#numericselector)              |       [Form Field](#formfield)        |          [Heading](#heading)             |  [Widget Heading](#widgetheading)      | [Gallery Item](#gallery-item) |
+|                          [Tags](#tags)                               |                                          |                                                          |                                       |                                          |                                        |                            |
 
 ### Field cơ bản
 #### Field Text, Password, Number, Email, Tel, Url, Textarea, hidden
@@ -117,6 +120,66 @@ $form
     ->add('field_name_radio', 'radio-icon', ['label' => 'Label Radio'])->options($options);
 ```
 
+#### Checkbox Tree
+Tạo danh sách checkbox dạng cây (cha - con), trả về mảng giá trị (name tự thêm `[]`).
+Mỗi option có dạng `['label' => ..., 'value' => ..., 'children' => [...]]`, nếu không truyền `value` sẽ lấy key làm value
+
+```php
+$options = [
+    ['label' => 'Cha 1', 'value' => 1, 'children' => [
+        ['label' => 'Con 1', 'value' => 2],
+    ]],
+];
+
+//Sử dụng phương thức `động`
+$form->checkboxTree('field_name', ['label' => 'Label Tree'])->options($options);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'checkbox-tree', ['label' => 'Label Tree'])->options($options);
+```
+
+#### Select Img
+Tạo danh sách lựa chọn hiển thị bằng hình ảnh. Mỗi option có dạng `['label' => ..., 'img' => ..., 'value' => ..., 'width' => ..., 'height' => ...]` (hoặc `'icon'` thay cho `'img'`), nếu không truyền `value` sẽ lấy key làm value
+
+```php
+$options = [
+    'layout1' => ['label' => 'Layout 1', 'img' => 'assets/img/layout1.png'],
+    'layout2' => ['label' => 'Layout 2', 'img' => 'assets/img/layout2.png'],
+];
+
+//Sử dụng phương thức `động`
+$form->selectImg('field_name', ['label' => 'Label Select Img'])->options($options);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'select-img', ['label' => 'Label Select Img'])->options($options);
+```
+
+#### Tab (Select Tabs)
+Tạo lựa chọn dạng các tab/nút bấm nằm ngang (thường dùng chọn icon align, direction...), value là key của option được chọn
+
+```php
+//Sử dụng phương thức `động`
+$form->tab('field_name', ['label' => 'Align'], 'left')->options([
+    'left'   => '<i class="fa-light fa-align-left"></i>',
+    'center' => '<i class="fa-light fa-align-center"></i>',
+    'right'  => '<i class="fa-light fa-align-right"></i>',
+]);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'tab', ['label' => 'Align'], 'left')->options([...]);
+```
+
+#### Code
+Tạo textarea soạn thảo code (CodeMirror). Hỗ trợ attribute `language` (thêm class `code-{language}`) và `rows`
+
+```php
+//Sử dụng phương thức `động`
+$form->code('field_name', ['label' => 'Label Code', 'language' => 'css']);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'code', ['label' => 'Label Code', 'language' => 'css']);
+```
+
 #### Switch (On/Off)
 Mặt định input Switch sẽ trả về giá trị 1 nếu bật và 0 nếu tắt
 ```php
@@ -157,9 +220,28 @@ $form->add('field_name_color', 'color', ['label' => 'Label color']);
 ```
 
 #### Image, File, Video
+Ba field này tạo input chọn file từ trình quản lý file (File Manager) của admin, mỗi field mở File Manager với bộ lọc tương ứng (ảnh, file, video) và lưu đường dẫn file vào input
+
+```php
+//Sử dụng phương thức `động`
+$form->image('field_name_image', ['label' => 'Label Image']);
+$form->file('field_name_file', ['label' => 'Label File']);
+$form->video('field_name_video', ['label' => 'Label Video']);
+
+//Sử dụng phương thức `add`
+$form->add('field_name_image', 'image', ['label' => 'Label Image']);
+$form->add('field_name_file', 'file', ['label' => 'Label File']);
+$form->add('field_name_video', 'video', ['label' => 'Label Video']);
+```
+
+Nếu muốn dùng input upload mặc định của trình duyệt (`<input type="file">`) thay vì File Manager, thêm attribute `default` bằng true:
+
+```php
+$form->image('field_name_image', ['label' => 'Label Image', 'default' => true]);
+```
 
 #### Select2
-Input color sử dụng thư viện `select2` nên bạn cần nhúng vào `theme` thư viện này nếu muốn sử dụng field color ở theme
+Input select2 sử dụng thư viện `select2` nên bạn cần nhúng vào `theme` thư viện này nếu muốn sử dụng field select2 ở theme
 
 ```php
 $header->add('select2', 'node_modules/select2/dist/css/select2.min.css');
@@ -221,7 +303,7 @@ Field DateRange trả về giá trị có format là `dd/mm/yyyy - dd/mm/yyyy`
 
 ```php
 //Sử dụng phương thức `động`
-$form->dateRange('field_name_date_range', ['label' => 'Label Date Range']);
+$form->daterange('field_name_date_range', ['label' => 'Label Date Range']);
     
 //Sử dụng phương thức `add`
 $form->add('field_name_date_range', 'daterange', ['label' => 'Label Date Range']);
@@ -276,6 +358,36 @@ $form->price('field_name_range', ['label' => 'Label price']);
 $form->add('field_name_range', 'price', ['label' => 'Label price']);
 ```
 
+**Số chữ số thập phân** *(từ 8.1.2)* — mặc định `0` vì cột giá của CMS là số nguyên (VND không có phần lẻ). Site dùng tiền tệ có xu (USD…) khai qua filter hoặc tham số `decimals` (nhận giá trị 0–4):
+
+```php
+//Đặt cho toàn hệ thống
+add_filter('form_price_decimals', fn() => 2);
+
+//Hoặc đặt riêng từng ô
+$form->price('price', ['label' => 'Giá', 'decimals' => 2]);
+```
+
+> Ô nhập luôn là **tiền tệ cơ sở**; cột `decimals` của bảng `currencies` chỉ dùng khi quy đổi để hiển thị ngoài site. Phần lẻ chỉ giữ được nếu cột tương ứng đổi sang `decimal` — cột `integer` vẫn bị cắt.
+
+#### Tags
+
+Ô nhập thẻ tự do có gợi ý (select2), gợi ý lấy động qua ajax. Có từ phiên bản **8.1.3**.
+
+```php
+//Sử dụng phương thức `động`
+$form->tags('tags', ['label' => 'Thẻ']);
+
+//Sử dụng phương thức `add`
+$form->add('tags', 'tags', [
+    'label'       => 'Thẻ',
+    'placeholder' => 'Nhập thẻ rồi nhấn Enter',
+    'tag_type'    => 'post',   // bộ từ vựng thẻ, mặc định "post"
+]);
+```
+
+> Giá trị gửi lên server là **TÊN thẻ**, không phải id — thẻ chưa tồn tại sẽ được tạo mới khi lưu. Tối đa 30 thẻ cho một nội dung. Xem [Thẻ (Tag)](../06-Cms/Tags.md).
+
 ### Field lấy dữ liệu
 
 #### Gallery
@@ -320,17 +432,18 @@ $form->page('field_name_page', ['label' => 'Label Page']);
 $form->add('field_name_page', 'page', ['label' => 'Label Page']);
 ```
 
-#### Post
-Lấy danh sách Bài viết _(Admin > Bài viết)_ dưới dạng select2
+#### Posts
+Tìm kiếm và chọn Bài viết _(Admin > Bài viết)_ dưới dạng popover (kế thừa field `popover-advance`, xem [Popover](Popover))
 >
-Field post nhận options `post_type` để xác định post_type của bài viết, nếu không truyền mặc định post_type là `post`
+Field posts nhận options `post_type` để xác định post_type của bài viết, nếu không truyền mặc định post_type là `post`.
+Có thể thêm options `multiple` (mặc định là true) để chọn nhiều bài viết.
 
 ```php
 //Sử dụng phương thức `động`
-$form->post('field_name_post', ['label' => 'Label Post', 'post_type' => 'post']);
+$form->posts('field_name_post', ['label' => 'Label Post', 'post_type' => 'post']);
     
 //Sử dụng phương thức `add`
-$form->add('field_name_post', 'post', ['label' => 'Label Post', 'post_type' => 'post']);
+$form->add('field_name_post', 'posts', ['label' => 'Label Post', 'post_type' => 'post']);
 ```
 
 
@@ -347,6 +460,26 @@ $form->postCategory('field_name_category', ['label' => 'Label Category', 'cate_t
 $form->add('field_name_category', 'postCategory', ['label' => 'Label Category', 'cate_type' => 'post_categories']);
 ```
 
+
+#### postCategoryTree
+Chọn nhiều danh mục bài viết dưới dạng cây checkbox (giống checkbox-tree nhưng dữ liệu lấy tự động từ danh mục), trả về mảng id danh mục.
+Nhận options `cate_type` giống field postCategory, mặc định là `post_categories`
+
+```php
+//Sử dụng phương thức `động`
+$form->postCategoryTree('field_name', ['label' => 'Label Category Tree', 'cate_type' => 'post_categories']);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'post-category-tree', ['label' => 'Label Category Tree']);
+```
+
+#### Popover Advance
+Field tìm kiếm và chọn dữ liệu (bài viết, danh mục, trang, thành viên hoặc dữ liệu tùy chỉnh) với giao diện popover.
+Xem chi tiết tại [**`Popover`**](Popover)
+
+```php
+$form->popoverAdvance('field_name', ['label' => 'Label', 'search' => 'post']);
+```
 
 ### Field giao diện
 #### none
@@ -656,6 +789,134 @@ Bạn có thể thêm attribute `customInput` để custom các field, `customIn
 
 ```php
 $css = Template::cssSpacing($data);
+```
+
+#### flexbox
+Field cấu hình các thuộc tính css flexbox: `direction`, `justify_content`, `align_items`, `gap`, `wrap`
+
+```php
+//Sử dụng phương thức `động`
+$form->flexBox('field_name', ['label' => 'Label Field']);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'flexbox', ['label' => 'Label Field']);
+```
+
+Khi submit bạn sẽ nhận được dữ liệu dạng
+
+```php
+[
+    'field_name' => [
+        'direction'       => 'column',
+        'justify_content' => 'start',
+        'align_items'     => '',
+        'gap'             => '',
+        'wrap'            => '',
+    ]
+]
+```
+
+#### flexboxResponsive
+Giống field flexbox nhưng cấu hình theo 3 kích thước, dữ liệu trả về gom theo key `desktop`, `tablet`, `mobile`
+
+```php
+//Sử dụng phương thức `động`
+$form->flexboxResponsive('field_name', ['label' => 'Label Field']);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'flexbox-responsive', ['label' => 'Label Field']);
+```
+
+#### textShadow
+Field cấu hình css `text-shadow` gồm `color`, `x`, `y`, `blur`. Attribute `popup` (mặc định true) quyết định hiển thị dạng popup hay inline
+
+```php
+//Sử dụng phương thức `động`
+$form->textShadow('field_name', ['label' => 'Label Field']);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'text-shadow', ['label' => 'Label Field']);
+```
+
+#### textStroke
+Field cấu hình css viền chữ (text-stroke) gồm `color`, `width`. Attribute `popup` (mặc định true)
+
+```php
+//Sử dụng phương thức `động`
+$form->textStroke('field_name', ['label' => 'Label Field']);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'text-stroke', ['label' => 'Label Field']);
+```
+
+#### typography
+Field cấu hình typography cho text: `fontFamily`, `fontSize` (responsive), `lineHeight`, `fontWeight`, `textStyle`, `align`.
+Hỗ trợ options `customInput` (mảng key => bool) để bật/tắt từng thành phần: `fontFamily`, `fontSize`, `fontSizeResponsive`, `textStyle`, `align`, `lineHeight`, `fontWeight`, `cssStyle` (tất cả mặc định true) và `fontWeightOptions` để thay danh sách font weight
+
+```php
+//Sử dụng phương thức `động`
+$form->typography('field_name', ['label' => 'Label Field']);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'typography', ['label' => 'Label Field']);
+```
+
+#### scrollEffects
+Field cấu hình nhóm hiệu ứng khi cuộn trang, gồm 6 hiệu ứng con: `vertical`, `horizontal`, `rotate`, `scale`, `opacity`, `blur` (mỗi hiệu ứng cũng là một field riêng: `scroll-effect-vertical`, `scroll-effect-horizontal`, `scroll-effect-rotate`, `scroll-effect-scale`, `scroll-effect-opacity`, `scroll-effect-blur`)
+
+```php
+//Sử dụng phương thức `động`
+$form->scrollEffects('field_name', ['label' => 'Label Field']);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'scroll-effects', ['label' => 'Label Field']);
+```
+
+#### container
+Field chọn kiểu khung chứa nội dung với 3 lựa chọn giá trị: `full`, `container`, `in-container` (lưu vào input hidden)
+
+```php
+//Sử dụng phương thức `động`
+$form->container('field_name', ['label' => 'Label Field']);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'container', ['label' => 'Label Field']);
+```
+
+#### numericSelector
+Field chọn số nguyên dạng thanh kéo có các ô số, nhận attribute `min` (mặc định 1) và `max` (mặc định 12)
+
+```php
+//Sử dụng phương thức `động`
+$form->numericSelector('field_name', ['label' => 'Label Field', 'min' => 1, 'max' => 12]);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'numericSelector', ['label' => 'Label Field']);
+```
+
+#### heading
+Field nhập text kèm chọn style heading, dữ liệu trả về dạng `['text' => ..., 'style' => ..., 'options' => [...]]`
+
+```php
+$form->heading('field_name', ['label' => 'Label Field']);
+```
+
+#### widgetHeading
+Field nhập tiêu đề cho widget (input text với giao diện heading của widget)
+
+```php
+$form->widgetHeading('field_name', ['label' => 'Label Field']);
+```
+
+#### formField
+Field trình tạo danh sách field động (form builder) — cho phép người dùng admin tự thêm/xóa các field (text, email, textarea, url, number, date, time, password, checkbox, radio, select, tel, hidden) kèm cấu hình label, placeholder, required, độ rộng cột (desktop/tablet/mobile), options, min/max...
+
+```php
+//Sử dụng phương thức `động`
+$form->formField('field_name', ['label' => 'Label Field']);
+
+//Sử dụng phương thức `add`
+$form->add('field_name', 'form-field', ['label' => 'Label Field']);
 ```
 
 ### Field build

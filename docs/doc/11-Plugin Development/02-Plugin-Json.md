@@ -69,7 +69,7 @@ hoăc bạn có thể tùy chỉnh sâu hơn nếu muốn:
 }
 ```
 
-- Nhờ có khối `"autoload"`, khi code bạn dùng `new Ecommerce\Cart\CartManager()`, hệ thống sẽ tự tìm chính xác đến tệp `app/Cart/CartManager.php` ở bên trong lõi Plugin của bạn. Bạn không bao giờ phải viết lệnh `require_once()`.
+- Nhờ có khối `"autoload"`, khi code bạn dùng `new Ecommerce\Cart\Cart()`, hệ thống sẽ tự tìm chính xác đến tệp `app/Cart/Cart.php` ở bên trong lõi Plugin của bạn. Bạn không bao giờ phải viết lệnh `require_once()`.
 
 ---
 

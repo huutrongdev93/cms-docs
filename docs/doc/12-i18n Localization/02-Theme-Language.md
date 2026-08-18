@@ -74,7 +74,7 @@ Rất nhiều lúc, bạn làm hàm AJAX Bỏ Giỏ Hàng (Code ở file `.js` �
 SkillDo Framework xử lý việc này thông qua một thư viện Frontend hỗ trợ là `lang.js`.
 Tuy nhiên, để đẩy toàn bộ mảng PHP thành JSON cho Javascript đọc, bạn cần sử dụng một lệnh Export đặc biệt trong Header của Layout Theme.
 
-**Bước 1:** Dùng Facade `SkillDo\Facades\Language` (hoặc biến Blade `$lang`) để đẩy các Nhóm ngữ cảnh ra cửa sổ HTML Window Object.
+**Bước 1:** Dùng Facade `SkillDo\Cms\Support\Language` (hoặc biến Blade `$lang`) để đẩy các Nhóm ngữ cảnh ra cửa sổ HTML Window Object.
 
 Trong `theme-store/include/head.blade.php`:
 ```blade

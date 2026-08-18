@@ -8,7 +8,7 @@ Nếu bạn coi ứng dụng của mình như một chiếc xe, thì **Service P
 
 ## 1. Vòng Đời Của Một Provider 
 
-Bất kỳ **Service Provider** nào trong SkillDo CMS (đặt ở thư mục `app/Providers/`) cũng đều kế thừa từ class abstract `SkillDo\ServiceProvider`.
+Bất kỳ **Service Provider** nào trong SkillDo CMS (dù nằm trong `app/`, trong plugin hay theme) cũng đều kế thừa từ class abstract `SkillDo\ServiceProvider`. Trong đó `register()` là phương thức **abstract bắt buộc** phải định nghĩa, còn `boot()` là tùy chọn (mặc định rỗng). Constructor của base class không nhận tham số — nó tự lấy `Container::getInstance()` gán vào `$this->app`.
 
 Quá trình "boot" (khởi động) ứng dụng luôn đi qua 2 phương thức của Provider theo thứ tự sau:
 
@@ -57,21 +57,29 @@ class CustomServiceProvider extends ServiceProvider {
     public function boot() {
          
          // An toàn để lấy bất kỳ cái gì ra khỏi Container
-         $config = \SkillDo\Facades\Config::get('app.timezone');
+         $timezone = \SkillDo\Support\Facades\Config::get('app.timezone');
+         // hoặc dùng helper: config('app.timezone')
 
-         // Đăng ký Event
-         \SkillDo\Facades\Event::listen('user.registered', function($user) {
-              // ...
-         });
-
-         // Đăng ký thư mục Views
+         // Đăng ký thư mục Views với namespace riêng → view('custom::ten-view')
          $this->loadViewsFrom(__DIR__.'/../views', 'custom');
+
+         // Đăng ký file ngôn ngữ với namespace riêng → trans('custom::messages.x')
+         $this->loadTranslationsFrom(__DIR__.'/../language', 'custom');
 
          // Register Hook CMS (WordPress style)
          add_action('admin_menu', [$this, 'addCustomMenu']);
     }
 }
 ```
+
+Ngoài 2 phương thức trên, base class `SkillDo\ServiceProvider` còn cung cấp sẵn các helper `protected`:
+
+| Method | Công dụng |
+|---|---|
+| `loadViewsFrom($path, $namespace)` | Đăng ký namespace view (`view('namespace::ten-view')`) |
+| `loadTranslationsFrom($path, $namespace)` | Đăng ký namespace ngôn ngữ (`trans('namespace::file.key')`) |
+| `mergeConfig($path, $key, $insert = false)` | Merge một thư mục/file config vào key config đang có |
+| `callAfterResolving($name, $callback)` | Chạy callback khi service `$name` được resolve (hoặc ngay lập tức nếu đã resolve) |
 
 ---
 
@@ -80,7 +88,7 @@ class CustomServiceProvider extends ServiceProvider {
 Ví dụ bạn viết một package, hoặc đơn giản cấu trúc ứng dụng Admin của bạn có các thành phần sau cần "nạp" lên bộ nhớ lúc khởi động ứng dụng:
 
 - Bạn có Custom Helper/Library mới.
-- Khai báo file cài đặt Route bổ sung (vd `routes/ajax.php`).
+- Khai báo file cài đặt Route bổ sung (chỉ 3 tên file được nạp tự động: `routes/admin.php`, `routes/web.php`, `routes/api.php` — file khác phải tự `require` trong Provider).
 - Móc nối (Hook) vào hệ thống Plugin/CMS bằng `add_action`, `add_filter`.
 - Đăng ký hệ thống tệp Đa Ngôn Ngữ (Language files).
 - Gắn View Namespace (Ví dụ `view('plugin-name::template')`).
@@ -91,52 +99,48 @@ Lúc này, một Provider là vị trí chuẩn xác nhất để làm.
 
 ## 3. Cách Đăng Ký Provider Vào Hệ Thống CMS
 
-Một Service Provider được viết ra sẽ không có tác dụng nếu bạn chưa bảo Framework gọi nó chạy.
-Trong SkillDo v8, danh sách các Provider cốt lõi nằm trong file cấu hình `config/app.php`.
+Một Service Provider được viết ra sẽ không có tác dụng nếu bạn chưa bảo Framework gọi nó chạy. Trong SkillDo v8 có **4 con đường** để một Provider được nạp:
+
+**1. Danh sách mặc định của Framework** (bootstrapper `SkillDo\Bootstrap\RegisterProviders`) — 6 provider nền luôn được merge vào **đầu** danh sách `app.providers`:
 
 ```php
-// config/app.php
-
-return [
-    /*
-    |--------------------------------------------------------------------------
-    | Autoloaded Service Providers
-    |--------------------------------------------------------------------------
-    */
-    'providers' => [
-        // Các Provider của Framework Core
-        \SkillDo\Api\ApiServiceProvider::class,
-        \SkillDo\Database\DatabaseServiceProvider::class,
-        \SkillDo\Cache\CacheServiceProvider::class,
-
-        // Các Provider của CMS
-        \SkillDo\Cms\Providers\CmsServiceProvider::class,
-        \SkillDo\Cms\Providers\PluginServiceProvider::class,
-        \SkillDo\Cms\Providers\ThemeServiceProvider::class,
-
-        // Application Providers Của Chính Bạn
-        \App\Providers\AppServiceProvider::class,
-        \App\Providers\EventServiceProvider::class,
-        \App\Providers\RouteServiceProvider::class,
-    ],
-];
+\SkillDo\Session\SessionServiceProvider::class,
+\SkillDo\Filesystem\FileSystemServiceProvider::class,
+\SkillDo\Log\LogServiceProvider::class,
+\SkillDo\Database\DatabaseServiceProvider::class,
+\SkillDo\View\ViewServiceProvider::class,
+\SkillDo\Translation\TranslationServiceProvider::class,
 ```
 
-Hệ thống sẽ chạy qua 2 vòng lặp (Loop):
-1. **Loop 1**: Chạy `register()` qua toàn bộ danh sách `providers`.
-2. **Loop 2**: Chạy `boot()` qua toàn bộ danh sách `providers` để dựng lên hệ thống Web.
+**2. Config `app.providers`** — mặc định khai báo trong `packages/skilldo/framework/src/config/app.php`, chỉ gồm 2 provider:
+
+```php
+// packages/skilldo/framework/src/config/app.php
+'providers' => [
+    \SkillDo\Api\ApiServiceProvider::class,
+    \SkillDo\Cms\Providers\CmsServiceProvider::class,
+],
+```
+
+Muốn thêm Provider của riêng bạn ở tầng ứng dụng: tạo file `config/app.php` ở root với key `providers` — cơ chế deep-merge config sẽ **nối thêm** (append) các provider của bạn vào danh sách mặc định (xem bài Config).
+
+**3. Đăng ký lồng trong một Provider khác** — gọi `$this->app->register(XServiceProvider::class)` ngay trong `register()`. Đây chính là cách `CmsServiceProvider` nạp loạt provider con của CMS (Hook, System, Plugin, Language, Taxonomy, Template, Ajax, Agent, Role, CmsRoute).
+
+**4. Manifest của Plugin/Theme** — khai báo trong key `providers` của `plugin.json` / `theme.json`. `SkillDo\Cms\Loader` (chạy ở callback `booted()` của Application) sẽ gọi `app()->register($provider)` cho từng provider. Vì lúc này ứng dụng **đã boot xong**, `register()` và `boot()` của các provider này được chạy ngay lập tức nối tiếp nhau.
+
+Với danh sách `app.providers`, hệ thống sẽ chạy qua 2 vòng lặp (Loop):
+1. **Loop 1** (bootstrapper `RegisterProviders`): Chạy `register()` qua toàn bộ danh sách `providers`.
+2. **Loop 2** (bootstrapper `BootProviders` → `Application::boot()`): Chạy `boot()` qua toàn bộ danh sách `providers` để dựng lên hệ thống Web.
+
+> Lưu ý: `Application::register()` chống đăng ký trùng — nếu provider đã được register trước đó thì trả về instance cũ (trừ khi truyền `$force = true`).
 
 ---
 
-## 4. Deferred Providers (Tải Chậm)
+## 4. Khai Báo Nhanh Bằng Thuộc Tính `$bindings` / `$singletons`
 
-Đôi khi, bạn tạo ra một Service mất rất nhiều thời gian xử lý, nhưng không phải mọi HTTP request đều xài nó (ví dụ thư viện xuất PDF). Nếu nạp trong `app.php` thì trang nào cũng mất thời gian load class này.
+SkillDo **không hỗ trợ Deferred Provider** (cờ `$defer` / hàm `provides()` kiểu Laravel) — mọi provider trong danh sách đều được `register()` ngay trong mỗi request.
 
-SkillDo hỗ trợ **Deferred Provider**. Thay vì nạp trong mọi request, hệ thống CHỈ NẠP Provider này KHI CÓ MỘT CLASS NÀO ĐÓ GỌI ĐẾN dịch vụ mà Provider này cung cấp.
-
-Để thực hiện:
-- Thêm cờ `protected $defer = true;`
-- Cung cấp hàm `provides()` trả về mảng danh sách tên dịch vụ.
+Thay vào đó, `Application::register()` hỗ trợ một tiện ích: nếu Provider khai báo thuộc tính `public $bindings` hoặc `public $singletons`, các cặp key → class trong đó sẽ được tự động `bind()` / `singleton()` vào Container mà không cần viết code trong `register()`:
 
 ```php
 namespace App\Providers;
@@ -145,19 +149,20 @@ use SkillDo\ServiceProvider;
 
 class PdfReportServiceProvider extends ServiceProvider {
 
-    // 1. Chỉ định đây là Deferred Provider
-    protected $defer = true;
+    // Mỗi cặp interface => implementation sẽ được bind() tự động
+    public $bindings = [
+        \App\Contracts\PdfGeneratorInterface::class => \App\Services\PdfGenerator::class,
+    ];
 
-    // 2. Đăng ký như bình thường
+    // Mỗi entry sẽ được singleton() tự động
+    // (nếu không có key, chính tên class được dùng làm key)
+    public $singletons = [
+        'PdfGenerator' => \App\Services\PdfGenerator::class,
+        \App\Services\ReportBuilder::class,
+    ];
+
     public function register() {
-         $this->app->singleton('PdfGenerator', function ($app) {
-             return new HeavyPdfLibrary();
-         });
-    }
-
-    // 3. Cho Framework biết "Khi nào ai đó đòi biến 'PdfGenerator', hãy nạp tôi!"
-    public function provides() {
-         return ['PdfGenerator'];
+        // vẫn bắt buộc định nghĩa (có thể để rỗng)
     }
 }
 ```

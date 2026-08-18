@@ -132,19 +132,28 @@ add_action('delete_product_success', function($productId) {
 
 ## 1.6 Hooks Collection (Gắn Flag Bán Chạy / Hot / Yêu Thích)
 
-Khi Admin click icon flag (yêu thích/bán chạy/hot) trong bảng danh sách:
+Khi Admin click icon flag (yêu thích/bán chạy/hot) trong bảng danh sách, ajax `Ecommerce\Ajax\Admin\ProductAjax::saveCollection` đảo giá trị cột `status1` / `status2` / `status3` và lưu bằng `Product::insert()`.
 
-| Hook Name | Tham Số | Mô Tả |
-|:---|:---|:---|
-| `ajax_save_products_collection_success` | `($productId, $column, $value)` | Sau khi toggle flag collection thành công |
+> Hook `ajax_save_products_collection_success` **không tồn tại**. Handler này không phát hook riêng — muốn chạy tác vụ sau khi flag đổi, hãy bám vào hook lưu sản phẩm chung:
 
 ```php
-add_action('ajax_save_products_collection_success', function($productId, $column, $value) {
-    // $column: 'status1', 'status2', 'status3'
-    // $value: 0 hoặc 1
-    if($column == 'status2' && $value == 1) {
-        // Sản phẩm vừa được đánh dấu "Bán chạy"
+add_action('save_products_object_edit', function($id, $request) {
+
+    $product = Product::find($id);
+
+    if(!empty($product) && $product->status2 == 1) {
+        // Sản phẩm đang được đánh dấu "Bán chạy"
         // Sync lên Elasticsearch index...
     }
-}, 10, 3);
+
+}, 10, 2);
 ```
+
+Nhãn, icon và khoá tìm kiếm của từng flag đổi được qua các filter động:
+
+| Hook Name | Loại | Mô Tả |
+|:---|:---|:---|
+| `products_collections_status{1,2,3}_name` | filter | Tên hiển thị của flag |
+| `products_collections_status{1,2,3}_icon` | filter | Icon của flag |
+| `products_collections_status{1,2,3}_search_active` | filter | Bật/tắt flag trong form tìm kiếm |
+| `products_collections_status{1,2,3}_search_key` | filter | Khoá tìm kiếm của flag |

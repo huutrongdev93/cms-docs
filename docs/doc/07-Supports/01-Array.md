@@ -4,7 +4,7 @@
 > **Alias ngắn:** `\Arr`  
 > **Tài liệu tham khảo:** [Laravel Array Helpers](https://laravel.com/docs/master/helpers#arrays-and-objects-method-list)
 
-SkillDo CMS v8 sử dụng trực tiếp `Illuminate\Support\Arr` của Laravel. Bạn có thể gọi thẳng bằng alias `Arr::` mà không cần `use`.
+SkillDo CMS v8 sử dụng trực tiếp `Illuminate\Support\Arr` của Laravel, đồng thời bổ sung macro đặc thù `Arr::unset()` (đăng ký trong `packages/skilldo/framework/src/Bootstrap/RegisterMacros.php`). Bạn có thể gọi thẳng bằng alias `Arr::` mà không cần `use`.
 
 |                                 |                             |                             |
 |---------------------------------|:---------------------------:|----------------------------:|
@@ -14,7 +14,7 @@ SkillDo CMS v8 sử dụng trực tiếp `Illuminate\Support\Arr` của Laravel.
 | [Arr::add](#arradd)             |    [Arr::last](#arrlast)    | [Arr::shuffle](#arrshuffle) |
 | [Arr::collapse](#arrcollapse)   |    [Arr::only](#arronly)    |     [Arr::where](#arrwhere) |
 | [Arr::crossJoin](#arrcrossjoin) | [Arr::isAssoc](#arrisassoc) |   [Arr::forget](#arrforget) |
-| [Arr::divide](#arrdivide)       | [Arr::prepend](#arrprepend) |                             |
+| [Arr::divide](#arrdivide)       | [Arr::prepend](#arrprepend) |     [Arr::unset](#arrunset) |
 | [Arr::dot](#arrdot)             |    [Arr::pull](#arrpull)    |                             |
 
 
@@ -277,4 +277,17 @@ Hàm `Arr::forget` xóa một cặp key / value khỏi mảng lồng nhau sử d
 $array = ['products' => ['desk' => ['price' => 100]]];
 Arr::forget($array, 'products.desk');
 // ['products' => []]
+```
+
+### `Arr::unset()`
+Hàm `Arr::unset` (macro riêng của SkillDo) xóa một key khỏi mảng (truyền theo tham chiếu) sử dụng kí hiệu "dot". Hỗ trợ wildcard `*` để xóa toàn bộ phần tử của một nhánh. Trả về mảng sau khi xóa.
+
+```php
+$array = ['products' => ['desk' => ['price' => 100, 'name' => 'Desk']]];
+Arr::unset($array, 'products.desk.price');
+// ['products' => ['desk' => ['name' => 'Desk']]]
+
+// Wildcard: xóa sạch một nhánh
+Arr::unset($array, '*');
+// []
 ```

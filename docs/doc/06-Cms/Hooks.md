@@ -112,15 +112,15 @@ add_filter(string $tag, callable $callback, int $priority = 10, int $accepted_ar
 
 ```php
 // Filter đơn giản — nhận giá trị, trả về giá trị đã sửa
-add_filter('the_title', function ($title) {
-    return strtoupper($title);
+add_filter('the_content', function ($content) {
+    return $content . '<p>Bản quyền thuộc về tôi</p>';
 });
 
-// Filter với nhiều tham số
-add_filter('get_post_thumbnail', function ($imgHtml, $postId, $size) {
-    // Thêm class vào ảnh
+// Filter với nhiều tham số (hook 'get_img' có sẵn trong core, truyền 2 tham số)
+add_filter('get_img', function ($imgHtml, $params) {
+    // $params gồm: url, img, alt, params (attributes), type
     return str_replace('<img', '<img class="post-thumb"', $imgHtml);
-}, 10, 3);  // accepted_args = 3
+}, 10, 2);  // accepted_args = 2
 
 // Filter trong Plugin
 add_filter('products_list_query', function ($query) {
@@ -139,10 +139,10 @@ apply_filters(string $tag, mixed $value, mixed ...$args): mixed
 
 ```php
 // Cơ bản
-$title = apply_filters('the_title', $post->title);
+$content = apply_filters('the_content', $content);
 
 // Truyền thêm tham số để filter có thể dùng
-$imgHtml = apply_filters('get_post_thumbnail', $imgHtml, $post->id, 'medium');
+$imgHtml = apply_filters('get_img', $imgHtml, $params);
 
 // Trong Model hoặc Service
 $items = apply_filters('my_plugin_product_list', $products, $categoryId);
@@ -151,16 +151,30 @@ $items = apply_filters('my_plugin_product_list', $products, $categoryId);
 ### `has_filter()` — Kiểm Tra Filter
 
 ```php
-if (has_filter('the_title')) {
-    // Có filter nào đó đang lọc the_title
+has_filter(string $tag, callable|string|false $function_to_check = false)
+```
+
+```php
+if (has_filter('the_content')) {
+    // Có filter nào đó đang lọc the_content
 }
 ```
 
 ### `remove_filter()` — Hủy Đăng Ký Filter
 
 ```php
-remove_filter('the_title', 'my_custom_title_function', 10);
-remove_all_filters('the_title');
+remove_filter('the_content', 'my_custom_content_function', 10);
+remove_all_filters('the_content');
+```
+
+### `current_filter()` / `doing_filter()` — Kiểm Tra Hook Đang Chạy
+
+```php
+// Tên hook (action hoặc filter) đang được thực thi
+$tag = current_filter();   // alias: current_action()
+
+// Có đang trong quá trình chạy một hook cụ thể không
+if (doing_filter('the_content')) { ... }   // alias: doing_action(...)
 ```
 
 ---
@@ -251,30 +265,52 @@ add_action('init', function () {
 | Hook | Khi nào phát ra | Tham số |
 |---|---|---|
 | `cms_loaded` | CMS Loader đã load xong các thành phần cơ bản. | — |
+| `after_setup_admin` | Khu vực Admin (views/admin) đã load xong (chỉ phát khi đang ở trang admin). | — |
 | `plugins_loaded` | Tất cả Plugin đang active đã load xong `ServiceProvider`. | — |
+| `after_setup_theme` | Theme (parent → child) đã load xong bootstrap/providers. | — |
 | `init` | CMS Controller khởi tạo xong (lúc bắt đầu vòng đời request). | — |
 | `admin_init` | Hệ thống khởi tạo riêng cho khu vực Admin backend. | — |
-| `theme_init` / `client_init` | Hệ thống khởi tạo riêng cho Theme frontend. | — |
+| `client_init` / `theme_init` | Hệ thống khởi tạo riêng cho Theme frontend (`client_init` phát trước `theme_init`). | — |
 | `ready` | CMS Controller đã sẵn sàng thực thi logic trang hiện tại. | — |
+| `shutdown` | Cuối vòng đời request, trước khi gửi response. | `$response, $request` |
+| `template_redirect` | Trước khi Template render trang frontend. | `$request` |
+| `admin_navigation` | Thời điểm đăng ký menu sidebar Admin (`AdminMenu::add`). | — |
+| `admin_header` / `admin_footer` | Render trong layout Admin (in thêm assets/HTML vào head/footer admin). | — |
+| `cle_header` / `cle_footer` | Render trong layout frontend của theme (theme-store phát từ `head.blade.php`/footer — nơi theme đăng ký in CSS/JS, meta tags). | — |
+| `skd_login` | User đăng nhập thành công. | `$username, $user` |
+| `skd_login_failed` | Đăng nhập thất bại. | `$username` |
+| `user_logout` | User đăng xuất. | — |
 | `user_register` | Khi một User mới đăng ký/tạo thành công. | `$userId` |
 | `profile_update` | Khi thông tin User được cập nhật. | `$userId` |
 | `deleted_user` | Khi User bị xóa khỏi hệ thống. | `$user` |
 | `set_user_role` | Khi User được gán một role mới. | `$userId, $role, $userRole` |
-| `update_{$name}_option` | Cập nhật một Option vào bảng system (`$name` là key option). | `$option, $name, $value` |
+| `remove_user_role` | Khi một role bị gỡ khỏi User. | `$userId, $role, $userRole` |
+| `plugin_active` / `plugin_deactivate` / `plugin_update` / `plugin_delete` | Vòng đời Plugin trong trang quản lý Plugin. | `$name` (plugin id) |
+| `add_{$name}_option` / `update_{$name}_option` / `delete_{$name}_option` | Thêm/Cập nhật/Xóa một Option trong bảng system (`$name` là key option). | update: `$option, $name, $value` |
+| `model_before_{$table}_update` / `model_before_{$table}_remove` | Trước khi Eloquent Builder update/delete trên bảng `$table`. | `$builder` |
+| `delete_{$table}_success` | Sau khi xóa thành công bản ghi trên bảng `$table`. | `$objects` (danh sách id) |
 | `admin_{$module}_table_column_{$name}` | Dùng trong quản trị admin để in thêm HTML ra 1 cột trong bảng. | `$item` |
 
 ### Filter Hooks Hệ Thống
 
 | Hook | Mô tả | Tham số |
 |---|---|---|
-| `the_content` | Lọc nội dung bài viết trước khi xuất ra view (VD: replace shortcode). | `$content` |
+| `the_content` | Lọc nội dung bài viết trước khi xuất ra view (VD: replace shortcode). Áp dụng trong helper `the_content()` (`packages/skilldo/cms/src/Support/helpers.php`). | `$content` |
 | `get_url` | Lọc URL (dùng cho đa ngôn ngữ hoặc rewrite rule). | `$slug` |
 | `get_img` | Lọc HTML thẻ `<img>` của helper `SkillDo\Cms\Support\Image`. | `$html, $params` |
 | `get_img_link` | Lọc URL ảnh của helper Image. | `$link, $params` |
 | `cms_logo` | Lọc/đổi logo của CMS Admin. | `$logoPath` |
-| `user_has_cap` / `role_has_cap`| Lọc/thay đổi kết quả check quyền capability. | `$capabilities, $cap, $role` |
-| `post_detail_view` / `post_index_view`| Lọc/đổi template view render cho trang chi tiết/danh sách bài viết. | `$view, $object` |
+| `authenticate` | Can thiệp quá trình xác thực trong `Auth::login` (trả về SKD_Error để chặn login). | `$user, $username, $password` |
+| `user_has_cap` | Lọc danh sách capability của user trước khi check quyền. | `$capabilities, $args` (`$args = [$cap, $userId]`) |
+| `role_has_cap` | Lọc danh sách capability của một role trước khi check quyền. | `$capabilities, $cap, $roleKey` |
+| `illegal_username` | Lọc danh sách username bị cấm khi tạo User (mặc định `['root']`). | `$usernames` |
+| `login_redirect_to` | Lọc URL chuyển hướng sau đăng nhập (middleware `RedirectIfAuthenticated`). | `$redirectTo` |
+| `get_data_menu` | Lọc danh sách menu item khi render Theme Menu. | `$menuItems` |
+| `admin_navigation_data` | Lọc toàn bộ cấu trúc navigation Admin trước khi render. | `$adminNav` |
+| `pre_insert_{$table}_check` | Chặn/validate trước khi insert vào bảng `$table` (trả về SKD_Error để hủy). | `$error, $builder` |
+| `post_detail_view` / `post_index_view` / `page_detail_view` | Lọc/đổi template view render cho trang chi tiết/danh sách bài viết, chi tiết trang. | `$view, $object` |
 | `admin_table_object_form_search`| Thêm/Sửa các input trên thanh filter/search của bảng Admin. | `$form` |
+| `admin_table_object_form_filter`| Thêm/Sửa các input trên form filter của bảng Admin. | `$form, $request` |
 
 ---
 

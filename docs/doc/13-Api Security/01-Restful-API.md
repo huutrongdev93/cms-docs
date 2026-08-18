@@ -54,7 +54,7 @@ Mặc định, các route đăng ký trong file này sẽ tự động được 
 Mở tệp `routes/api.php` và thêm đường dẫn lấy danh sách sản phẩm:
 
 ```php
-use SkillDo\Facades\Route;
+use SkillDo\Support\Facades\Route;
 use App\Controllers\Api\ProductApiController;
 
 // Route công khai (Public) lấy danh sách không cần đăng nhập

@@ -78,7 +78,7 @@ Nếu bạn làm một gói Package nằm ngoài cấu trúc chuẩn của Plugi
 ```php
 namespace SkillDo\MyCustomPackage\Providers;
 
-use SkillDo\Support\ServiceProvider;
+use SkillDo\ServiceProvider;
 
 class CustomPackageServiceProvider extends ServiceProvider {
 

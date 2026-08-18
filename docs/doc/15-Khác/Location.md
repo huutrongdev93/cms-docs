@@ -1,4 +1,12 @@
+> **File:** `packages/skilldo/cms/src/Location/Location.php`  
+> **Class:** `SkillDo\Cms\Location\Location`  
+> **Alias:** `\SkillDo\Location` (đăng ký trong `CmsServiceProvider`)
+
 `Location` là một công cụ mạnh mẽ cho việc truy xuất thông tin địa lý cơ bản của Việt Nam, bạn có thể dễ dàng truy cập thông tin về các tỉnh thành, quận huyện và các đơn vị hành chính cấp dưới như phường, xã.
+
+Dữ liệu được lấy từ dịch vụ SkillDo (`SKDService::location()`) và **cache 30 ngày**. Các phần tử trả về là object (stdClass); các method `*Options()` chỉ trả về đơn vị có `active = true`.
+
+> Đây là dữ liệu đơn vị hành chính **cũ (3 cấp: tỉnh → quận/huyện → phường/xã)**. Với đơn vị hành chính mới áp dụng từ 01/07/2025 (2 cấp), dùng [`Location2`](./Location2.md).
 
 ### Tỉnh / Thành phố
 #### Danh sách
@@ -189,10 +197,10 @@ _Kết quả_
 ]
 ```
 #### Chi tiết
-Lấy chi tiết quận huyện theo id
+Lấy chi tiết phường xã theo id quận huyện và id phường xã
 
 ```php
-\SkillDo\Location::wards(6440, 83331); //Huyện Bình Chánh
+\SkillDo\Location::wards(6440, 83331); //Xã Tân Kiên
 ```
 kêt quả
 ```json
@@ -210,4 +218,17 @@ Lấy tên phường xã bằng id quận huyện và id phường xã
 
 ```php
 \SkillDo\Location::wardName(6440, 83331); //Xã Tân Kiên
+```
+
+### Địa chỉ đầy đủ
+
+Ghép tên Phường xã + Quận huyện + Tỉnh thành thành chuỗi địa chỉ hoàn chỉnh:
+
+```php
+\SkillDo\Location::address($province_id, $districts_id, $ward_id = '')
+```
+
+```php
+\SkillDo\Location::address(58, 6440, 83331);
+// "Xã Tân Kiên, Huyện Bình Chánh, TP. Hồ Chí Minh"
 ```

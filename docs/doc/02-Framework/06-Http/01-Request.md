@@ -198,12 +198,14 @@ $input = $request->except(['credit_card']);
 $input = $request->except('credit_card');
 ```
 
-|    Method     |                                Mô tả & Cách dùng                                |
-|:-------------:|:-------------------------------------------------------------------------------:|
-|   `path()`    |  Lấy đường dẫn URI. Ví dụ vào `domain.com/admin/user` thì trả về `admin/user`.  |
-|    `url()`    |                       Lấy đầy đủ URL bỏ đi Query String.                        |
-|  `fullUrl()`  |                       Lấy đầy đủ URL có kèm Query String.                       |
-|    `ip()`     |                  Lấy địa chỉ IP của Client. `request()->ip()`                   |
+|     Method      |                                       Mô tả & Cách dùng                                        |
+|:---------------:|:------------------------------------------------------------------------------------------------:|
+|    `path()`     |         Lấy đường dẫn URI. Ví dụ vào `domain.com/admin/user` thì trả về `admin/user`.          |
+|     `url()`     |                               Lấy đầy đủ URL bỏ đi Query String.                               |
+|   `fullUrl()`   |                              Lấy đầy đủ URL có kèm Query String.                               |
+|     `ip()`      |                          Lấy địa chỉ IP của Client. `request()->ip()`                          |
+| `segment($i)`   | Lấy 1 đoạn (segment) của URI theo vị trí (bắt đầu từ 1). Vd URI `admin/user`: `segment(1)` = `admin`. |
+|  `segments()`   |                        Lấy toàn bộ các segment của URI dưới dạng mảng.                         |
 
 ### 3.2. Kiểm Tra Trạng Thái Request
 
@@ -319,7 +321,7 @@ if ($request->hasHeader('X-Header-Name')) {
 }
 ```
 
-Bạn có thể sử dụng phương thức `bearerToken` để lấy một mã thông báo từ header `Authorization`. Nếu không có header nào như vậy, một chuỗi trống sẽ được trả về:
+Bạn có thể sử dụng phương thức `bearerToken` để lấy một mã thông báo từ header `Authorization`. Nếu không có header nào như vậy, `null` sẽ được trả về:
 
 ```php
 $token = $request->bearerToken();
@@ -360,10 +362,34 @@ $path = $request->avatar->path();
 $extension = $request->avatar->extension();
 ```
 
-### 3.4. Các Method Chuyên Biệt SkillDo (Mở rộng)
+### 3.5. Các Method Chuyên Biệt SkillDo (Mở rộng)
 
 |          Method          |                                                                                                   Mô tả & Cách dùng                                                                                                    |
 |:------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| `cookie($key, $default)` |                                                    Lấy giá trị cookie sử dụng class Core Cookie của SkillDo. `$theme = request()->cookie('theme_color', 'light');`                                                     |
-|    `hasCookie($key)`     |                                                                            Kiểm tra cookie trên Cms. `request()->hasCookie('theme_color')`                                                                             |
-|    `validate($rules)`    | *(Mở rộng bởi SkillDo)* Kích hoạt thư viện `SkillDo\Validate\Validate` tự động kiểm tra dữ liệu đầu vào. Đầu vào có thể truyền 1 mảng Rule hoặc class Form / FormAdmin. `request()->validate(['name' => 'required']);` |
+| `cookie($key, $default)` |                                                    Lấy giá trị cookie sử dụng class `SkillDo\Support\Cookie` của SkillDo (override cookie của Illuminate). `$theme = request()->cookie('theme_color', 'light');`        |
+|    `hasCookie($key)`     |                                                                            Kiểm tra cookie trên Cms (`Cookie::has`). `request()->hasCookie('theme_color')`                                                             |
+|    `validate($rules)`    | *(Mở rộng bởi SkillDo)* Kích hoạt thư viện `SkillDo\Validate\Validate` tự động kiểm tra dữ liệu đầu vào. Đầu vào có thể truyền 1 mảng Rule hoặc class Form / FormAdmin.                                                |
+
+#### Chi tiết về `validate()`
+
+Signature thực tế trong source:
+
+```php
+public function validate(array|Form|FormAdmin $rules): Validate
+```
+
+- Rule phải là đối tượng `SkillDo\Validate\Rule` (không hỗ trợ rule dạng chuỗi kiểu Laravel như `'required'`).
+- Nếu truyền vào một `Form` / `FormAdmin`, hệ thống tự lấy rule từ `$form->validations()` và tự chuyển tên field dạng ngoặc vuông (`data[name]`, `items[]`) sang ký hiệu "dấu chấm" (`data.name`, `items.*`).
+- Kết quả trả về là đối tượng `SkillDo\Validate\Validate` (đã chạy `->validate()` sẵn), kiểm tra bằng `->fails()` / `->passes()` và lấy lỗi qua `->errors()` (trả về `SKD_Error`).
+
+```php
+use SkillDo\Validate\Rule;
+
+$validate = request()->validate([
+    'name' => Rule::make('Họ tên')->notEmpty(),
+]);
+
+if ($validate->fails()) {
+    response()->error($validate->errors());
+}
+```

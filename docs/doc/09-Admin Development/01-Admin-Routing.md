@@ -29,7 +29,7 @@ Việc khai báo công khai này giúp hệ thống rõ ràng và linh hoạt, c
 ```php
 // File: routes/admin.php
 
-use SkillDo\Facades\Route;
+use SkillDo\Support\Facades\Route;
 
 // 1. NHÓM CHO PHÉP TRUY CẬP KHI CHƯA ĐĂNG NHẬP (VD: Form Login Admin)
 Route::namespace('App\Controllers\Admin')
@@ -75,7 +75,7 @@ Ví dụ, bạn viết code tại class `App\Providers\PluginServiceProvider` c�
 namespace App\Providers;
 
 use SkillDo\ServiceProvider;
-use SkillDo\Facades\Route;
+use SkillDo\Support\Facades\Route;
 
 class GiftPluginServiceProvider extends ServiceProvider {
 
@@ -107,7 +107,7 @@ class GiftPluginServiceProvider extends ServiceProvider {
 
 Khi Request được chấp nhận và đưa vào `GiftAdminController`, Framework đưa toàn bộ công cụ tạo giao diện (View) để nạp trang Admin (khung Navbar/Sidebar) bọc quanh thân trang (Content) của bạn.
 
-Để làm được, hệ thống sử dụng class Admin Controller gốc (`SkillDo\Cms\Controllers\AdminController` hoặc Helper). 
+Để làm được, hệ thống sử dụng class Admin Controller gốc (`SkillDo\Cms\Controller`). 
 
 ```php
 namespace App\Controllers\Admin;

@@ -8,6 +8,8 @@
 
 CMS cung cấp một hệ thống Ajax thống nhất. Backend đăng ký handlers, frontend gọi qua URL `/ajax` với param `action`.
 
+Endpoint `/ajax` được đăng ký trong `routes/admin.php` (`Route::match(['get','post','put','patch','delete'], 'ajax', 'AjaxController@index')`) và dispatch bởi `App\Controllers\Admin\AjaxController`. Request **bắt buộc phải là XHR** (có header `X-Requested-With: XMLHttpRequest`) — nếu không sẽ bị redirect về trang admin.
+
 ## Luồng Hoạt Động
 
 ```
@@ -28,9 +30,9 @@ response()->success(...) / response()->error(...)
 
 | Method | Yêu cầu | Mô tả |
 |---|---|---|
-| `Ajax::client()` | Không cần đăng nhập | Ajax công khai |
-| `Ajax::login()` | User đã đăng nhập | Ajax cho thành viên |
-| `Ajax::admin()` | User có quyền admin | Ajax chỉ dành cho admin |
+| `Ajax::client()` | Không cần đăng nhập | Ajax công khai (alias: `Ajax::public()`) |
+| `Ajax::login()` | User đã đăng nhập (`Auth::check()`) | Ajax cho thành viên |
+| `Ajax::admin()` | User đã đăng nhập **và** có capability `loggin_admin` | Ajax chỉ dành cho admin |
 
 ### Cú pháp
 
@@ -40,6 +42,20 @@ Ajax::client('ClassName::methodName', ['get', 'post']);
 
 Ajax::login('ClassName::methodName', 'post');
 Ajax::admin('ClassName::methodName', 'post');
+```
+
+> Tham số method mặc định là `'post'` nếu không truyền. Một action chỉ được đăng ký một lần cho mỗi tier (trùng sẽ bị bỏ qua).
+
+### Kiểm tra / hủy đăng ký
+
+```php
+// Kiểm tra một action đã đăng ký chưa (theo tier)
+Ajax::isRegisterClient('ClassName::methodName');
+Ajax::isRegisterLogin('ClassName::methodName');
+Ajax::isRegisterAdmin('ClassName::methodName');
+
+// Hủy đăng ký một action (gỡ khỏi mọi tier) — gọi qua instance trong container
+app('ajax')->remove('ClassName::methodName');
 ```
 
 ### Đăng ký trong Plugin
@@ -176,9 +192,11 @@ Khi admin và client dùng ngôn ngữ khác nhau, thêm `_is_lang`:
 ```javascript
 let data = {
     action:   'MyPlugin\\Ajax\\PublicAjax::load',
-    _is_lang: 'theme',  // 'theme' = ngôn ngữ client, 'admin' = ngôn ngữ admin
+    _is_lang: 'theme',  // 'theme' = chạy với ngôn ngữ client (lấy từ session/`language.theme.default`)
 };
 ```
+
+> Chỉ giá trị `'theme'` có ý nghĩa với handler `Ajax::login()`/`Ajax::admin()`: nó ép request chạy theo ngôn ngữ của client. Không truyền (hoặc giá trị khác) thì request từ admin chạy theo ngôn ngữ admin như bình thường. Handler `Ajax::client()` luôn chạy theo ngôn ngữ client.
 
 ### `SkilldoMessage.response(response)`
 
@@ -321,28 +339,36 @@ plugins/my-plugin/
 
 ## Response Format
 
+`response()->success($message, $data)` trả HTTP code mặc định `200`, `response()->error($message, $data)` trả `400` (đổi bằng `response()->setApiStatus($code)` trước khi gọi). Nếu `$message` là `SKD_Error` (VD: `$validate->errors()`), message trong JSON là **chuỗi lỗi đầu tiên** (`->first()`).
+
 ```json
 // Success
 {
-    "status": "success",
-    "code": 200,
-    "message": "Thao tác thành công!",
     "data": {
         "id": 1,
         "title": "Sản phẩm mới"
-    }
+    },
+    "status": "success",
+    "code": 200,
+    "message": "Thao tác thành công!"
 }
 
-// Error
+// Error — ví dụ response()->error($validate->errors())
 {
+    "data": [],
     "status": "error",
     "code": 400,
-    "message": "Dữ liệu không hợp lệ",
-    "data": {
-        "errors": {
-            "title": "Tiêu đề không được rỗng"
-        }
-    }
+    "message": "Tiêu đề không được rỗng"
 }
 ```
+
+> Sau khi gửi JSON, response kết thúc request ngay (`die`) — code phía sau `response()->success()`/`error()` không chạy.
+
+### Xử lý lỗi trong handler
+
+Exception ném ra trong handler được `AjaxController` bắt lại, ghi `Log::error(...)` và trả về `response()->error(...)`. Khi `APP_DEBUG=true` message lỗi thật + vị trí file được trả về; khi tắt debug chỉ trả thông báo chung "Đã có lỗi xảy ra. Vui lòng thử lại.".
+
+### Ajax của Element (Page Builder)
+
+Element có thể khai báo key `ajax` trong `widget.json` (map `tier => 'Class::method'`). Khi action khớp, `AjaxController` tự `include` file element và đăng ký action với tier tương ứng trước khi dispatch — element không cần file `bootstrap/ajax.php` riêng.
 

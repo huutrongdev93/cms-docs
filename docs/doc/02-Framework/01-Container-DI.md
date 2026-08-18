@@ -4,6 +4,8 @@ SkillDo Framework được xây dựng xoay quanh khái niệm **Service Contain
 
 Bài viết này sẽ giúp bạn hiểu sâu về cách hệ thống quản lý các object (đối tượng) và tiêm phụ thuộc (Dependency Injection - DI).
 
+Về mặt mã nguồn: class `SkillDo\Container` kế thừa trực tiếp `Illuminate\Container\Container`, và `SkillDo\Application` lại kế thừa `SkillDo\Container` — nghĩa là **Application chính là Container** của toàn ứng dụng, sở hữu đầy đủ API của Illuminate Container (`bind`, `singleton`, `instance`, `make`, `call`, `afterResolving`, contextual binding...).
+
 ---
 
 ## 1. Service Container là gì?
@@ -92,7 +94,7 @@ $reportService = SkillDo\Application::getInstance()->make(ReportService::class);
 
 ### Ràng buộc class vào Container (Binding)
 
-Làm sao Container biết được cách khởi tạo một class phức tạp? Đôi khi chúng ta cần định nghĩa và đưa (bind) nó vào trong hộp thần kỳ bằng chứng. Việc này thường thực hiện trong các file **Service Providers**.
+Làm sao Container biết được cách khởi tạo một class phức tạp? Đôi khi chúng ta cần định nghĩa và đưa (bind) nó vào trong hộp thần kỳ. Việc này thường thực hiện trong các file **Service Providers**.
 
 #### `bind()` (Khởi tạo lại mỗi lần gọi)
 
@@ -157,7 +159,34 @@ class FileController {
 
 ---
 
+## 4. Các Binding Cốt Lõi Có Sẵn Trong Container
+
+Khi ứng dụng boot xong, các service sau đã nằm sẵn trong Container (lấy ra bằng `app('tên')`):
+
+| Tên binding | Class thực tế | Đăng ký bởi |
+|---|---|---|
+| `app` | `SkillDo\Application` (chính nó) | `Application::registerBaseBindings()` |
+| `config` | `Illuminate\Config\Repository` | bootstrapper `LoadConfiguration` |
+| `router` | `SkillDo\Routing\Router` | `Application::registerBaseBindings()` |
+| `file` | `SkillDo\Support\File` (extends `Illuminate\Filesystem\Filesystem`) | `Application::registerBaseBindings()` |
+| `cache` | `SkillDo\Cache\Cache` | bootstrapper `RegisterFacades` |
+| `request` | `SkillDo\Http\Request` | `Application::handleRequest()` (instance) |
+| `response` | `SkillDo\Http\Response` | helper `response()` (lazy singleton) |
+| `session` | `Symfony\...\Session\Session` | `SessionServiceProvider` |
+| `files`, `filesystem` | Filesystem / Flysystem | `FileSystemServiceProvider` |
+| `log` | `SkillDo\Log\Log` | `LogServiceProvider` |
+| `db` | Database manager (Eloquent Capsule) | `DatabaseServiceProvider` |
+| `view` | View engine (BladeOne) | `ViewServiceProvider` |
+| `translator` | Translator | `TranslationServiceProvider` |
+| `data` | Mảng dữ liệu view-scoped (`Cms::setData`) | `CmsServiceProvider` |
+
+Ngoài ra Application bind sẵn các **đường dẫn**: `path.base`, `path.config`, `path.view`, `path.storage`, `path.cache`, `path.log`.
+
+Helper `app()` gọi **không tham số** sẽ trả về chính instance `Application` (`Application::getInstance()`); truyền tham số string thì tương đương `->make($entity)`.
+
+---
+
 ## TỔNG KẾT
 - **Container** (hay Hộp thần kỳ) giúp quản lý mọi đối tượng trong ứng dụng.
-- **Dependency Injection**: Tiêm phụ thuộc tự động vào hàm constructor. Cứ khai báo type-hint, Container sẽ cấp hàng.
-- Nơi để viết các hàm khóa học (`bind`, `singleton`) cho Container là ở **Service Provider**. (Sẽ nói ngay bài sau).
+- **Dependency Injection**: Tiêm phụ thuộc tự động vào hàm constructor *và* vào method của Controller/Closure khi Router dispatch (qua `ControllerDispatcher`/`CallableDispatcher`). Cứ khai báo type-hint, Container sẽ cấp hàng.
+- Nơi để viết các ràng buộc (`bind`, `singleton`) cho Container là ở **Service Provider**. (Sẽ nói ngay bài sau).

@@ -53,7 +53,12 @@ $status = OrderStatus::from('completed'); // OrderStatus::COMPLETED
 // Lấy tất cả options cho select
 $options = OrderStatus::options()->toArray();
 // [['value' => 'wait', 'label' => 'Chờ xác nhận'], ...]
+
+// Mã trạng thái kiểu cũ (v7) - dùng khi cần tương thích ngược
+$old = OrderStatus::SHIPPING->old();       // 'wc-ship'
 ```
+
+> `label()` lấy nhãn từ file dịch (`sicommerce::order.status.*`) nên thay đổi theo ngôn ngữ đang chọn — các nhãn trong bảng trên là bản tiếng Việt.
 
 ### Sử Dụng qua OrderHelper
 
@@ -83,6 +88,16 @@ add_filter('order_status_label', function($label, $value) {
 add_filter('order_status_color', function($color, $value) {
     if($value == 'completed') return '#00aa55'; // Màu xanh đậm hơn
     return $color;
+}, 10, 2);
+
+// Tuỳ chỉnh badge class
+add_filter('order_status_badge', function($badge, $value) {
+    return $badge;
+}, 10, 2);
+
+// Tuỳ chỉnh mã trạng thái kiểu cũ
+add_filter('order_status_old', function($old, $value) {
+    return $old;
 }, 10, 2);
 
 // Thêm trạng thái vào danh sách (qua OrderHelper::status)

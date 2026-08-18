@@ -16,10 +16,12 @@ SkillDo v8 hỗ trợ **2 loại theme**:
 Khi CMS load một view, nó tìm kiếm **theme-child trước**, nếu không có thì fallback sang **theme-store**:
 
 ```
-Theme::partial('include/header')
-  → views/theme-child/include/header.blade.php   (ưu tiên)
-  → views/theme-store/include/header.blade.php   (fallback)
+Theme::partial('resources/common/breadcrumb')
+  → views/theme-child/resources/common/breadcrumb.blade.php   (ưu tiên)
+  → views/theme-store/resources/common/breadcrumb.blade.php   (fallback)
 ```
+
+`Theme::partial()` tự thêm namespace `theme::` vào đường dẫn (trừ khi đường dẫn đã mang namespace riêng, ví dụ element của plugin: `travel::elements/...`), rồi gọi `view()`.
 
 ---
 
@@ -58,7 +60,8 @@ views/theme-store/
 │   ├── Layouts/                   # Layout logic classes (PSR-4: Theme\Layouts\*)
 │   │   ├── PageDetail.php         # Logic layout trang chi tiết (page)
 │   │   ├── PostDetail.php         # Logic layout bài viết chi tiết
-│   │   └── PostIndex.php          # Logic layout danh sách bài viết
+│   │   ├── PostIndex.php          # Logic layout danh sách bài viết
+│   │   └── ProductsIndex.php      # Logic layout danh sách sản phẩm
 │   │
 │   ├── Providers/
 │   │   └── ThemeServiceProvider.php  # Service Provider của theme
@@ -79,7 +82,8 @@ views/theme-store/
 │   │   ├── ThemeBreadcrumb.php    # Breadcrumb builder
 │   │   ├── ThemeBreadcrumbItem.php# Breadcrumb item builder
 │   │   ├── ThemeWidget.php        # Widget builder (alias)
-│   │   ├── ThemeAuthForm.php      # Form xác thực (login / register / forgot)
+│   │   ├── Supports/
+│   │   │   └── ThemeAuthForm.php  # Form xác thực (login / register / forgot)
 │   │   ├── ThemeCssBuild.php      # CSS builder helper
 │   │   ├── ThemeHeaderStyle.php   # CSS helper cho header
 │   │   ├── ThemeHeadingStyle.php  # CSS helper cho heading
@@ -103,7 +107,6 @@ views/theme-store/
 │   │   └── ThemeMixin.php         # Blade/Str macro extensions
 │   │
 │   ├── Options/                   # Theme option configuration files
-│   │   ├── banner.php             # Option banner
 │   │   ├── fonts.php              # Option fonts
 │   │   ├── footer.php             # Option footer
 │   │   ├── general.php            # Option chung
@@ -111,8 +114,7 @@ views/theme-store/
 │   │   ├── header-mobile.php      # Option header mobile
 │   │   ├── map.php                # Option bản đồ
 │   │   ├── mobile.php             # Option mobile
-│   │   ├── navigation.php         # Option navigation/menu
-│   │   └── post.php               # Option bài viết
+│   │   └── navigation.php         # Option navigation/menu
 │   │
 │   └── helpers/
 │       └── helper.php             # Helper functions của theme
@@ -156,18 +158,6 @@ views/theme-store/
 │   ├── account/                   # Partials trang tài khoản
 │   │   ├── account-nav.blade.php
 │   │   └── profile-widget.blade.php
-│   └── admin/                     # Partials cho Admin backend
-│       └── theme-layout/          # UI quản lý layout
-│           ├── main.blade.php
-│           ├── layout.blade.php
-│           ├── layout-item.blade.php
-│           ├── components.blade.php
-│           ├── navigation.blade.php
-│           └── heading-default/
-│               ├── index.blade.php
-│               └── item.blade.php
-│
-├── include/                       # Partial views theo loại nội dung
 │   ├── loop/                      # Loop item views
 │   │   ├── item_post.blade.php
 │   │   ├── item_post_horizontal.blade.php
@@ -179,55 +169,55 @@ views/theme-store/
 │   │   │   ├── title.blade.php
 │   │   │   ├── share.blade.php
 │   │   │   └── related.blade.php
-│   │   ├── item/
-│   │   │   └── css.blade.php
 │   │   └── list/                  # Danh sách bài viết
 │   │       ├── title.blade.php
+│   │       ├── posts.blade.php
 │   │       └── pagination.blade.php
-│   └── product/                   # Product partials
-│       ├── detail/                # Chi tiết sản phẩm
-│       │   ├── breadcrumb.blade.php
-│       │   └── mobile-cart.blade.php
-│       └── list/                  # Danh sách sản phẩm
-│           ├── title.blade.php
-│           └── pagination.blade.php
+│   ├── product/                   # Product partials
+│   │   ├── detail/                # Chi tiết sản phẩm
+│   │   │   ├── breadcrumb.blade.php
+│   │   │   └── mobile-cart.blade.php
+│   │   └── list/                  # Danh sách sản phẩm
+│   │       ├── title.blade.php
+│   │       └── pagination.blade.php
+│   └── admin/                     # Partials cho Admin backend
+│       └── theme-layout/          # UI quản lý layout
+│           ├── main.blade.php
+│           ├── layout.blade.php
+│           ├── layout-item.blade.php
+│           ├── components.blade.php
+│           ├── navigation.blade.php
+│           └── heading-default/
+│               ├── index.blade.php
+│               └── item.blade.php
 │
 ├── language/                      # Translation files của theme
-│   ├── vi/...
+│   ├── vi/                        # auth.php, contact.php, general.php, page.php, post.php, user.php
 │   └── en/...
 │
 ├── assets/                        # CSS, JS, images của theme
 │   ├── css/
 │   ├── js/
-│   └── images/
+│   ├── less/
+│   ├── images/
+│   ├── add-on/
+│   └── bundle/
 │
-├── widget/                        # Widget blocks & elements
-│   ├── widget.json                # Danh sách widget đăng ký
-│   ├── blocks/                    # Widget blocks (about, banner, feedback, products...)
-│   │   ├── about/                 # Widget giới thiệu (style1 → style21)
-│   │   ├── banner/                # Widget banner
-│   │   ├── brands/                # Widget thương hiệu/đối tác
-│   │   ├── email/                 # Widget email/newsletter
-│   │   ├── feedback/              # Widget đánh giá/testimonial
-│   │   ├── footer/                # Widget footer
-│   │   ├── form/                  # Widget form liên hệ
-│   │   ├── items/                 # Widget danh sách items (style1 → style26)
-│   │   ├── page-builder/          # Widget page builder
-│   │   ├── post/                  # Widget bài viết (style1 → style19)
-│   │   ├── post-video/            # Widget bài viết có video
-│   │   ├── products/              # Widget sản phẩm (style1 → style21, flash-sale)
-│   │   ├── products-category/     # Widget danh mục sản phẩm
-│   │   ├── question/              # Widget hỏi đáp
-│   │   ├── question-feedback/     # Widget hỏi đáp + feedback
-│   │   ├── question-post/         # Widget hỏi đáp + bài viết
-│   │   ├── question-video/        # Widget hỏi đáp + video
-│   │   ├── slider/                # Widget slider (style1 → style14)
-│   │   ├── tien-ich/              # Widget tiện ích (content, map, menu-tags)
-│   │   └── videos/                # Widget video gallery
-│   └── elements/                  # Widget elements (button, cart, auth-button...)
-│       ├── auth-button/
-│       ├── button/
-│       └── cart/
+├── elements/                      # Elements của Page Builder (xem 07-Theme-Elements.md)
+│   ├── elements.json              # Danh sách element đăng ký
+│   ├── button/                    # Mỗi element 1 thư mục: class PHP + style1..styleN hoặc assets/ + views/
+│   ├── heading/
+│   ├── posts/
+│   ├── products/
+│   ├── slider/
+│   ├── feedback/
+│   ├── form/
+│   ├── gallery/
+│   ├── icon-box/
+│   ├── tabs/
+│   ├── video/
+│   └── ... (auth-button, cart, counter, divider, faq, hotline, logo, map,
+│            menu-nav, search-bar, social, text-editor, work-process, v.v.)
 │
 ├── home-index.blade.php           # Content trang chủ
 ├── post-index.blade.php           # Content danh sách bài viết
@@ -265,6 +255,9 @@ views/theme-store/
             "Theme\\Layouts":  "app\\Layouts",
             "Theme\\Custom":   "app\\Custom"
         }
+    },
+    "middlewares": {
+        "aliases": {}
     }
 }
 ```
@@ -309,7 +302,6 @@ Theme::config()
         add_action('cle_header', [\Theme\Services\ThemeHeadService::class, 'styleVariable'], 40);
 
         // ── CSS INLINE ───────────────────────────────────────────
-        add_action('theme_custom_css', [\Theme\Services\ThemeStyleService::class, 'postItemCss'], 999);
         add_action('cle_header', [\Theme\Services\ThemeStyleService::class, 'css'], 999);
 
         // ── SCRIPTS ──────────────────────────────────────────────
@@ -354,6 +346,7 @@ use SkillDo\Cms\Support\Theme;
 use Theme\Layouts\PageDetail;
 use Theme\Layouts\PostDetail;
 use Theme\Layouts\PostIndex;
+use Theme\Layouts\ProductsIndex;
 use Theme\Supports\ThemeLayout;
 
 Theme::config()->booted('layout', function (\SkillDo\Cms\Support\ThemeConfig $theme)
@@ -371,11 +364,20 @@ Theme::config()->booted('layout', function (\SkillDo\Cms\Support\ThemeConfig $th
         'user.password'       => 'template-user',
     ]);
 
-    add_action('theme_init', function () {
+    function themeLayoutRegister(): void
+    {
         new PageDetail();
         new PostIndex();
         new PostDetail();
-    }, 100);
+        new ProductsIndex();
+    }
+
+    add_action('theme_init', 'themeLayoutRegister', 100);
+
+    // Khi review trong Page Builder (ajax) cũng cần đăng ký lại layout
+    if (isAjax()) {
+        add_action('builder_review_layout', 'themeLayoutRegister', 100);
+    }
 });
 ```
 
@@ -398,40 +400,52 @@ Theme::config()->booted('layout', function (\SkillDo\Cms\Support\ThemeConfig $th
 
 ## Layout Files — Cấu trúc HTML
 
-Mỗi layout là một file Blade đầy đủ HTML:
+Mỗi layout là một file Blade đầy đủ HTML. Dòng comment `Layout-name:` ở đầu file là **bắt buộc** — CMS quét comment này (`Template::getListLayout()`) để hiển thị tên layout trong danh sách chọn layout ở Admin:
 
 ```blade
-{{-- layouts/template-sidebar-right.blade.php --}}
+{{--
+Layout-name: Template Sidebar (Phải)
+--}}
 <!DOCTYPE html>
 <html lang="{{Language::current()}}" @do_action('in_tag_html')>
-    {!! Theme::partial('resources/common/head') !!}
+    {!! Theme::resources('common/head') !!}
     <body @do_action('in_tag_body')>
-        {!! Theme::partial('resources/layout/header') !!}
+        {!! Theme::resources('mobile/mobile-header') !!}
+        <div class="wrapper wrapper-{!! Template::getClass() !!}">
+            {!! Theme::resources('layout/top') !!}
 
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-9">
-                    {!! Theme::content() !!}  {{-- Nội dung trang --}}
-                </div>
-                <div class="col-lg-3 sidebar">
-                    {!! Theme::partial('resources/layout/sidebar-right') !!}
+            @do_action('template_wrapper_before')
+            @do_action('template_'.Template::getPage().'_before')
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9">
+                        {!! Theme::content() !!}  {{-- Nội dung trang --}}
+                    </div>
+                    <div class="col-lg-3 sidebar">
+                        {!! Theme::resources('layout/sidebar-right') !!}
+                    </div>
                 </div>
             </div>
+
+            @do_action('template_wrapper_after')
+            @do_action('template_'.Template::getPage().'_after')
         </div>
-
-        @do_action('template_wrapper_after')
-
-        {!! Theme::partial('resources/layout/footer') !!}
+        {!! Theme::resources('layout/footer') !!}
     </body>
 </html>
 ```
+
+> `Theme::resources('common/head')` là shortcut của `Theme::partial('resources/common/head')`.
 
 ### Theme Helpers
 
 | Helper | Mô tả |
 |---|---|
 | `Theme::content()` | Render nội dung trang hiện tại |
-| `Theme::partial('path/view')` | Include partial view (theme-child → theme-store) |
+| `Theme::partial('path/view', $data = [])` | Include partial view (theme-child → theme-store) |
+| `Theme::resources('path/view', $data = [])` | Shortcut: `Theme::partial('resources/...')` |
+| `Theme::view('path/view', $data = [])` | `echo Theme::partial(...)` |
 | `Theme::isHome()` | Kiểm tra đang ở trang chủ |
 | `Theme::name()` | Tên thư mục theme đang active |
 | `Language::current()` | Ngôn ngữ hiện tại (`vi`, `en`) |
@@ -455,6 +469,10 @@ class ThemeServiceProvider extends ServiceProvider
     {
         // Đăng ký class aliases dùng trong theme
         $loader = AliasLoader::getInstance();
+        $loader->alias('ThemeHeaderStyle', \Theme\Supports\ThemeHeaderStyle::class);
+        $loader->alias('ThemeNavigationStyle', \Theme\Supports\ThemeNavigationStyle::class);
+        $loader->alias('ThemeHeadingStyle', \Theme\Supports\ThemeHeadingStyle::class);
+        $loader->alias('ThemeCssBuild', \Theme\Supports\ThemeCssBuild::class);
         $loader->alias('ThemeWidget', \Theme\Supports\ThemeWidget::class);
         $loader->alias('walker_nav_menu', \Theme\Supports\WalkerNavMenu::class);
     }
@@ -462,6 +480,7 @@ class ThemeServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Chạy sau khi tất cả providers đã register
+        // (theme-store dùng boot() để đẩy config gallery/register vào app('config') với prefix theme::)
     }
 }
 ```
@@ -493,8 +512,8 @@ class ThemeServiceProvider extends ServiceProvider
 
 ## Theme Partial Functions
 
-### `Theme::partial(string $path): string`
-Include partial view, ưu tiên theme-child trước theme-store.
+### `Theme::partial(string $path, array $data = []): string`
+Include partial view, ưu tiên theme-child trước theme-store (render qua namespace view `theme::`). Khi `$data` rỗng, toàn bộ dữ liệu view-scope trong `app('data')` được truyền vào.
 
 ```blade
 {!! Theme::partial('resources/common/head') !!}
@@ -502,12 +521,15 @@ Include partial view, ưu tiên theme-child trước theme-store.
 {!! Theme::partial('resources/layout/footer') !!}
 {!! Theme::partial('resources/layout/sidebar-right') !!}
 {!! Theme::partial('resources/mobile/mobile-header') !!}
-{!! Theme::partial('include/loop/item_post', ['post' => $post]) !!}
+{!! Theme::partial('resources/loop/item_post', ['post' => $post]) !!}
 ```
 
-### `theme_include(string $file): mixed`
-Include PHP file từ thư mục theme (ưu tiên theme-child).
+### Các shortcut khác (`SkillDo\Cms\Support\Theme`)
 
 ```php
-theme_include('app/Options/general.php');
+Theme::resources('common/head');          // = Theme::partial('resources/common/head')
+Theme::include('loop/item_post', [...]);  // = Theme::partial('include/...') — dùng cho theme có thư mục include/
+Theme::view('resources/common/alert');    // echo Theme::partial(...)
+Theme::hasChildTheme('resources/layout/header'); // file có tồn tại trong theme-child?
+Theme::hasFileView('resources/layout/header');   // file có tồn tại trong theme đang active?
 ```

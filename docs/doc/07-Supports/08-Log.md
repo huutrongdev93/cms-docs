@@ -11,7 +11,7 @@ Class `Log` cung cấp hệ thống ghi nhật ký (logging) cho SkillDo CMS v8.
 ## 1. Các Channel (Chế Độ Lưu)
 
 ### `daily` (Mặc định)
-Ghi log vào file theo từng ngày, tự động tạo file mới mỗi ngày và xóa file cũ hơn **360 ngày**.
+Ghi log vào file theo từng ngày, tự động tạo file mới mỗi ngày và giữ tối đa **360 file** (khi vượt quá, các file cũ nhất sẽ bị xóa).
 
 - **Vị trí file log:** `storage/logs/app-DD-MM-YYYY.log`
 - Ví dụ: `storage/logs/app-10-03-2026.log`
@@ -218,4 +218,6 @@ protected static function boot(): void
 | `single('plugins/my-plugin/api.log')` | `storage/logs/plugins/my-plugin/api.log` |
 
 > **Lưu ý:** Thư mục `storage/logs/` được đặt bên ngoài webroot, không thể truy cập trực tiếp từ trình duyệt.  
-> Log channel `daily` tự động xóa file cũ hơn **360 ngày** để tránh chiếm dung lượng.
+> Log channel `daily` tự động giữ tối đa **360 file** log (xóa file cũ nhất khi vượt quá) để tránh chiếm dung lượng.  
+> Truyền level không hợp lệ (ngoài 8 level PSR-3 ở trên) sẽ ném `InvalidArgumentException`.  
+> Ngoài `Log::single()` / `Log::daily()`, có thể dùng `Log::build(['driver' => 'single', 'path' => '...'])` để khởi tạo channel theo mảng cấu hình.

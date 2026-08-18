@@ -237,10 +237,31 @@ $products = Product::whereIn('id', function($q) use ($collectionId) {
 
 ---
 
-## Session (Phiên làm việc / Xem gần đây)
+## Session (Kho lưu giỏ hàng của user đăng nhập)
 
-**Class**: `\Ecommerce\Models\Session`  
-**Table**: `products_session` (lưu sản phẩm đã xem)
+**Class**: `\Ecommerce\Models\Session`
+**Table**: `session`
+**Primary Key**: `session_id`
+**Alias**: *không có* — phải dùng namespace đầy đủ
 
-Được dùng nội bộ bởi `ProductsDetail::setViewedSession()`. Bạn thường không cần tương tác trực tiếp.
+Model này là nơi driver `Cart\Driver\Database` lưu giỏ hàng cho người dùng **đã đăng nhập** (khách vãng lai dùng `Cart\Driver\Session` lưu trong PHP session). Cột `payload` được cast sang mảng.
+
+> **Cẩn thận:** class này trùng tên với `Ecommerce\Cart\Driver\Session` — luôn import bằng namespace đầy đủ.
+
+Bạn thường không cần tương tác trực tiếp; dùng facade `Scart` thay thế.
+
+---
+
+## Extra Options (Tùy chọn phụ tính thêm tiền)
+
+Bốn model phục vụ tính năng Extra Product Options — chỉ hoạt động khi bật config `general.extras`.
+
+| Class | Alias | Table | Mô tả |
+|:---|:---|:---|:---|
+| `\Ecommerce\Models\ExtraTemplate` | `ExtraTemplate` | `product_extra_templates` | Template tùy chọn dùng chung cho nhiều sản phẩm |
+| `\Ecommerce\Models\ExtraGroup` | `ExtraGroup` | `product_extra_groups` | Nhóm tùy chọn trong một template |
+| `\Ecommerce\Models\ExtraItem` | `ExtraItem` | `product_extra_items` | Từng field tùy chọn (và mức tiền cộng thêm) |
+| `\Ecommerce\Models\ExtraUpload` | `ExtraUpload` | `product_extra_uploads` | File khách tải lên, gắn theo dòng đơn hàng |
+
+Logic nghiệp vụ nằm ở `ExtraOptionsService`, được nối vào các hook `cart_add`, `pre_insert_order_item_data`, `checkout_after_success`, `ecommerce_order_deleted` trong `bootstrap/extra-options.php`.
 

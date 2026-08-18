@@ -6,14 +6,16 @@
 
 Class `Url` cung cấp các helper tĩnh để tạo và xử lý URL trong SkillDo CMS v8.
 
-|                             |                                     |                               |
-|-----------------------------|:-----------------------------------:|------------------------------:|
-| [Url::is](#urlis)           |      [Url::admin](#urladmin)        | [Url::account](#urlaccount)   |
-| [Url::base](#urlbase)       |  [Url::permalink](#urlpermalink)    | [Url::register](#urlregister) |
-| [Url::current](#urlcurrent) |    [Url::segment](#urlsegment)      | [Url::login](#urllogin)       |
-| [Url::ssl](#urlssl)         | [Url::getYoutubeID](#urlgetyoutubeid) | [Url::logout](#urllogout)   |
-| [Url::theme](#urltheme)     | [Url::isYoutube](#urlisyoutube)     | [Url::forgot](#urlforgot)     |
-| [Url::slug](#urlslug)       | [Url::language](#urllanguage)       | [Url::download](#urldownload) |
+|                             |                                       |                               |
+|-----------------------------|:-------------------------------------:|------------------------------:|
+| [Url::is](#urlis)           |       [Url::admin](#urladmin)         | [Url::account](#urlaccount)   |
+| [Url::base](#urlbase)       |   [Url::permalink](#urlpermalink)     | [Url::register](#urlregister) |
+| [Url::current](#urlcurrent) |       [Url::route](#urlroute)         | [Url::login](#urllogin)       |
+| [Url::theme](#urltheme)     | [Url::getYoutubeID](#urlgetyoutubeid) | [Url::logout](#urllogout)     |
+| [Url::slug](#urlslug)       |   [Url::isYoutube](#urlisyoutube)     | [Url::forgot](#urlforgot)     |
+| [Url::fileManager](#urlfilemanager) | [Url::language](#urllanguage) | [Url::download](#urldownload) |
+| [Url::path](#urlpath)       |       [Url::asset](#urlasset)         | [Url::tag](#urltag)           |
+| [Url::pathHash](#urlpathhash) |     [Url::search](#urlsearch)       |                               |
 
 
 ### `Url::is()`
@@ -50,17 +52,12 @@ Url::current(true)
 // aHR0cHM6Ly9kb21haW4uY29tL3Nhbi1waGFtP3BhZ2U9Mg==
 ```
 
-### `Url::ssl()`
-Hàm `Url::ssl` kiểm tra domain hiện tại có dùng HTTPS (SSL) hay không.
+### `Url::route()`
+Hàm `Url::route` trả về URL của một named route (gọi qua helper `route()` toàn cục).
 
 ```php
-// Đang ở http://domain.com/
-Url::ssl()
-// false
-
-// Đang ở https://domain.com/
-Url::ssl()
-// true
+Url::route('account.order')
+// account/order
 ```
 
 ### `Url::admin()`
@@ -94,16 +91,84 @@ Url::permalink('san-pham-a')
 // Ngôn ngữ en:       https://domain.com/en/san-pham-a
 ```
 
-### `Url::segment()`
-Hàm `Url::segment` trả về phân đoạn (segment) của URL hiện tại theo vị trí (bắt đầu từ 1).
+### `Url::path()`
+Hàm `Url::path` trả về đường dẫn tính từ **gốc site, KHÔNG kèm tên miền**.
+
+Dùng cho nội dung được cache ra file (CSS bundle): không nhúng tên miền nên file vẫn đúng khi đổi domain hoặc chuyển `http` ↔ `https`.
 
 ```php
-// Đang ở https://domain.com/en/san-pham
-Url::segment(1)
-// en
-Url::segment(2)
-// san-pham
+Url::path('uploads/source/a.jpg')
+// /uploads/source/a.jpg
+
+// Khi CMS cài trong thư mục con
+// /thu-muc-con/uploads/source/a.jpg
 ```
+
+### `Url::pathHash()`
+Hàm `Url::pathHash` trả về **dấu vân tay 8 ký tự** của base path, dùng nhúng vào tên file cache (CSS/JS bundle).
+
+File bundle có chứa đường dẫn tính từ gốc site, nên bundle dựng ở `https://sandbox.com/projectname` không dùng lại được ở `https://product.com`. Vân tay này khiến bundle cũ tự bị bỏ qua thay vì dùng nhầm.
+
+```php
+Url::pathHash()
+// "3f2a9c1b"
+```
+
+### `Url::asset()`
+Hàm `Url::asset` trả về **URL tuyệt đối** cho tài nguyên (ảnh, css…). Nếu đầu vào đã là URL tuyệt đối, protocol-relative (`//…`) hoặc data URI thì giữ nguyên; ngược lại nối tên miền + base path.
+
+Dùng cho CSS nền của element, vì CSS có thể được nạp từ file bundle nằm trong thư mục con khiến URL tương đối bị trình duyệt resolve sai.
+
+```php
+Url::asset('uploads/source/bg.jpg')
+// https://domain.com/uploads/source/bg.jpg
+
+Url::asset('https://cdn.com/bg.jpg')
+// https://cdn.com/bg.jpg  (giữ nguyên)
+
+Url::asset('data:image/png;base64,...')
+// giữ nguyên
+```
+
+### `Url::tag()`
+Hàm `Url::tag` trả về URL trang lưu trữ theo [thẻ](../06-Cms/Tags.md). Tiền tố đổi được qua config `cms.tag.prefix` (mặc định `tag`).
+
+```php
+Url::tag('huong-dan')
+// /tag/huong-dan
+// Đa ngữ: /en/tag/huong-dan
+```
+
+> Trả về **đường dẫn tuyệt đối theo gốc site** (có `/` ở đầu) và tự kèm tiền tố ngôn ngữ. Trước 8.1.4 hàm này trả về đường dẫn tương đối nên ở trang có URL nhiều đoạn trình duyệt resolve sai thành 404.
+
+### `Url::search()`
+Hàm `Url::search` trả về URL trang kết quả tìm kiếm. Tiền tố đổi được qua config `cms.search.prefix` (mặc định `search`). Tham số rỗng sẽ bị bỏ khỏi query string.
+
+```php
+Url::search()
+// /search
+
+Url::search('áo thun')
+// /search?keyword=%C3%A1o+thun
+
+Url::search('áo thun', 'product')
+// /search?keyword=%C3%A1o+thun&type=product
+```
+
+> Cùng quy ước với `Url::tag()`: đường dẫn tuyệt đối theo gốc site + tự kèm tiền tố ngôn ngữ, để form tìm kiếm đặt ở header luôn trỏ đúng dù đang đứng ở trang có URL sâu bao nhiêu đoạn.
+
+### `Url::fileManager()`
+Hàm `Url::fileManager` trả về URL của trình quản lý file (Responsive File Manager) dùng trong admin. Nhận thêm chuỗi query params; tự động thêm `callback=responsive_filemanager_callback` nếu chưa có.
+
+```php
+Url::fileManager()
+// https://domain.com/vendor/rpsfmng/dialog.php?editor=mce_0
+
+Url::fileManager('type=1&field_id=image')
+// ...dialog.php?editor=mce_0&callback=responsive_filemanager_callback&type=1&field_id=image
+```
+
+> **Lưu ý:** Để lấy segment URL hiện tại, dùng `request()->segments()` hoặc `request()->segment($n)` thay vì `Url::` (class `Url` không có method `segment`).
 
 ### `Url::getYoutubeID()`
 Hàm `Url::getYoutubeID` trích xuất ID video từ URL YouTube.
@@ -130,10 +195,9 @@ Hàm `Url::account` trả về URL trang thông tin tài khoản (Frontend).
 ```php
 Url::account()
 // https://domain.com/account
-
-Url::account('order')
-// https://domain.com/account (Url::account không nhận tham số path - dùng Url::base để build thêm)
 ```
+
+> **Lưu ý:** `Url::account()` không nhận tham số path. Cần URL con (ví dụ `account/order`), dùng `Url::base('account/order')`.
 
 ### `Url::register()`
 Hàm `Url::register` trả về URL trang đăng ký tài khoản (Frontend).
@@ -186,11 +250,11 @@ Url::language('en')
 ```
 
 ### `Url::download()`
-Hàm `Url::download` tải một file từ URL về server và lưu vào đường dẫn chỉ định. Trả về `true` nếu thành công.
+Hàm `Url::download` tải một file từ URL về server (HTTP client, timeout 120 giây, ghi trực tiếp xuống file) và lưu vào đường dẫn chỉ định. Trả về `true` nếu thành công, `false` nếu response không thành công; ném lại `Exception` nếu có lỗi kết nối.
 
 ```php
 $success = Url::download(
     'https://example.com/file.zip',
-    storage_path('app/downloads/file.zip')
+    Path::storage('downloads/file.zip')
 );
 ```

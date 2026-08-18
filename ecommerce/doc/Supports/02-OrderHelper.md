@@ -102,20 +102,19 @@ $address = PrdCartHelper::billingAddress($order);
 // Ví dụ: "Phường Bến Nghé, Quận 1, Thành phố Hồ Chí Minh"
 ```
 
-### `PrdCartHelper::buildAddress($city, $ward)`
-Xây dựng chuỗi địa chỉ từ code tỉnh và code phường/xã (dùng Location2 mới).
+> `billingAddress()` tự chọn API địa giới phù hợp: đơn hàng **có** `districts` (dữ liệu cũ 3 cấp) thì gọi `Location::address($city, $districts, $ward)`; đơn **không** có `districts` (dữ liệu mới 2 cấp, từ 01/07/2025) thì gọi `Location2::address($city, $ward)`.
+
+Muốn tự ghép địa chỉ ngoài phạm vi đơn hàng, gọi thẳng hai class địa giới của CMS:
 
 ```php
-$address = PrdCartHelper::buildAddress('79', '26734');
-// "Phường Bến Nghé, Thành phố Hồ Chí Minh"
-```
+use SkillDo\Cms\Location\Location;   // 3 cấp: tỉnh → quận/huyện → phường/xã
+use SkillDo\Cms\Location\Location2;  // 2 cấp: tỉnh → phường/xã
 
-### `PrdCartHelper::buildAddressOld($city, $district, $ward)`
-Xây dựng địa chỉ theo cấu trúc cũ (Tỉnh → Huyện → Xã).
+// Đơn vị hành chính mới (2 cấp)
+Location2::address($provinceId, $wardId);
 
-```php
-$address = PrdCartHelper::buildAddressOld('HCM', 'Q1', 'BENNGHE');
-// "Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh"
+// Đơn vị hành chính cũ (3 cấp)
+Location::address($provinceId, $districtId, $wardId);
 ```
 
 ### `PrdCartHelper::attributeDisplay($attributeId, $type)`

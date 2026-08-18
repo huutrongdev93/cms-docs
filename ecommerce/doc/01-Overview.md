@@ -9,12 +9,15 @@ Sicommerce là một plugin hệ thống thương mại điện tử cốt lõi 
 ```
 plugins/sicommerce/
 ├── app/
-│   ├── Cart/           # Scart – quản lý giỏ hàng theo Session
+│   ├── Ajax/           # Ajax handlers (đăng ký trong bootstrap/ajax.php)
+│   ├── Cart/           # Cart (lõi) + Scart (facade tĩnh) + Driver/{Session,Database}
+│   ├── Cms/            # Form field & popover riêng của plugin
 │   ├── Controllers/    # Web Controllers (ProductController, CheckoutController...)
 │   ├── Gateway/
 │   │   ├── Payment/    # Cổng thanh toán (AbstractPaymentBase, PaymentManager...)
 │   │   └── Shipping/   # Cổng vận chuyển (AbstractShippingBase, ShippingManager...)
-│   ├── helpers/        # Global helper functions
+│   ├── helpers/        # Global helper functions (nạp theo file, không PSR-4)
+│   ├── Macros/         # Macro mở rộng (nạp theo file, không PSR-4)
 │   ├── Models/         # Eloquent Models (Product, Order, Brands, Currencies...)
 │   ├── Modules/
 │   │   ├── Admin/      # Logic Admin (Products, Orders, Customer, Setting...)
@@ -25,7 +28,7 @@ plugins/sicommerce/
 │   ├── Supports/       # Các lớp tiện ích (Prd, Config, OrderHelper, PrdCartHelper...)
 │   └── Template/       # Template render classes (ProductsDetail, ProductsIndex...)
 ├── bootstrap/          # File đăng ký Hook/Filter theo từng chức năng
-├── config/             # File cấu hình mặc định (general.php, order.php, product.php...)
+├── config/             # File cấu hình mặc định (general, product, checkout, order)
 ├── database/           # Migration scripts
 ├── language/           # File dịch (en/, vi/)
 ├── routes/             # Route definitions (admin.php, api.php, web.php)
@@ -45,15 +48,18 @@ Khi viết mã mở rộng cho Sicommerce, bạn sẽ chủ yếu tương tác v
 
 ## 2. Namespace & Hằng Số
 
-- **Namespace gốc**: `Ecommerce\`
-- **Tên plugin (constant)**: `ECOMMERCE_NAME` = `'sicommerce'`
-- **Option config**: Lưu trong database table `options` với key `ecommerce_config`
+- **Namespace gốc**: `Ecommerce\` (**không phải** `Sicommerce`)
+- **Class chính**: `Sicommerce` trong `index.php` (không namespace) — chỉ gọi `ActivatorService::activate()` / `DeactivatorService::uninstall()`
+- **Hằng số** (khai trong `bootstrap/constants.php`): `ECOMMERCE_NAME` = `'sicommerce'`, `ECOMMERCE_PATH`, `URL_PRODUCT` = `'san-pham'`, các hằng trạng thái đơn `ORDER_WAIT` … `ORDER_CANCELLED`
+- **Option config**: toàn bộ config override lưu trong **một** option duy nhất `ecommerce_config` (mảng lồng nhau) trong bảng `system`
 
 ```php
 // Lấy config bằng helper
-$value = Config::get('general.layout');    // \Ecommerce\Supports\Config
-$value = config('sicommerce::general.layout'); // Laravel config helper
+$value = Config::get('general.layout_products');        // \Ecommerce\Supports\Config
+$value = config('sicommerce::general.layout_products'); // config helper của framework
 ```
+
+Ngoài `ecommerce_config`, plugin còn dùng các option rời: `product_currency`, `product_price_contact`, `product_fulltext_search`, `attributeDisplay`, `payments` (cấu hình cổng thanh toán), `cart_shipping` (cấu hình vận chuyển), `admin_product_limit`.
 
 ---
 
@@ -73,16 +79,24 @@ ServiceProvider đã đăng ký sẵn danh sách Class Alias. Bạn có thể g�
 | `Order`           | `Ecommerce\Models\Order`           | Model đơn hàng                             |
 | `OrderItem`       | `Ecommerce\Models\OrderItem`       | Model dòng sản phẩm trong đơn              |
 | `Scart`           | `Ecommerce\Cart\Scart`             | Lớp xử lý giỏ hàng                         |
+| `ExtraTemplate`   | `Ecommerce\Models\ExtraTemplate`   | Model template Extra Options               |
+| `ExtraGroup`      | `Ecommerce\Models\ExtraGroup`      | Model nhóm Extra Options                   |
+| `ExtraItem`       | `Ecommerce\Models\ExtraItem`       | Model field Extra Options                  |
+| `ExtraUpload`     | `Ecommerce\Models\ExtraUpload`     | Model file khách tải lên theo dòng đơn     |
 | `Prd`             | `Ecommerce\Supports\Prd`           | Helper tiện ích (giá, view, collection...) |
 | `PrdCartHelper`   | `Ecommerce\Supports\PrdCartHelper` | Helper địa chỉ & hiển thị thuộc tính       |
+
+Ngoài ra còn alias legacy `Ecommerce\Model\*` → `Ecommerce\Models\*` (chú ý khác chữ **"s"**) cho `Product`, `ProductCategory`, `Brands`, `Currencies`.
+
+> **KHÔNG có alias** — phải dùng namespace đầy đủ: `Collection`, `OrderHistory`, `Models\Session`, `Supports\Config`, `OrderHelper`, `EmailTemplate`, `CartLocation`, `Supports\Report`.
 
 **Ví dụ sử dụng:**
 ```php
 // Không cần gọi \Ecommerce\Models\Product::...
 $products = Product::where('public', 1)->get();
 
-// Lấy danh mục
-$categories = ProductCategory::tree()->get();
+// Lấy danh mục dạng cây — scope thực thi query ngay, KHÔNG chain ->get()
+$categories = ProductCategory::tree();
 
 // Định dạng giá
 echo Prd::price($product->price);
@@ -96,12 +110,20 @@ Thư mục `bootstrap/` chứa các file PHP được load tự động khi plug
 
 | File                      | Chức năng                                                   |
 |:--------------------------|:------------------------------------------------------------|
-| `config.php`              | Navigation, assets, breadcrumb, phân quyền, webhook         |
-| `products.php`            | Hooks form sản phẩm (add/edit/trash/delete)                 |
-| `order.php`               | Hooks đơn hàng (detail, add, status, email)                 |
+| `constants.php`           | Khai báo hằng số (`ECOMMERCE_PATH`, `URL_PRODUCT`, trạng thái đơn…) |
+| `ajax.php`                | **Registry toàn bộ ajax endpoint** (`Ajax::admin()` / `Ajax::client()`) — tra file này để biết một ajax action trỏ đi đâu |
+| `config.php`              | Navigation, assets, breadcrumb, phân quyền, webhook tỷ giá  |
+| `products.php`            | Hooks form sản phẩm (add/edit/trash/delete), metabox, modal UI |
+| `categories.php`          | Hooks CRUD danh mục sản phẩm                                |
+| `brands.php`              | Hooks CRUD thương hiệu (chỉ đăng ký menu khi bật `general.brands`) |
+| `collections.php`         | Hooks CRUD bộ sưu tập                                       |
+| `attributes.php`          | Hooks CRUD thuộc tính                                       |
+| `order.php`               | Hooks đơn hàng (detail, add, status, in đơn, email)         |
 | `customer.php`            | Hooks quản lý khách hàng (bảng, tab chi tiết, đơn hàng web) |
 | `setting.php`             | Hooks cấu hình hệ thống Commerce                            |
 | `history.php`             | Ghi log lịch sử đơn hàng                                    |
+| `extra-options.php`       | Wire `ExtraOptionsService` vào giỏ hàng / đơn hàng          |
+| `template.php`            | Frontend chung: assets, biến CSS, layout resolver, breadcrumb, tìm kiếm |
 | `template-index.php`      | Hooks trang danh sách sản phẩm                              |
 | `template-detail.php`     | Hooks trang chi tiết sản phẩm                               |
 | `template-object.php`     | Hooks khối sản phẩm (Product Item)                          |

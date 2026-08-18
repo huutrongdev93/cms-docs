@@ -2,6 +2,8 @@
 
 Hướng dẫn này sẽ hướng dẫn bạn qua quá trình nâng cấp các sản phẩm dựa trên CMS SkillDo.
 
+> **Lưu ý:** Các bước bên dưới áp dụng cho dòng phiên bản `7.x` (kiến trúc cũ với thư mục `applications/`). SkillDo **v8** là bản tái kiến trúc toàn diện (core chuyển vào `packages/skilldo/framework` + `packages/skilldo/cms`, cấu hình qua `.env` + `config/`), không nâng cấp tự động từ 7.x bằng các bước này.
+
 **Lưu ý khi up từ ver `7.0.x` lên phiên bản mới nhất**
 
 - Bước 1: Tắt hết các plugin có sử dụng model
@@ -18,7 +20,7 @@ Hướng dẫn này sẽ hướng dẫn bạn qua quá trình nâng cấp các s
 - Bước 3: Cập nhật tất cả plugin lên phiên bản mới
 - Bước 4: Kích hoạt lại plugin sicommerce-cart
 - Bước 5: Kiểm tra lại footer sau khi up
-- 
+
 **Lưu ý khi up từ ver `7.4.x` lên phiên bản mới**
 
 - Widget footer được tách thành mục riêng nên cần kiểm tra lại footer sau khi up

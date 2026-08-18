@@ -13,15 +13,16 @@
 
 ### 1.1 Các Disk Sẵn Có
 
-SkillDo CMS v8 cấu hình sẵn 5 disk trong `config/filesystems.php`:
+SkillDo CMS v8 cấu hình sẵn 6 disk (defaults tại `packages/skilldo/framework/src/config/filesystems.php`, override ở root `config/filesystems.php`). Disk mặc định là **`uploads`**:
 
 | Disk | Thư mục gốc | Dùng để |
 |---|---|---|
 | `root` | `/` (thư mục gốc project) | Thao tác file ở thư mục gốc |
 | `storage` | `storage/` | Lưu file nội bộ (log, cache, session...) |
 | `plugins` | `plugins/` | Thao tác file trong thư mục plugins |
+| `plugin` | `plugins/` | Alias của `plugins` (cùng thư mục gốc) |
 | `views` | `views/` | Thao tác file trong thư mục views/theme |
-| `uploads` | `storage/uploads/` | Quản lý ảnh, file upload của người dùng |
+| `uploads` | `storage/uploads/` | Quản lý ảnh, file upload của người dùng (disk mặc định) |
 
 ---
 
@@ -228,13 +229,14 @@ $config = MyPluginConfig::get();
 
 ## 2. File
 
-> **File:** `packages/skilldo/framework/src/Support/File.php`  
-> **Namespace:** `SkillDo\Support\File`  
-> **Alias ngắn:** `\File`  
-> **Extends:** `Illuminate\Filesystem\Filesystem`  
+> **File:** `packages/skilldo/framework/src/Support/File.php` (class) — `packages/skilldo/framework/src/Support/Facades/File.php` (facade)  
+> **Namespace class:** `SkillDo\Support\File` — **Extends:** `Illuminate\Filesystem\Filesystem`  
+> **Facade:** `SkillDo\Support\Facades\File` (accessor `file`) hoặc `Illuminate\Support\Facades\File` (accessor `files`)  
 > **Tài liệu tham khảo:** [Laravel File](https://laravel.com/docs/12.x/helpers#files)
 
 `File` là lớp bao bọc `Illuminate\Filesystem\Filesystem` của Laravel. Khác với `Storage` (dùng **disk ảo** với đường dẫn tương đối), `File` làm việc trực tiếp với **đường dẫn tuyệt đối** trên server.
+
+> **Lưu ý quan trọng:** Để gọi tĩnh `File::exists()`, `File::put()`... bạn phải `use` một trong hai **Facade** ở trên (codebase chủ yếu dùng `Illuminate\Support\Facades\File`). Alias toàn cục `\File` trỏ thẳng vào class `SkillDo\Support\File` (không phải facade) — chỉ gọi tĩnh được các **macro**, các method instance của Filesystem sẽ báo lỗi.
 
 > **Khi nào dùng `File` thay vì `Storage`?**
 > - Cần đường dẫn **tuyệt đối** (ví dụ: kết hợp với `Path::`)
@@ -247,6 +249,7 @@ $config = MyPluginConfig::get();
 
 ```php
 use SkillDo\Support\Path;
+use Illuminate\Support\Facades\File;
 
 // Kiểm tra file tồn tại
 $path = Path::storage('cms/my-plugin/config.json');
@@ -370,7 +373,34 @@ $dirs = File::directories(Path::storage('cms'));
 
 ---
 
-### 2.6 Ví Dụ Thực Tế — Dùng `File` Trong Plugin ActivatorService
+### 2.6 Macro Mở Rộng Của CMS
+
+`CmsServiceProvider` đăng ký thêm các macro tiện ích trên `File` (dùng được qua cả hai facade lẫn alias `\File`):
+
+```php
+// Chuẩn hóa đường dẫn ảnh: bỏ tiền tố domain + 'storage/uploads/source' / 'uploads/source'
+File::clear('https://domain.com/storage/uploads/source/2026/03/photo.jpg');
+// '2026/03/photo.jpg'
+
+// Đổi 'storage/uploads/source' thành 'uploads/source' trong URL
+File::convert('storage/uploads/source/2026/03/photo.jpg');
+// 'uploads/source/2026/03/photo.jpg'
+
+// Chuyển chuỗi kích thước thành bytes (hỗ trợ B, KB, MB, GB, TB, PB)
+File::getSizeInBytes('2MB');   // 2097152.0
+File::getSizeInBytes('512K');  // 524288.0
+
+// Lấy extension (bỏ query ?v=..., nhận diện fonts.googleapis.com là css)
+File::getExtension('app.js?v=1.2');  // 'js'
+
+// Phân loại file: image | video | audio | archives | psd | pdf | doc | excel | youtube | vimeo | file | unknown
+File::getExtensionType('photo.webp');                    // 'image'
+File::getExtensionType('https://youtube.com/watch?v=x'); // 'youtube'
+```
+
+---
+
+### 2.7 Ví Dụ Thực Tế — Dùng `File` Trong Plugin ActivatorService
 
 ```php
 use SkillDo\Support\Path;

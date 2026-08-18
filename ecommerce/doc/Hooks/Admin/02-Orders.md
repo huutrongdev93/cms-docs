@@ -124,39 +124,52 @@ add_action('order_save_sections_primary', function() {
 
 ### Lifecycle Hooks
 
-| Hook Type | Hook Name | Priority | Tham Số | Mô Tả |
-|:---:|:---|:---:|:---|:---|
-| **Action** | `admin_order_status_before_update` | 1 | `($statusNew, $statusOld)` | Trước khi lưu trạng thái mới. Có thể `response()->error()` để chặn |
-| **Action** | `admin_order_status_update` | 1 | `($statusNew, $statusOld)` | Sau khi trạng thái đã được cập nhật |
-| **Action** | `admin_order_status_{status}_save` | — | `($orderId)` | Hook riêng cho từng trạng thái cụ thể |
+| Hook Type | Hook Name | Tham Số | Mô Tả |
+|:---:|:---|:---|:---|
+| **Filter** | `admin_order_status_{status}_save` | `($orderUpdate, $status, $order)` | Mảng dữ liệu sắp ghi vào đơn. Trả về mảng rỗng để **chặn** việc cập nhật |
+| **Action** | `admin_order_status_before_update` | `($order, $status)` | Trước khi lưu trạng thái mới. Có thể `response()->error()` để chặn |
+| **Action** | `admin_order_status_update` | `($order, $status)` | Sau khi trạng thái đã được cập nhật |
+| **Action** | `admin_order_status_cancelled_after` | `($order)` | Riêng cho luồng hủy đơn, chạy trước khi xử lý hủy |
+| **Filter** | `admin_order_status_cancelled_errors` | `($messages, $order)` | Trả `SKD_Error` để chặn việc hủy đơn |
+
+> **Quan trọng:** `$order` là **đối tượng Order**, `$status` là **trạng thái mới** (chuỗi). Không phải cặp `($statusNew, $statusOld)`.
 
 ### Pattern Hook Riêng Cho Từng Trạng Thái
+
+`admin_order_status_{status}_save` là hook **động** — tên ghép từ `OrderStatus->value`:
 
 ```
 admin_order_status_wait_save
 admin_order_status_confirm_save
 admin_order_status_wait-pickup_save
+admin_order_status_pickup_save
+admin_order_status_pickup-fail_save
+admin_order_status_processing_save
 admin_order_status_ship_save
+admin_order_status_ship-fail_save
 admin_order_status_completed_save
 admin_order_status_cancelled_save
 ```
 
 ```php
-// Chạy trước khi đổi trạng thái (để validate)
-add_action('admin_order_status_before_update', function($statusNew, $statusOld) {
-    // Ngăn chuyển từ completed sang wait
-    if($statusOld == 'completed' && $statusNew == 'wait') {
+use Ecommerce\Status\OrderStatus;
+
+// Bổ sung dữ liệu ghi kèm khi đơn chuyển sang "hoàn thành"
+add_filter('admin_order_status_'.OrderStatus::COMPLETED->value.'_save', function($orderUpdate, $status, $order) {
+    $orderUpdate['completed_at'] = time();
+    return $orderUpdate;
+}, 10, 3);
+
+// Chạy trước khi đổi trạng thái (để validate / chặn)
+add_action('admin_order_status_before_update', function($order, $status) {
+    if($order->status == OrderStatus::COMPLETED->value && $status == OrderStatus::WAIT->value) {
         response()->error('Không thể reset đơn đã hoàn thành!');
     }
 }, 1, 2);
 
 // Chạy sau khi đổi trạng thái
-add_action('admin_order_status_update', function($statusNew, $statusOld) {
-    $orderId = request()->input('id');
-    $order   = Order::find($orderId);
-
-    // Push webhook cho affiliate khi đơn hoàn thành
-    if($statusNew == 'completed') {
+add_action('admin_order_status_update', function($order, $status) {
+    if($status == OrderStatus::COMPLETED->value) {
         Http::post('https://affiliate.api/webhook', [
             'event'    => 'order_completed',
             'order_id' => $order->id,
@@ -164,37 +177,28 @@ add_action('admin_order_status_update', function($statusNew, $statusOld) {
         ]);
     }
 }, 10, 2);
-
-// Hook chỉ khi đơn bị hủy
-add_action('admin_order_status_cancelled_save', function($orderId) {
-    $order = Order::find($orderId);
-    // Hoàn điểm tích lũy
-    if($order->customer_id) {
-        User::where('id', $order->customer_id)->decrement('loyalty_points', 10);
-    }
-}, 10, 1);
-
-// Hook chỉ khi đơn hoàn thành
-add_action('admin_order_status_completed_save', function($orderId) {
-    $order = Order::find($orderId);
-    // Gửi email cảm ơn + mã voucher
-}, 10, 1);
 ```
 
 ### Hooks Trạng Thái Thanh Toán
 
-| Hook Type | Hook Name | Priority | Tham Số | Mô Tả |
-|:---:|:---|:---:|:---|:---|
-| **Action** | `admin_order_status_pay_update` | 10 | `($statusNew, $statusOld)` | Khi trạng thái thanh toán thay đổi |
-| **Action** | `admin_order_status_pay_{status}_success` | — | `($orderId)` | Hook riêng theo từng trạng thái thanh toán |
+| Hook Type | Hook Name | Tham Số | Mô Tả |
+|:---:|:---|:---|:---|
+| **Filter** | `admin_order_status_pay_{status}_save` | `($orderUpdate, $status, $order)` | Mảng dữ liệu sắp ghi. Trả mảng rỗng để chặn |
+| **Action** | `admin_order_status_pay_{status}_action` | `($order, $status)` | Ngay sau filter `_save`, trước khi ghi |
+| **Action** | `admin_order_status_pay_before_update` | `($order, $status)` | Trước khi lưu trạng thái thanh toán |
+| **Action** | `admin_order_status_pay_{status}_success` | `($order, $status)` | Sau khi lưu thành công, riêng theo từng trạng thái |
+| **Action** | `admin_order_status_pay_update` | `($order, $status)` | Sau khi lưu thành công, cho mọi trạng thái |
+
+Giá trị `{status}` lấy từ enum `OrderPay`: `unpaid`, `paid`, `refunded`.
 
 ```php
+use Ecommerce\Status\OrderPay;
+
 // Hook khi đơn được đánh dấu đã thanh toán
-add_action('admin_order_status_pay_paid_success', function($orderId) {
-    $order = Order::find($orderId);
+add_action('admin_order_status_pay_'.OrderPay::COMPLETED->value.'_success', function($order, $status) {
     // Kích hoạt license key
     // Gửi email xác nhận thanh toán
-}, 10, 1);
+}, 10, 2);
 ```
 
 ---

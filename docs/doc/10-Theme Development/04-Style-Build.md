@@ -65,6 +65,11 @@ $selectors = '.box-item a';
 
 // Cũng có thể nạp mảng nâng cao nếu muốn thay class thẻ lúc hover:
 // $selectors = ['normal' => '.box-item a', 'hover' => '.box-item a:hover', 'active' => '.box-item a.active'];
+//
+// Truyền chuỗi thì hệ thống TỰ SINH hai trạng thái còn lại:
+//   hover  -> '.box-item a:hover'   (tự thêm ':hover' nếu chưa có)
+//   active -> '.box-item a.active'  (tự thêm '.active')
+// Truyền mảng mà thiếu 'hover'/'active' cũng được suy ra từ 'normal' theo cùng quy tắc.
 
 $style->cssSelector($selectors, 
     [
@@ -81,21 +86,44 @@ $style->cssSelector($selectors,
 ### Danh Sách Hỗ Trợ Hàm Parser Của Input Tương Ứng (Biến `$properties['style']`)
 Khi Framework lấy mảng từ Input (như `$paddingData`), CMS cần một hàm Dịch ra mã Cứng cho loại Input đó. Quy tắc tương xứng như sau:
 
-| Tên Input Trong Form Builder             | Khai Báo 'style' Của Builder  |
-|------------------------------------------|---------------|
-| `inputBackground`                        | `cssBackground` |
-| `textBuilding`                           | `cssText`       |
-| `inputDimension`                         | `cssRadius`     |
-| `inputDimension`, `inputDimensionResponsive`| `cssDimension`  |
-| `boxShadow`                              | `cssBoxShadow`  |
-| `inputBorder`                            | `cssBorder`     |
-| `inputSpacing` (Margin, Padding)         | `cssSpacing`    |
-| `buttonBuilding`                         | `cssButton`     |
-| `boxBuilding`                            | `cssBox`        |
-| `colorBuilding`                          | `cssColor`      |
-| `colorBuilding`                          | `cssTextColor`  |
+Tên hàm parser là **method của `SkillDo\Cms\Template\Template`** (thực chất nằm trong trait `TemplateCss`), được gọi động: `Template::{$property['style']}($property['data'])`.
 
-> *(Khung `cssSelector` của Version 8 sẽ tự động thông minh quét trạng thái `cssHover`, `cssMobile`, `cssTablet` được đẻ ra từ Data Input, không cần bạn khai báo lặp lại nhọc nhằn nhét thẻ).*
+> [!TIP]
+> Trong `cssSelector()`, tên nào **không bắt đầu bằng `css`** sẽ được tự ghép: `'text'` → `cssText`, `'box'` → `cssBox`, `'backgroundColor'` → `cssBackgroundColor`. Vì vậy code thật của theme hay viết dạng ngắn. Cả hai cách đều đúng.
+>
+> Nếu tên sau khi ghép **không tồn tại** trên `Template`, thuộc tính đó bị **bỏ qua âm thầm** — không có cảnh báo. Gõ sai tên parser nghĩa là CSS biến mất mà không báo lỗi.
+>
+> Riêng `cssColor` được gọi với tham số đầu cố định: `Template::cssColor('color', $data)`.
+
+| Tên field trong Form Builder                 | Khai báo `'style'` |
+|----------------------------------------------|--------------------|
+| `background`                                 | `cssBackground`    |
+| `background` (chỉ lấy phần nền)              | `cssBg`            |
+| `color`                                      | `cssBackgroundColor` |
+| `textBuilding`                               | `cssText`          |
+| `inputDimension`                             | `cssRadius`        |
+| `inputDimension`, `inputDimensionResponsive` | `cssDimension`     |
+| `boxShadow`                                  | `cssBoxShadow`     |
+| `border`                                     | `cssBorder`        |
+| `border` (chỉ lấy màu viền)                  | `cssBorderColor`   |
+| `spacing` (margin, padding)                  | `cssSpacing`       |
+| `buttonBuilding`                             | `cssButton`        |
+| `boxBuilding`                                | `cssBox`           |
+| `colorBuilding`                              | `cssColor`         |
+| `colorBuilding` (chỉ màu chữ)                | `cssTextColor`     |
+| `textShadow`                                 | `cssTextShadow`    |
+| `textStroke`                                 | `cssTextStroke`    |
+| `typography`                                 | `cssTypography`    |
+
+Mỗi parser trả về một mảng nhiều khoá; `cssSelector()` tự bốc đúng khoá theo cặp **thiết bị × trạng thái**:
+
+| | normal | hover | active |
+|---|---|---|---|
+| **desktop** | `css` | `cssHover` | `cssActive` |
+| **tablet** | `cssTablet` | `cssHoverTablet` | `cssActiveTablet` |
+| **mobile** | `cssMobile` | `cssHoverMobile` | `cssActiveMobile` |
+
+Nhờ vậy bạn chỉ khai một lần, không phải lặp lại cho từng breakpoint.
 
 ---
 
@@ -109,8 +137,20 @@ $style->cssStyle(string $path, array $args);
 ```
 
 **Tham số:**
-- `$path` : Hậu tố Class nằm phía trong của `$wrapper`.
-- `$args` : Mảng Cấu hình hành vi.
+- `$path` : Hậu tố Class nằm phía trong của `$wrapper`. Truyền chuỗi rỗng `''` để CSS áp thẳng lên chính wrapper.
+- `$args` : Mảng cấu hình hành vi.
+
+| Khoá trong `$args` | Ý nghĩa |
+|---|---|
+| `style` | **Bắt buộc.** Closure trả CSS, chuỗi CSS thuần, hoặc **tên đầy đủ** method của `Template` (vd `cssText`) |
+| `data` | Mảng dữ liệu từ Form Builder — bắt buộc khi `style` là tên method |
+| `options` | Chuỗi tên thiết bị (`desktop`/`tablet`/`mobile`/`hover`), **hoặc** mảng ánh xạ `thiết-bị => khoá-css` |
+| `device` | Bí danh cũ của `options` (dạng mảng) |
+| `key` | Khoá css dùng cho desktop khi không khai `options` |
+| `hover` | Tên khoá css lấy làm trạng thái hover |
+
+> [!WARNING]
+> Khác với `cssSelector()`, `cssStyle()` **không tự ghép tiền tố `css`**. Phải viết đầy đủ `cssText`, `cssBox`… Viết `'text'` sẽ bị hiểu là **chuỗi CSS thuần** và in nguyên văn ra file.
 
 ### Cách 1: Nạp Giá Trị Text tĩnh bằng Closure
 ```php
@@ -159,4 +199,17 @@ $cssOutput = $style->build();
 echo '<style>' . $cssOutput . '</style>';
 ```
 
-> *Mẹo vặt*: Sau khi gọi `build()`, Hệ thống rớt biến và tự Clean Clear chuỗi `$cssBuilder`. Hoặc gọi `$style->reset();` để làm mới biến chứa cục bộ trước khi render thẻ Box khác.
+**Cú pháp:** `build(string $wrapper = ''): string`
+
+Có thể truyền wrapper ngay lúc build. Lưu ý **wrapper đã đặt trong constructor / `wrapper()` sẽ thắng** tham số này — nếu `$this->wrapper` khác rỗng thì tham số `$wrapper` bị bỏ qua.
+
+Thứ tự chuỗi trả về: `variables` → CSS desktop → khối `@media(max-width:1000px)` (tablet) → khối `@media(max-width:600px)` (mobile).
+
+> [!WARNING]
+> `build()` **không tự xoá** dữ liệu đã tích luỹ — `$cssBuilder` vẫn còn nguyên sau khi build. Muốn dùng lại cùng một đối tượng cho khối khác, phải gọi `$style->reset()` thủ công, nếu không CSS của khối trước sẽ bị lặp lại:
+>
+> ```php
+> echo '<style>'.$style->build().'</style>';
+>
+> $style->reset()->wrapper('.another-box');
+> ```

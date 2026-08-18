@@ -14,15 +14,11 @@ Hệ thống cung cấp file `.env` mặc định nằm ở thư mục root củ
 ### Các cấu hình `.env` mặc định quan trọng:
 
 ```env
-APP_NAME="SkillDo CMS.v8"
-APP_ENV=local           # Có 2 trạng thái: local (Nhà phát triển) và production (Môi trường thực)
-APP_DEBUG=true          # Bật trang hiển thị lỗi màu đỏ. Tắt (false) trên production.
-APP_URL=http://localhost:8000
+APP_ENV=local           # local (Nhà phát triển) hoặc production (Môi trường thực)
+APP_DEBUG=true          # Bật trang lỗi Ignition. Tắt (false) trên production.
 S_PATH="/"              # Đường dẫn Sub-folder, mặc định luôn là / kể cả không dùng.
 
-CACHE_DRIVER=file       # (file, array, database, memcached, redis)
-SESSION_DRIVER=file     # (file, database, array)
-QUEUE_CONNECTION=sync   # (sync, database, redis)
+CACHE_DRIVER=file       # (file, redis, memcached) — xem config cache.php
 
 # Database MySQL
 DB_CONNECTION=mysql
@@ -31,18 +27,29 @@ DB_PORT=3306
 DB_DATABASE=skilldocms_db
 DB_USERNAME=root
 DB_PASSWORD=
+DB_CHARSET=utf8mb4
+DB_COLLATION=utf8mb4_unicode_ci
+DB_PREFIX=cle_          # Tiền tố tên bảng
 
-# Cache Driver Redis
-REDIS_CLIENT=phpredis 
+# Cache Driver Redis (chỉ cần khi CACHE_DRIVER=redis)
 REDIS_HOST=127.0.0.1
 REDIS_PASSWORD=null
 REDIS_PORT=6379
 
+# Bảo mật
+CSRF_SECRET_KEY=        # Khóa ký CSRF token
+CSRF_STATELESS_TOKEN=   # Bật/tắt CSRF token dạng stateless
+COOKIE_SIGNING_KEY=     # Khóa ký cookie
+SESSION_COOKIE_SAMESITE=Lax
+
 # JSON Web Token (JWT API)
 JWT_PUBLIC_KEY=
 JWT_PRIVATE_KEY=
-JWT_TTL=480            # Thời gian sống token bằng phút
+JWT_TTL=480             # Thời gian sống access token (phút), mặc định 8 giờ
+JWT_REFRESH_TTL=20160   # Thời gian sống refresh token (phút), mặc định 2 tuần
 ```
+
+> Lưu ý: SkillDo v8 **không có** hệ thống Queue (`QUEUE_CONNECTION`) và session không cấu hình qua `SESSION_DRIVER` (session dùng Symfony NativeSessionStorage, lưu file PHP native).
 
 ### Cách lấy giá trị .env trong mã PHP
 
@@ -53,15 +60,29 @@ $appEnv = env('APP_ENV', 'production');
 // Nó sẽ đọc dòng APP_ENV=local. Nếu không có dòng đó, trả về biến thứ 2 'production'
 ```
 
+> Mẹo: nếu tồn tại file `.env.{APP_ENV}` (ví dụ `.env.production`), bootstrapper `LoadEnvironmentVariables` sẽ tự động nạp file đó thay cho `.env`.
+
 ---
 
 ## 2. Quản Lý File Cấu Hình (/config/)
 
-Nếu `.env` là nơi chứa những cái **String (Chuỗi)** không đổi, thì thư mục `config/` là nơi chứa các giá trị **Mảng (Array)** động cho CMS.
+Nếu `.env` là nơi chứa những cái **String (Chuỗi)** không đổi, thì các file config là nơi chứa các giá trị **Mảng (Array)** động cho CMS.
+
+### Mô hình merge 3 tầng
+
+Khác với Laravel, SkillDo v8 nạp config từ **3 thư mục** và deep-merge lại với nhau (logic trong `SkillDo\Bootstrap\LoadConfiguration`), theo thứ tự ưu tiên **tăng dần**:
+
+1. `packages/skilldo/framework/src/config/` — defaults của framework (`app`, `cache`, `cors`, `csrf`, `database`, `filesystems`, `request-sanitizer`, `security-headers`)
+2. `packages/skilldo/cms/src/config/` — defaults của cms (`cms`, `csrf`, `language`, `media`, `security-headers`)
+3. `config/` ở root dự án — tầng **OVERRIDE** của ứng dụng (hiện đang rỗng)
+
+Khi key trùng nhau: app thắng cms, cms thắng framework. Với mảng associative thì merge đệ quy từng key; với mảng indexed (list) thì phần tử mới được **nối thêm** nếu chưa tồn tại — vì vậy thêm `config/app.php` với key `providers` sẽ append provider của bạn vào danh sách mặc định chứ không thay thế.
+
+> Muốn đổi một giá trị mặc định: tìm file gốc trong 2 package để biết cấu trúc, rồi tạo file **cùng tên** trong `config/` ở root chỉ chứa các key cần đè.
 
 ### Cấu trúc mảng cấu hình
 Các file cấu hình trả về 1 array gốc nhiều cấp bậc.
-Ví dụ file `config/cms.php`
+Ví dụ file `packages/skilldo/cms/src/config/cms.php` (trích):
 ```php
 return [
     'admin' => [
@@ -91,34 +112,41 @@ $adminPath = config('cms.admin.prefix');
 $cache = config('cms.not_exist_key', 'mặc-định-ở-đây');
 
 // Gọi thông qua Facade
-use SkillDo\Facades\Config;
+use SkillDo\Support\Facades\Config;
 
 $themeName = Config::get('cms.theme.default');
 ```
 
 ### Đặt lại giá trị Cấu hình tạm thời lúc chạy (Runtime)
 
-Bạn có thể chỉnh sửa đè (override) một cấu hình đang chạy ở giữa một Request (ví dụ bạn làm một Plugin đổi theme tự động vào ban đêm). Config update sẽ tồn tại tạm thời và DỪNG ngay khu Request kết thúc.
+Bạn có thể chỉnh sửa đè (override) một cấu hình đang chạy ở giữa một Request (ví dụ bạn làm một Plugin đổi theme tự động vào ban đêm). Config update sẽ tồn tại tạm thời và DỪNG ngay khi Request kết thúc.
+
+Lưu ý: khác Laravel, helper `config()` của SkillDo **không** nhận mảng để set. Gọi `config()` không tham số sẽ trả về repository, từ đó gọi `->set()`:
 
 ```php
-// Khi gọi hàm config truyền vào một MẢNG thì sẽ biến thành set (đặt đè) giá trị
-config(['cms.theme.default' => 'dark-theme-mode']);
+// Cách 1: qua helper (config() không tham số = Illuminate\Config\Repository)
+config()->set('cms.theme.default', 'dark-theme-mode');
+
+// Cách 2: qua Facade
+\SkillDo\Support\Facades\Config::set('cms.theme.default', 'dark-theme-mode');
 
 // Khi lấy ra, bây giờ sẽ là dark-theme-mode
-$currentTheme = config('cms.theme.default'); 
+$currentTheme = config('cms.theme.default');
 ```
 
 ---
 
 ## 3. Caching File Cấu Hình (Tăng Tốc Sản Phẩm)
 
-Thông thường, tại môi trường `APP_ENV=local`, cứ mỗi một request người dùng gõ enter, Framework sẽ duyệt lại mảng và file `.env` một lần để lấy toàn bộ Cấu hình (Rất chậm, tốn nhiều chu kỳ đọc đĩa FileSystem).
+Thông thường (khi chưa có cache), cứ mỗi một request, Framework sẽ duyệt lại file `.env` và toàn bộ file config của cả 3 tầng một lần để merge ra Cấu hình (tốn nhiều chu kỳ đọc đĩa FileSystem).
 
 Tuy nhiên, SkillDo Framework sở hữu tính năng **Cache Cấu Hình Động**.
-Khi bật `APP_DEBUG=false`, CMS sẽ gộp (merge) TOÀN BỘ file trong mục `/config/` và file `.env` lại thành MỘT file duy nhất dưới dạng mảng native PHP để nằm ở ổ ứng: 
+Khi `APP_DEBUG=false`, ở cuối quá trình boot (`Application::boot()`), CMS sẽ ghi TOÀN BỘ config đã merge (bao gồm cả giá trị đã đọc từ `.env`) thành MỘT file duy nhất dưới dạng mảng native PHP:
 `bootstrap/cache/config.php`
 
-Khi có `bootstrap/cache/config.php`, hệ thống không còn mất thời gian IO đọc lẻ tẻ từng file một nữa. 🚀
+Khi có `bootstrap/cache/config.php`:
+- `LoadConfiguration` nạp thẳng file cache, bỏ qua việc merge 3 tầng. 🚀
+- `LoadEnvironmentVariables` cũng **bỏ qua luôn việc đọc `.env`**.
 
-Sau khi file này sinh ra, mọi thay đổi của bạn trong `.env` hay `config/cms.php` SẼ KHÔNG CÓ TÁC DỤNG nữa vì CMS đang đọc bản cache.
--> **Bạn phải xóa thủ công bằng giao diện Admin (Clear Cache) hoặc xóa file đó đi thì hệ thống thay đổi tự động tạo ra mảng Cache mới.**
+Vì vậy, mọi thay đổi của bạn trong `.env` hay các file config SẼ KHÔNG CÓ TÁC DỤNG nữa khi cache còn tồn tại.
+-> **Bạn phải xóa cache bằng giao diện Admin (Clear Cache) hoặc xóa file `bootstrap/cache/config.php` đi — request kế tiếp hệ thống sẽ merge lại và tự sinh file cache mới.**

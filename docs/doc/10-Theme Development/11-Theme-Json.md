@@ -22,21 +22,31 @@ Sau đó dữ liệu JSON được hợp nhất tiếp với cấu hình từ `a
 
 ```json
 {
+    "name": "Theme Store",
+    "description": "A theme store for your application.",
+    "version": "5.0.0",
+    "author": "SKD Software",
     "providers": [
         "Theme\\Providers\\ThemeServiceProvider"
     ],
-    "aliases": {
-        "middlewares": {
-            "theme.auth": "Theme\\Middlewares\\ThemeAuthMiddleware"
+    "autoload": {
+        "psr-4": {
+            "Theme\\Builders": "app\\Builders",
+            "Theme\\Layouts": "app\\Layouts"
         }
     },
     "middlewares": {
+        "global": [],
+        "aliases": {
+            "theme.auth": "Theme\\Middlewares\\ThemeAuthMiddleware"
+        },
         "groups": {
             "web": [
                 "Theme\\Middlewares\\ThemeSetupMiddleware"
             ]
         }
     },
+    "includes": [],
     "cms": {
         "form": {
             "popover": {
@@ -54,13 +64,20 @@ Sau đó dữ liệu JSON được hợp nhất tiếp với cấu hình từ `a
 
 ### Giải thích từng khối
 
-| Khối                  | Mô tả                                                                               |
-|-----------------------|-------------------------------------------------------------------------------------|
-| `providers`           | Danh sách Service Provider sẽ được tự động `register()` và `boot()`                 |
-| `aliases.middlewares` | Đăng ký alias ngắn gọn cho Middleware, dùng được trong `->middleware('theme.auth')` |
-| `middlewares.groups`  | Gán Middleware vào nhóm route (`web` / `api`) — chạy trên mọi request thuộc nhóm đó |
-| `cms.form.popover`    | Đăng ký Popover Handle tuỳ chỉnh cho Form Builder Admin                             |
-| `cms.form.fields`     | Đăng ký Custom Field tuỳ chỉnh cho Form Builder Admin                               |
+| Khối                     | Mô tả                                                                               |
+|--------------------------|-------------------------------------------------------------------------------------|
+| `name` / `description` / `version` / `author` | Thông tin hiển thị của theme |
+| `providers`              | Danh sách Service Provider sẽ được tự động `register()` và `boot()`                 |
+| `autoload.psr-4`         | Map namespace → thư mục **ngoài** danh sách PSR-4 mặc định (xem mục 7)              |
+| `middlewares.global`     | Middleware chạy trên **mọi** request, trước cả bước match route                      |
+| `middlewares.aliases`    | Alias ngắn gọn cho Middleware, dùng trong `->middleware('theme.auth')`              |
+| `middlewares.groups`     | Gán Middleware vào nhóm route (`web` / `api`)                                       |
+| `includes`               | Danh sách file được `include` thêm khi nạp theme                                    |
+| `cms.form.popover`       | Đăng ký Popover tuỳ chỉnh cho Form Builder Admin                                    |
+| `cms.form.fields`        | Đăng ký Custom Field tuỳ chỉnh cho Form Builder Admin                               |
+
+> [!NOTE]
+> Dạng cũ `"aliases": { "middlewares": { … } }` (alias ở **cấp cao nhất**) vẫn được chấp nhận: khi nạp xong, Loader gộp nó vào `middlewares.aliases`, và khi trùng key thì `middlewares.aliases` thắng. Với code mới hãy dùng `middlewares.aliases`.
 
 ---
 
@@ -98,25 +115,28 @@ Sau đó dữ liệu JSON được hợp nhất tiếp với cấu hình từ `a
 
 Đặt tại: `views/theme-child/theme.json`
 
-Khi file này tồn tại, CMS sẽ **override** (ghi đè) các key trùng từ `theme-store/theme.json`. Dùng khi bạn muốn thay thế hoàn toàn một provider hay popover của theme gốc.
+Khi file này tồn tại, CMS nạp nó **sau** `theme-store/theme.json` ở chế độ `override: true` — tức là **popover / form field trùng key sẽ bị thay thế** bằng khai báo của theme con. Dùng khi bạn muốn ghi đè một popover hoặc form field của theme gốc.
 
 ```json
 {
     "providers": [
         "Theme\\Providers\\ThemeServiceProvider",
-        "ThemeChild\\Providers\\ChildServiceProvider"
+        "Theme\\Providers\\ChildServiceProvider"
     ],
     "cms": {
         "form": {
             "popover": {
-                "themeProducts": "ThemeChild\\Cms\\Form\\Popovers\\OverrideProductsPopover"
+                "themeProducts": "Theme\\Cms\\Form\\Popovers\\OverrideProductsPopover"
             }
         }
     }
 }
 ```
 
-> Khi sử dụng `theme-child/theme.json`, toàn bộ khối `providers` của theme-store bị **thay thế** — vì vậy bạn cần khai báo lại đầy đủ các provider cần thiết.
+> [!IMPORTANT]
+> **`providers` không bao giờ bị thay thế** — Loader luôn **cộng dồn** provider của cả ba file (`$collected['providers'][] = …`). Vì vậy trong `theme-child/theme.json` bạn **chỉ cần khai provider mới**, không phải chép lại provider của theme-store. Khai lại cũng vô hại vì danh sách được lọc trùng khi nạp.
+>
+> Điều này cũng đúng với `autoload.psr-4`, `middlewares.*` và `includes` — tất cả đều gộp thêm chứ không ghi đè khối.
 
 ---
 
@@ -124,24 +144,24 @@ Khi file này tồn tại, CMS sẽ **override** (ghi đè) các key trùng từ
 
 Đặt tại: `views/theme-child/theme-child.json`
 
-Đây là file **chỉ bổ sung thêm** — các key đã tồn tại trong `theme-store/theme.json` sẽ **không bị ghi đè**. Dùng khi bạn chỉ muốn thêm provider, middleware hoặc popover mới mà không ảnh hưởng đến theme gốc.
+File này được nạp cuối cùng ở chế độ `override: false` — popover / form field **trùng key sẽ bị bỏ qua**, chỉ key mới được thêm vào. Dùng khi bạn muốn chắc chắn không vô tình đè lên khai báo của theme gốc.
 
 ```json
 {
     "providers": [
-        "ThemeChild\\Providers\\ChildServiceProvider"
+        "Theme\\Providers\\ChildServiceProvider"
     ],
     "middlewares": {
         "groups": {
             "web": [
-                "ThemeChild\\Middlewares\\ChildSetupMiddleware"
+                "Theme\\Middlewares\\ChildSetupMiddleware"
             ]
         }
     },
     "cms": {
         "form": {
             "popover": {
-                "childSpecialPopover": "ThemeChild\\Cms\\Form\\Popovers\\ChildSpecialPopover"
+                "childSpecialPopover": "Theme\\Cms\\Form\\Popovers\\ChildSpecialPopover"
             }
         }
     }
@@ -152,25 +172,41 @@ Khi file này tồn tại, CMS sẽ **override** (ghi đè) các key trùng từ
 
 ## 6. So Sánh `theme.json` (child) vs `theme-child.json`
 
-| Tính năng                          | `theme-child/theme.json` | `theme-child/theme-child.json` |
-|------------------------------------|:------------------------:|:------------------------------:|
-| Override key trùng với theme-store |           ✅ Có           |            ❌ Không             |
-| Bổ sung key mới                    |           ✅ Có           |              ✅ Có              |
-| Thích hợp cho                      |  Thay thế cấu hình gốc   |     Mở rộng thêm tính năng     |
+Cả hai file đều được nạp; khác biệt **chỉ nằm ở hai khối `cms.form.popover` và `cms.form.fields`**:
+
+| Khối trong JSON | `theme-child/theme.json` | `theme-child/theme-child.json` |
+|---|:---:|:---:|
+| `cms.form.popover` | **Ghi đè** key trùng của theme-store | Chỉ thêm key mới, **giữ nguyên** key trùng |
+| `cms.form.fields` | **Ghi đè** key trùng | Chỉ thêm key mới |
+| `providers` | Cộng dồn | Cộng dồn |
+| `autoload.psr-4` | Cộng dồn | Cộng dồn |
+| `middlewares.*` | Cộng dồn | Cộng dồn |
+| `includes` | Cộng dồn | Cộng dồn |
+
+Nói cách khác: dùng `theme-child/theme.json` khi cần **thay thế** một popover / form field của theme gốc; dùng `theme-child.json` khi chỉ muốn **thêm** mà chắc chắn không đụng vào cái có sẵn.
 
 ---
 
 ## 7. Namespace Chuẩn Cho Code Trong Theme
 
-Khi khai báo class trong `theme.json`, namespace phải khớp với cấu trúc thư mục:
+> [!IMPORTANT]
+> **Theme cha và theme con dùng CHUNG một prefix `Theme\`** — không có namespace `ThemeChild\`. Loader map mỗi namespace con tới **hai** thư mục: `views/<theme-child>/app/...` trước, rồi `views/theme-store/app/...`. Class nằm ở theme con vì thế tự động ghi đè class cùng tên ở theme cha.
 
-| Namespace                                   | Đường dẫn file                                               |
-|---------------------------------------------|--------------------------------------------------------------|
-| `Theme\Providers\ThemeServiceProvider`      | `views/theme-store/app/Providers/ThemeServiceProvider.php`   |
-| `Theme\Middlewares\ThemeSetupMiddleware`    | `views/theme-store/app/Middlewares/ThemeSetupMiddleware.php` |
-| `Theme\Cms\Form\Popovers\MyPopover`         | `views/theme-store/app/Cms/Form/Popovers/MyPopover.php`      |
-| `Theme\Cms\Form\Field\MyField`              | `views/theme-store/app/Cms/Form/Field/MyField.php`           |
-| `ThemeChild\Providers\ChildServiceProvider` | `views/theme-child/app/Providers/ChildServiceProvider.php`   |
+Chín namespace con được map sẵn (không cần khai `autoload`):
+
+`Theme\Ajax`, `Theme\Cms`, `Theme\Controllers`, `Theme\Middlewares`, `Theme\Providers`, `Theme\Modules`, `Theme\Supports`, `Theme\Models`, `Theme\Services` → `app/{Ajax,Cms,Controllers,Middlewares,Providers,Modules,Supports,Models,Services}/`
+
+| Namespace                                | Tìm ở (theo thứ tự)                                            |
+|------------------------------------------|-----------------------------------------------------------------|
+| `Theme\Providers\ThemeServiceProvider`   | `views/theme-child/app/Providers/…` → `views/theme-store/app/Providers/…` |
+| `Theme\Middlewares\ThemeSetupMiddleware` | `views/theme-child/app/Middlewares/…` → `views/theme-store/app/Middlewares/…` |
+| `Theme\Cms\Form\Popovers\MyPopover`      | `…/app/Cms/Form/Popovers/MyPopover.php`                          |
+| `Theme\Cms\Form\Field\MyField`           | `…/app/Cms/Form/Field/MyField.php`                               |
+| `Theme\Providers\ChildServiceProvider`   | Provider **riêng của theme con**: `views/theme-child/app/Providers/ChildServiceProvider.php` |
+
+Namespace **ngoài** chín cái trên (ví dụ `Theme\Builders`, `Theme\Layouts`) phải khai trong `autoload.psr-4` của `theme.json` — như theme-store đang làm.
+
+> `app/Macros` và `app/helpers` được **nạp theo từng file**, không qua PSR-4, nên file trong đó **không đặt namespace**.
 
 ---
 

@@ -41,12 +41,10 @@ class MyPluginTaxonomyService
             'menu_position'      => 5,      // Vị trí trong sidebar Admin
             'menu_icon'          => '<i class="fas fa-cogs"></i>',
             'supports'           => [
-                'group' => ['info', 'media', 'seo'],
-                'field' => [
-                    'title', 'excerpt', 'content',
-                    'image', 'public', 'slug',
-                    'seo_title', 'seo_keywords', 'seo_description',
-                ],
+                'info'  => ['title', 'excerpt', 'content'],
+                'media' => ['image'],
+                'seo'   => ['slug', 'seo_title', 'seo_keywords', 'seo_description'],
+                'theme' => ['theme_layout', 'theme_view'],
             ],
             'capabilities' => [
                 'view'   => 'view_services',
@@ -65,16 +63,40 @@ class MyPluginTaxonomyService
 |---|---|---|
 | `labels.name` | string | Tên hiển thị dạng số nhiều (vd: "Dịch vụ") |
 | `labels.singular_name` | string | Tên hiển thị dạng số ít |
-| `public` | bool | Hiển thị ngoài Frontend và Admin |
-| `show_in_nav_menus` | bool | Hiển thị trong trang quản lý Menu (Giao diện → Menu) |
-| `show_in_nav_admin` | bool | Hiển thị trong thanh điều hướng Admin |
-| `menu_position` | int | Thứ tự trong sidebar Admin (càng nhỏ càng lên trên) |
+| `labels.add_new_item` | string | Nhãn nút "Thêm mới" |
+| `labels.edit_item` | string | Nhãn trang sửa |
+| `public` | bool | Hiển thị ngoài Frontend và Admin (mặc định `true`) |
+| `show_in_nav_menus` | bool | Hiển thị trong trang quản lý Menu (Giao diện → Menu). Mặc định `0` (tắt) |
+| `show_in_nav_admin` | bool | Hiển thị trong thanh điều hướng Admin (mặc định `true`) |
+| `exclude_from_search` | bool | Ẩn khỏi kết quả tìm kiếm (mặc định `true`) |
+| `menu_position` | int | Thứ tự trong sidebar Admin (càng nhỏ càng lên trên, mặc định `3`) |
 | `menu_icon` | string | HTML icon cho menu item |
-| `supports.group` | array | Nhóm field hiển thị: `info`, `media`, `seo`, `theme` |
-| `supports.field` | array | Các field cụ thể: `title`, `content`, `image`, `slug`... |
-| `capabilities` | array | Mapping capability cho từng hành động: `view`, `add`, `edit`, `delete` |
+| `supports` | array | Map nhóm → danh sách field. Key là tên nhóm (`info`, `media`, `seo`, `theme`), value là mảng tên field. Nếu bỏ trống sẽ dùng bộ mặc định đầy đủ |
+| `capabilities` | array | Mapping capability cho từng hành động: `view`, `add`, `edit`, `delete`. Mặc định: `view_posts`, `add_posts`, `edit_posts`, `delete_posts` |
 
-### 1.3 Các Field Hỗ Trợ trong `supports.field`
+> **Shortcut keys:** có thể truyền `admin_nav_header` (ghi đè `labels.name`) và `name` (ghi đè `labels.singular_name`) ở cấp ngoài cùng của `$args` — hệ thống tự chuyển vào `labels` rồi xóa key gốc.
+>
+> Đăng ký trùng `$postType` đã tồn tại sẽ trả về `false` (không ghi đè).
+
+### 1.3 Các Nhóm và Field Hỗ Trợ trong `supports`
+
+`supports` là một **associative array** với key là tên nhóm và value là danh sách field trong nhóm đó:
+
+```php
+'supports' => [
+    'info'  => ['title', 'excerpt', 'content'],
+    'media' => ['image'],
+    'seo'   => ['slug', 'seo_title', 'seo_keywords', 'seo_description'],
+    'theme' => ['theme_layout', 'theme_view'],
+],
+```
+
+| Nhóm | Field khả dụng |
+|---|---|
+| `info` | `title`, `excerpt`, `content`, `public` |
+| `media` | `image` |
+| `seo` | `slug`, `seo_title`, `seo_description`, `seo_keywords` |
+| `theme` | `theme_layout`, `theme_view` |
 
 | Field | Mô tả |
 |---|---|
@@ -105,16 +127,19 @@ Taxonomy::addCategory(string $cateType, string $postType, array $args): bool
 ```php
 Taxonomy::addCategory('service-category', 'services', [
     'labels' => [
-        'name'     => 'Danh mục dịch vụ',
-        'singular' => 'Danh mục dịch vụ',
+        'name'          => 'Danh mục dịch vụ',
+        'singular_name' => 'Danh mục dịch vụ',
     ],
     'public'            => true,
     'show_in_nav_menus' => true,  // Hiển thị trong quản lý Menu
     'show_in_nav_admin' => true,  // Hiển thị trong Admin navigation
     'parent'            => true,  // Cho phép danh mục cha/con (phân cấp)
     'supports' => [
-        'group' => ['info', 'media', 'seo'],
-        'field' => ['name', 'excerpt', 'image', 'slug', 'seo_title', 'seo_description'],
+        'info'     => ['name', 'excerpt'],
+        'media'    => ['image'],
+        'seo'      => ['slug', 'seo_title', 'seo_keywords', 'seo_description'],
+        'theme'    => ['theme_layout', 'theme_view'],
+        'category' => ['parent_id'],
     ],
 ]);
 ```
@@ -124,12 +149,18 @@ Taxonomy::addCategory('service-category', 'services', [
 | Tham số | Kiểu | Mô tả |
 |---|---|---|
 | `labels.name` | string | Tên hiển thị |
-| `labels.singular` | string | Tên số ít |
-| `public` | bool | Hiển thị Frontend |
-| `show_in_nav_menus` | bool | Hiển thị trong quản lý Menu |
-| `show_in_nav_admin` | bool | Hiển thị trong Admin navigation |
-| `parent` | bool | Cho phép danh mục phân cấp cha/con |
-| `supports.field` | array | Các field hỗ trợ (tương tự Post Type) |
+| `labels.singular_name` | string | Tên số ít |
+| `labels.add_new_item` | string | Nhãn nút "Thêm mới" |
+| `public` | bool | Hiển thị Frontend (mặc định `true`) |
+| `show_in_nav_menus` | bool | Hiển thị trong quản lý Menu. Mặc định `0` (tắt) |
+| `show_in_nav_admin` | bool | Hiển thị trong Admin navigation (mặc định `true`) |
+| `exclude_from_search` | bool | Ẩn khỏi kết quả tìm kiếm (mặc định `true`) |
+| `parent` | bool | Cho phép danh mục phân cấp cha/con (mặc định `true`) |
+| `show_admin_column` | bool | Hiển thị cột category trong bảng Admin của Post Type (mặc định `false`) |
+| `supports` | array | Map nhóm → danh sách field (tương tự Post Type, thêm nhóm `category` với field `parent_id`). Bỏ trống sẽ dùng bộ mặc định đầy đủ |
+| `capabilities` | array | `edit`, `delete`. Mặc định: `post_categories_list`, `post_categories_delete` |
+
+> Shortcut keys `admin_nav_header` / `name` hoạt động giống Post Type. Key `post_type` trong detail của Category Type được hệ thống tự gán khi link với Post Type — không cần truyền tay.
 
 ---
 
@@ -169,37 +200,46 @@ $exists = Taxonomy::hasPost('services');
 $exists = Taxonomy::hasCategory('service-category');
 // true / false
 
-// Lấy danh sách tất cả Post Type đã đăng ký
+// Lấy danh sách tất cả Post Type đã đăng ký (keyed by postType, kèm đầy đủ config)
 $postTypes = Taxonomy::getPost();
-// ['post', 'video-gallery', 'services', ...]
+// ['post' => [...], 'services' => [...], ...]
 
-// Lấy thông tin chi tiết của một Post Type
+// Lấy thông tin config của một Post Type cụ thể
 $detail = Taxonomy::getPost('services');
 // ['labels' => [...], 'public' => true, ...]
 
-// Lấy tất cả Post Type với chi tiết đầy đủ
+// Alias của getPost() không tham số — tường minh hơn khi cần toàn bộ data
 $allPosts = Taxonomy::getPostDetail();
 
-// Lấy danh sách Category Type đã đăng ký
+// Lấy tất cả Category Type đã đăng ký (keyed by cateType, kèm đầy đủ config)
 $cateTypes = Taxonomy::getCategory();
 
-// Lấy thông tin chi tiết của một Category Type
+// Lấy thông tin config của một Category Type cụ thể
 $detail = Taxonomy::getCategory('service-category');
+// ['labels' => [...], 'public' => true, 'post_type' => 'services', ...]
 
 // Lấy danh sách Category Type liên kết với một Post Type
+// $output = TaxonomyService::OUT_NAMES  → trả về mảng tên (mặc định)
+// $output = TaxonomyService::OUT_DETAILS → trả về mảng config đầy đủ
 $linkedCats = Taxonomy::getCategoryByPost('services');
 // ['service-category']
+
+$linkedCatsDetail = Taxonomy::getCategoryByPost('services', \SkillDo\Cms\Taxonomy\TaxonomyService::OUT_DETAILS);
+// ['service-category' => ['labels' => [...], ...]]
+
+// Cũng chấp nhận object có thuộc tính post_type
+$linkedCats = Taxonomy::getCategoryByPost($postObject);
 ```
 
 ### Hủy Đăng Ký (Dùng trong DeactivatorService)
 
 ```php
-// Hủy đăng ký Post Type
+// Hủy đăng ký Post Type (đồng thời gỡ liên kết với tất cả Category Type)
 Taxonomy::removePost('services');
 
-// Hủy đăng ký Category Type
+// Hủy đăng ký Category Type hoàn toàn (đồng thời gỡ khỏi tất cả Post Type)
 Taxonomy::removeCategory('service-category');
 
-// Hủy liên kết Category Type khỏi Post Type (giữ lại Category Type)
+// Chỉ gỡ liên kết Category Type khỏi một Post Type cụ thể (giữ lại Category Type)
 Taxonomy::removeCategory('service-category', 'services');
 ```

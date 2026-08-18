@@ -1,66 +1,125 @@
-# Các Hàm Tiện Ích
+# Các Hàm Tiện Ích Trong Theme
 
-Quá trình xây dựng một Theme Blade, việc lấy dữ liệu User, In Ảnh hoặc Gọi Link Thống Nhất là những cực hình khi băm PHP thủ công.
-Dưới đây là một Kho Thuốc Lõi các Thư Viện Hàm Cung cấp sẵn từ Core CMS v8 gọi bằng Method Static.
+Khi dựng giao diện Blade, bốn nhóm helper dưới đây thay thế toàn bộ việc ghép chuỗi PHP thủ công. Tất cả đều gọi bằng static method và có alias toàn cục nên **không cần `use`** trong Blade.
 
-## 1. Hệ URL Navigation & Routing (`SkillDo\Cms\Support\Url`)
+---
 
-Lấy nhanh Cấu Trúc Link mà Domain hiện hành tự Setup. Sạch Sẽ, bảo mật.
+## 1. URL & Điều Hướng — `SkillDo\Cms\Support\Url` (alias `Url`)
+
 ```blade
-<!-- Lấy Link Cấu hình Hệ thống về Trang Chủ Gốc -->
+{{-- Trang chủ --}}
 <a href="{{ Url::base() }}">Home</a>
 
-<!-- In Cấu hình tuyệt đối ra 1 thư mục Image -->
-<img src="{{ Url::base('assets/logo.png') }}" />
+{{-- Ghép đường dẫn vào gốc site --}}
+<img src="{{ Url::base('views/theme-store/assets/images/logo.png') }}" />
 
-<!-- In Link Trỏ Vào Backend Phân Hệ Admin Panel Hệ Thống -->
-<a href="{{ Url::admin('users/edit/5') }}">Sửa Người Dùng Này Ở Admin</a>
+{{-- Link vào khu vực admin --}}
+<a href="{{ Url::admin('users/edit/5') }}">Sửa người dùng</a>
 
-<!-- In Cấu hình Router Tuyệt Đối Route Name có trong Laravel Core Domain (VD: detail, page, router tùy biến) -->
-<a href="{{ Url::permalink($object->slug) }}">Xem Cụ Thể Sản Phẩm Này</a> 
-<!-- Note: permalink tự rà Cấu hình SEO slug Url friendly của Module! -->
+{{-- Đường dẫn bài viết / danh mục: tự thêm tiền tố ngôn ngữ khi chạy đa ngữ --}}
+<a href="{{ Url::permalink($object->slug) }}">{{ $object->title }}</a>
+
+{{-- Các trang tài khoản dựng sẵn --}}
+<a href="{{ Url::login() }}">Đăng nhập</a>
+<a href="{{ Url::register() }}">Đăng ký</a>
+<a href="{{ Url::forgot() }}">Quên mật khẩu</a>
+<a href="{{ Url::account() }}">Tài khoản</a>
+<a href="{{ Url::logout() }}">Đăng xuất</a>
+
+{{-- Trang lưu trữ theo thẻ & trang tìm kiếm --}}
+<a href="{{ Url::tag($tag->slug) }}">{{ $tag->name }}</a>
+<form action="{{ Url::search() }}" method="get">…</form>
 ```
 
-## 2. Các Lệnh Gọi Meta & Khung Session Page Hiện Tại ( `SkillDo\Cms\Support\Cms` )
+> Danh sách đầy đủ: xem [Url](../07-Supports/03-Url.md).
 
-Bạn thường ở Master Main Blade Layout (`main.blade.php`), làm thế nào Blade Khung Cha biết Cục Thân Page Con đang đổ Data Sản phẩm Tên gì mà Echo ra Menu Cấu hình tương ứng?
+---
 
-Gán data ở Controller bằng `Cms::setData()` thì gọi ra ở Blade Component con cực sạch như sau:
+## 2. Dữ Liệu View — `SkillDo\Cms\Support\Cms` (alias `Cms`)
+
+Controller đẩy dữ liệu vào kho chung bằng `Cms::setData()`; mọi Blade — kể cả layout cha và partial lồng sâu — đọc lại bằng `Cms::getData()`. Nhờ vậy layout không cần nhận biến truyền tay qua từng cấp.
 
 ```blade
-<!-- Khung Cha main.blade.php -->
-<?php 
-   // Lôi Metadata của Khung Cha View CMS hiện thời ra đĩa 
-   $module_active = Cms::getData('module');  
-?>
-@if ($module_active == 'products') 
-     <!--  Mất màu đỏ vì Tôi Chặn Đèn Check Code Riêng chỉ kích Hoạt Khi CMS render Module Products Controller!! -->
+@php
+    $module = Cms::getData('module');
+    $object = Cms::getData('object');
+@endphp
+
+@if($module == 'products')
+    {{-- Chỉ chạy khi controller sản phẩm đang render --}}
 @endif
 
-<!-- Hoặc lấy cấu trúc Global Object Module Mảng Dữ Liệu Truy Vấn -->
-<?php $object = Cms::getData('object'); ?>
-<h2>{{ $object->title ?? 'Rỗng' }}</h2>
+<h2>{{ $object->title ?? '' }}</h2>
 ```
 
-## 3. Ảnh Upload Xử Lý Image Storage Base (`SkillDo\Cms\Support\Image`)
-Thủ thuật In link CDN hoặc Tên Ảnh Không gãy ảnh Error Empty Source.
+Các key thường có: `object` (bản ghi đang xem), `objects` (danh sách), `category`, `pagination`, `module`.
+
+> Trong Blade của theme, các biến này cũng đã được đẩy sẵn vào view scope, nên phần lớn trường hợp bạn dùng thẳng `$object`, `$objects` mà không cần gọi `Cms::getData()`.
+
+---
+
+## 3. Ảnh — `SkillDo\Cms\Support\Image` (alias `Image`)
+
+Mỗi kích thước là **một static method riêng**, nhận `($path, $alt = null)` và trả về **đối tượng `Image`** (không phải chuỗi):
+
+| Method | Kích thước |
+|---|---|
+| `Image::source($path, $alt)` | Ảnh gốc |
+| `Image::large($path, $alt)` | Lớn |
+| `Image::medium($path, $alt)` | Trung bình |
+| `Image::thumb($path, $alt)` | Thumbnail |
+| `Image::url($path, $alt)` | Kiểu `link` (dùng cho ảnh ngoài / link trực tiếp) |
+
+Từ đối tượng đó, gọi tiếp một trong hai:
+
+| Method | Trả về |
+|---|---|
+| `->html($alt = null)` | Chuỗi thẻ `<img …>` hoàn chỉnh |
+| `->link()` | Chỉ URL của ảnh |
+
 ```blade
-<!-- Thụt lùi / Tự Lấy Cache Của một Link Ảnh.  -->
-<img src="{{ Image::url($object->image, 'medium') }}" /> 
-<!-- => Nếu không có ảnh, hệ thống lấy link ảnh Defaut Cấu Hình Base (Empty Thumbnail). Size resize trung bình ('medium') Tối ưu Băng thông -->
+{{-- In cả thẻ img (khuyên dùng) --}}
+{!! Image::medium($object->image, $object->title)->html() !!}
+
+{{-- Chỉ lấy URL để tự đặt vào thuộc tính --}}
+<div style="background-image: url('{{ Image::large($object->image)->link() }}')"></div>
+
+{{-- Thêm thuộc tính trước khi render --}}
+{!! Image::medium($object->image, $object->title)->attribute('lazy', 'default')->html() !!}
+
+{{-- Kích thước động --}}
+{!! Image::{$options->size}($options->img ?? '', $options->alt ?? '')->html() !!}
 ```
 
-## 4. Auth Giai Đoạn Nhanh Hệ Thống Thành Viên Frontend (`SkillDo\Support\Auth`)
+> [!WARNING]
+> Tham số thứ hai là **`$alt`**, không phải kích thước. `Image::url($path, 'medium')` không đổi kích thước — nó gán chữ `"medium"` làm alt.
+>
+> Ảnh rỗng vẫn cho ra thẻ hợp lệ (dùng ảnh mặc định của hệ thống), nên không cần tự kiểm tra `empty()`.
 
-Cho biết Khách Guest Ẩn Danh, Hay Một CMS Account Đã Sign-in Trùng IP Local session Browser.
+Nếu bỏ trống `$alt`, `html()` tự lấy `title` hoặc `name` của `Cms::getData('object')` làm alt.
+
+---
+
+## 4. Xác Thực — `SkillDo\Support\Auth` (alias `Auth`)
 
 ```blade
-@if(Auth::check()) 
-    <p>Chào Mừng {{ Auth::user()->fullname }} - (Role Hệ Thống: {{ Auth::user()->username }}) !</p>
-    <a href="{{ Url::base('logout') }}">Đăng Xuất</a>
+@if(Auth::check())
+    <p>Chào {{ Auth::user()->fullname }}</p>
+    <a href="{{ Url::account() }}">Tài khoản</a>
+    <a href="{{ Url::logout() }}">Đăng xuất</a>
 @else
-    <p>Quý Khách Nên Đăng Nhập Website CMS Cửa Hàng Trước Khi Check Form Giỏ.</p>
+    <a href="{{ Url::login() }}">Đăng nhập</a>
+    <a href="{{ Url::register() }}">Đăng ký</a>
 @endif
 ```
 
-*Các Helper Class Static này luôn sẵn sàng Autoload Namespace tại mọi Layer Component View Core. Thỏa Sức Vẽ View Tĩnh Bơm Dữ Liệu Đông Backend PHP Xịn Sò Nhất.*
+| Method | Mô tả |
+|---|---|
+| `Auth::check()` | Đã đăng nhập chưa |
+| `Auth::user()` | Đối tượng người dùng hiện tại |
+| `Auth::id()` / `Auth::userID()` | Id người dùng |
+| `Auth::getRole()` / `Auth::getRoleName()` | Key / tên nhóm quyền |
+| `Auth::hasCap($cap)` | Kiểm tra một quyền cụ thể |
+| `Auth::isSupper()` | Có phải tài khoản quyền cao nhất |
+
+> `username` là **tên đăng nhập**, không phải nhóm quyền. Muốn hiển thị nhóm quyền dùng `Auth::getRoleName()`. Chi tiết phân quyền: xem [Role & Permission](../06-Cms/04-Auth%20Role/02-Role-Permission.md).

@@ -16,7 +16,7 @@ Thuộc tính bổ sung
 
 | Params   | Type |                    Description | Default |
 |----------|:----:|-------------------------------:|:-------:|
-| multiple | bool | Cho phép chọn nhiều đối trượng |  false  |
+| multiple | bool | Cho phép chọn nhiều đối tượng  |  true   |
 
 #### Popover post
 Popover post cho phép bạn tìm kiếm và chọn bài viết
@@ -32,7 +32,7 @@ Thuộc tính bổ sung
 
 | Params   |  Type  |                    Description | Default |
 |----------|:------:|-------------------------------:|:-------:|
-| multiple |  bool  | Cho phép chọn nhiều đối trượng |  false  |
+| multiple |  bool  | Cho phép chọn nhiều đối tượng  |  true   |
 | taxonomy | string | post_type của bài viết cần lấy |  post   |
 
 
@@ -50,7 +50,7 @@ Thuộc tính bổ sung
 
 | Params   |  Type  |                    Description |     Default     |
 |----------|:------:|-------------------------------:|:---------------:|
-| multiple |  bool  | Cho phép chọn nhiều đối trượng |      false      |
+| multiple |  bool  | Cho phép chọn nhiều đối tượng  |      true       |
 | taxonomy | string | cate_type của danh mục cần lấy | post_categories |
 
 #### Popover user
@@ -68,7 +68,9 @@ Thuộc tính bổ sung
 
 | Params   |  Type  |                    Description |     Default     |
 |----------|:------:|-------------------------------:|:---------------:|
-| multiple |  bool  | Cho phép chọn nhiều đối trượng |      false      |
+| multiple |  bool  | Cho phép chọn nhiều đối tượng  |      true       |
+
+Ngoài ra mọi field popoverAdvance còn hỗ trợ thuộc tính `noImage` (bool) — nếu true sẽ luôn dùng template không ảnh kể cả khi item có key `image`
 
 ### Thêm Field Popover
 

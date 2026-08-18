@@ -32,6 +32,8 @@ plugins/my-plugin/
 
 Khi Plugin được kích hoạt (Active), CMS sẽ tự động load file này vào hệ thống Router mà **không cần cấu hình hay include thủ công** trong `ServiceProvider`.
 
+> **Theme cũng có cơ chế tương tự:** `SkillDo\Cms\Providers\CmsRouteServiceProvider` quét thêm `routes/web.php`, `routes/admin.php`, `routes/api.php` trong cả thư mục theme đang dùng (`views/theme-store/routes/`) và theme-child (`views/theme-child/routes/`), gắn middleware nhóm tương ứng giống Plugin. Thứ tự load: route gốc của app → route Plugin (theo danh sách active) → route Theme → route Theme-child.
+
 ---
 
 ## 2. Các Method Định Tuyến Cơ Bản
@@ -49,7 +51,7 @@ Route::options('ping', 'Plugin\Controllers\Web\PingController@ping');
 // Sử dụng chung cho nhiều verbs
 Route::match(['get', 'post'], 'payment/notification', 'PaymentController@webhook');
 
-// Chấp nhận mọi loại requests (GET, POST, PUT, DELETE, PATCH, OPTIONS)
+// Chấp nhận mọi loại requests (GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS)
 Route::any('custom-url', 'CustomController@handle');
 ```
 
@@ -114,10 +116,28 @@ Route::get('/gio-hang', \Ecommerce\Controllers\Web\EcommerceController::class.'@
 
 **Gọi ra URI bằng tên Route Helper trong template hoặc Controller:**
 
+Signature thực tế của helper (khai báo tại `packages/skilldo/framework/src/Support/common.php`):
+
+```php
+function route($name, mixed $parameters = [], bool $absolute = false): string
+```
+
+> **Khác Laravel:** mặc định `route()` trả về **URI tương đối** (không có domain, không có `/` đầu). Muốn URL tuyệt đối phải truyền `$absolute = true`. Nếu tên route không tồn tại, hàm trả về chuỗi rỗng `''` (không ném exception).
+
 ```php
 // Ở mã PHP hoặc Template File
-$url = route('sicommerce.cart'); // Output: https://domain.com/gio-hang
+$url = route('sicommerce.cart');             // Output: gio-hang
+$url = route('sicommerce.cart', [], true);   // Output: https://domain.com/gio-hang
+
+// Truyền tham số: ưu tiên khớp theo key trùng tên placeholder, còn lại khớp theo thứ tự
+$url = route('admin.products.brands.edit', ['id' => 5]); // admin/products/brands/edit/5
+
+// Tham số thừa (không khớp placeholder) tự thành query string
+$url = route('sicommerce.cart', ['utm' => 'zalo'], true); // https://domain.com/gio-hang?utm=zalo
 ```
+
+- Placeholder optional (`{id?}`) không có giá trị sẽ bị loại bỏ khỏi URI.
+- Thiếu giá trị cho placeholder **bắt buộc** sẽ ném `InvalidArgumentException`.
 
 ---
 
@@ -191,5 +211,45 @@ Bạn có thể cung cấp đoạn xử lý thay thế khi hệ thống URL khô
 ```php
 Route::fallback(function () {
     return 'URL này không tồn tại!';
+});
+```
+
+> **Lưu ý:** CMS đã tự đăng ký 2 route "bắt tất cả" ở cuối: `/{any}` trong khu vực admin (trả trang 404 admin) và `/{slug}` ngoài web (đặt tên `index`, do `App\Controllers\Web\SlugController` phân giải slug từ bảng `routes`). Vì vậy fallback thường chỉ cần thiết khi bạn tự dựng nhóm route đặc thù.
+
+---
+
+## 10. Route Đa Ngôn Ngữ — `Route::localized()`
+
+Macro `localized` (đăng ký trong `CmsServiceProvider`) giúp khai báo một nhóm route **vừa có bản gốc không prefix, vừa tự sinh thêm biến thể có prefix theo từng ngôn ngữ** đang kích hoạt trong hệ thống (lấy từ `Language::listKey()`, vd `vi`, `en`). Biến thể theo ngôn ngữ được tự động thêm tiền tố tên route `{locale}.`:
+
+```php
+Route::localized(function () {
+    Route::get('gio-hang', \Ecommerce\Controllers\Web\EcommerceController::class.'@cart')
+        ->name('sicommerce.cart');
+});
+
+// Kết quả đăng ký:
+// /gio-hang        → name: sicommerce.cart      (ngôn ngữ mặc định)
+// /vi/gio-hang     → name: vi.sicommerce.cart
+// /en/gio-hang     → name: en.sicommerce.cart
+```
+
+Kết hợp với middleware `SetLanguage` (nhóm `web`), segment ngôn ngữ đầu URL sẽ được nhận diện và lưu vào session để kích hoạt locale tương ứng.
+
+---
+
+## 11. Group Namespace & Controller
+
+Ngoài `prefix` / `middleware`, group còn hỗ trợ thuộc tính `namespace` (tự prepend namespace cho action string) và `controller` (gom các action về cùng một Controller):
+
+```php
+Route::namespace('App\Controllers\Web')->group(function () {
+    // 'SlugController@index' → 'App\Controllers\Web\SlugController@index'
+    Route::get('/{slug}', 'SlugController@index')->name('index');
+});
+
+Route::controller(\Ecommerce\Controllers\Web\EcommerceController::class)->group(function () {
+    Route::get('gio-hang', 'cart');      // → EcommerceController@cart
+    Route::get('thanh-toan', 'checkout');
 });
 ```

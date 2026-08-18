@@ -6,7 +6,7 @@
 
 Class `Path` cung cấp các helper tĩnh để lấy **đường dẫn hệ thống tuyệt đối** trên server. Khác với `Url::` (dùng cho URL web), `Path::` dùng để truy cập file trên filesystem.
 
-> **Lưu ý:** Trong CMS v8, `Path::upload()` và `Path::plugin()` đã được thay thế bằng các phương thức mới phù hợp với cấu trúc thư mục mới. `theme()`, `admin()`, `plugin()` được đăng ký qua Macro.
+> **Lưu ý:** Class `Path` dùng trait `Macroable`. Các phương thức gốc: `base()`, `storage()`, `cache()`, `config()`, `view()`, `log()`. Các phương thức `theme()`, `themeChild()`, `admin()`, `plugin()` được đăng ký qua Macro trong `CmsServiceProvider`. Mọi kết quả đều được chuẩn hóa qua `path_normalize()` (dấu phân cách theo hệ điều hành).
 
 ---
 
@@ -33,25 +33,25 @@ Path::storage('logs/error.log')
 ```
 
 ### `Path::cache()`
-Trả về đường dẫn tuyệt đối đến thư mục cache.
+Trả về đường dẫn tuyệt đối đến thư mục cache (`storage/framework/cache`).
 
 ```php
 Path::cache()
-// /var/www/html/myproject/storage/cache
+// /var/www/html/myproject/storage/framework/cache
 
 Path::cache('my_cache.php')
-// /var/www/html/myproject/storage/cache/my_cache.php
+// /var/www/html/myproject/storage/framework/cache/my_cache.php
 ```
 
 ### `Path::config()`
-Trả về đường dẫn tuyệt đối đến thư mục cấu hình.
+Trả về đường dẫn tuyệt đối đến thư mục cấu hình (thư mục `config/` ở gốc project — nơi chứa các file override).
 
 ```php
 Path::config()
-// /var/www/html/myproject/bootstrap/config
+// /var/www/html/myproject/config
 
 Path::config('cms.php')
-// /var/www/html/myproject/bootstrap/config/cms.php
+// /var/www/html/myproject/config/cms.php
 ```
 
 ### `Path::view()`
@@ -85,6 +85,17 @@ Path::theme()
 
 Path::theme('assets/images/logo.png')
 // /var/www/html/myproject/views/theme-store/assets/images/logo.png
+```
+
+### `Path::themeChild()` *(Macro — đăng ký ở CMS)*
+Trả về đường dẫn tuyệt đối đến thư mục theme-child (cấu hình `cms.theme.child`).
+
+```php
+Path::themeChild()
+// /var/www/html/myproject/views/theme-child
+
+Path::themeChild('assets/images/logo.png')
+// /var/www/html/myproject/views/theme-child/assets/images/logo.png
 ```
 
 ### `Path::admin()` *(Macro — đăng ký ở CMS)*

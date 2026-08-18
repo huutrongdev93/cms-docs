@@ -11,7 +11,7 @@
 ---
 
 ### `Option::add()`
-Thêm một option mới vào database. Nếu `$optionValue` là array hoặc object, sẽ được tự động serialize.
+Thêm một option mới vào database. Nếu `$value` là array hoặc object, sẽ được tự động `json_encode` (JSON_UNESCAPED_UNICODE) trước khi lưu.
 
 ```php
 Option::add(string $name, mixed $value): false|int
@@ -48,12 +48,17 @@ $apiKey = Option::get('my_plugin_api_key');
 // 'sk-abc123xyz'
 
 $settings = Option::get('my_plugin_settings');
-// ['timeout' => 30, 'retries' => 3]  (tự động unserialize)
+// ['timeout' => 30, 'retries' => 3]  (tự động json_decode / unserialize)
 
 // Với giá trị mặc định
 $timeout = Option::get('my_plugin_timeout', 60);
 // 60 (nếu option chưa được tạo)
 ```
+
+> **Lưu ý:**
+> - Giá trị lưu dạng JSON hoặc serialized sẽ được tự động decode khi đọc.
+> - Nếu không tìm thấy trong bảng `system`, hàm còn tìm tiếp bên trong option `theme_option` (các tùy chọn của theme) trước khi trả về `$default`.
+> - Khi CMS chưa cài đặt (chưa chạy wizard `/install`), `Option::get` luôn trả về `$default`.
 
 ---
 
@@ -110,6 +115,26 @@ Option::all(): object
 $config = Option::all();
 echo $config->general_label;        // Tên website
 echo $config->my_plugin_api_key;    // Option của plugin
+```
+
+---
+
+### Hooks Của Option
+
+Các thao tác Option phát ra action hook theo tên option — plugin có thể móc vào để theo dõi thay đổi:
+
+| Hook | Thời điểm |
+|---|---|
+| `add_{$name}_option` | Trước khi insert option mới |
+| `added_{$name}_meta` | Sau khi insert thành công (nhận `$mid, $name, $value`) |
+| `update_{$name}_option` | Trước khi update (nhận `$option, $name, $value`) |
+| `delete_{$name}_option` | Trước khi delete (nhận `$query, $name`) |
+| `deleted_{$name}_option` | Sau khi delete thành công |
+
+```php
+add_action('update_my_plugin_api_key_option', function ($option, $name, $value) {
+    // log lại thay đổi api key...
+}, 10, 3);
 ```
 
 ---

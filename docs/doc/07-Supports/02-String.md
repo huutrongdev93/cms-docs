@@ -4,20 +4,21 @@
 > **Alias ngắn:** `\Str`  
 > **Tài liệu tham khảo:** [Laravel String Helpers](https://laravel.com/docs/master/strings)
 
-SkillDo CMS v8 mở rộng `Illuminate\Support\Str` của Laravel, bổ sung thêm các phương thức đặc thù như `Str::clear()`, `Str::price()`, `Str::isSerialized()`. Tất cả gọi bằng alias `Str::`.
+SkillDo CMS v8 mở rộng `Illuminate\Support\Str` của Laravel, bổ sung thêm các macro đặc thù như `Str::clear()`, `Str::price()`, `Str::isSerialized()`, `Str::safeJson()`, `Str::colorToRgb()`... (đăng ký trong `packages/skilldo/framework/src/Bootstrap/RegisterMacros.php`). Lưu ý `Str::ascii()` và `Str::slug()` cũng được **ghi đè** bằng macro để xử lý tiếng Việt tốt hơn. Tất cả gọi bằng alias `Str::`.
 
-|                                     |                                       |                                       |
-|-------------------------------------|:-------------------------------------:|--------------------------------------:|
-| [Str::clear](#strclear)             |       [Str::finish](#strfinish)       | [Str::replaceFirst](#strreplacefirst) |
-| [Str::after](#strafter)             |           [Str::is](#stris)           |   [Str::replaceLast](#strreplacelast) |
-| [Str::afterLast](#strafterlast)     | [Str::isSerialized](#strisserialized) |               [Str::ascii](#strascii) |
-| [Str::before](#strbefore)           |   [Str::startsWith](#strstartswith)   |                 [Str::slug](#strslug) |
-| [Str::beforeLast](#strbeforelast)   |       [Str::length](#strlength)       |               [Str::price](#strprice) |
-| [Str::between](#strbetween)         |        [Str::limit](#strlimit)        |             [Str::substr](#strsubstr) |
-| [Str::contains](#strcontains)       |        [Str::lower](#strlower)        |           [Str::ucfirst](#strucfirst) |
-| [Str::containsAll](#strcontainsall) |        [Str::upper](#strupper)        |               [Str::title](#strtitle) |
-| [Str::endsWith](#strendswith)       | [Str::replaceArray](#strreplacearray) |               [Str::of](#strof)       |
-| [Str::start](#strstart)             |       [Str::random](#strrandom)       |                                       |
+|                                     |                                       |                                                 |
+|-------------------------------------|:-------------------------------------:|------------------------------------------------:|
+| [Str::clear](#strclear)             |       [Str::finish](#strfinish)       |           [Str::replaceFirst](#strreplacefirst) |
+| [Str::after](#strafter)             |           [Str::is](#stris)           |             [Str::replaceLast](#strreplacelast) |
+| [Str::afterLast](#strafterlast)     | [Str::isSerialized](#strisserialized) |                         [Str::ascii](#strascii) |
+| [Str::before](#strbefore)           |   [Str::startsWith](#strstartswith)   |                           [Str::slug](#strslug) |
+| [Str::beforeLast](#strbeforelast)   |       [Str::length](#strlength)       |                         [Str::price](#strprice) |
+| [Str::between](#strbetween)         |        [Str::limit](#strlimit)        |                       [Str::substr](#strsubstr) |
+| [Str::contains](#strcontains)       |        [Str::lower](#strlower)        |                     [Str::ucfirst](#strucfirst) |
+| [Str::containsAll](#strcontainsall) |        [Str::upper](#strupper)        |                         [Str::title](#strtitle) |
+| [Str::endsWith](#strendswith)       | [Str::replaceArray](#strreplacearray) |                               [Str::of](#strof) |
+| [Str::start](#strstart)             |       [Str::random](#strrandom)       |                   [Str::safeJson](#strsafejson) |
+| [Str::colorToRgb](#strcolortorgb)   |     [Str::isStatic](#strisstatic)     | [Str::isHtmlSpecialChars](#strishtmlspecialchars) |
 
 
 ### `Str::clear`
@@ -227,28 +228,45 @@ $replaced = Str::replaceLast('the', 'a', 'the quick brown fox jumps over the laz
 ```
 
 ### `Str::ascii`
-Hàm `Str::ascii` chuyển chuỗi thành một giá trị ASCII:
+Hàm `Str::ascii` được SkillDo **ghi đè bằng macro**: chuẩn hóa Unicode (Normalizer FORM_C), chuyển chuỗi về **chữ thường** rồi chuyển các ký tự có dấu (đặc biệt là tiếng Việt) thành không dấu:
 
 ```php
 $slice = Str::ascii('û');
 // 'u'
+
+$slice = Str::ascii('Tiếng Việt');
+// 'tieng viet'
 ```
 
 ### `Str::slug`
-Hàm `Str::slug` tạo ra một URL "slug" thân thiện từ chuỗi cho trước:
+Hàm `Str::slug` được SkillDo **ghi đè bằng macro**: loại bỏ HTML entities và thẻ HTML trước, chuyển tiếng Việt không dấu (qua `Str::ascii`), rồi tạo URL "slug" thân thiện:
 
 ```php
 $slug = Str::slug('SkillDo 8 CMS', '-');
 // skilldo-8-cms
+
+$slug = Str::slug('Sản phẩm mới');
+// san-pham-moi
 ```
 
 ### `Str::price`
-Hàm `Str::price` là hàm mở rộng đặc thù của SkillDo. Xóa các ký tự `"."`, `","` khỏi chuỗi và trả về kiểu `int`:
+Hàm `Str::price` là macro mở rộng đặc thù của SkillDo. Loại bỏ mọi ký tự không phải số/dấu chấm/dấu phẩy khỏi chuỗi, xử lý dấu `,` (coi là phân cách hàng nghìn, hoặc phân cách thập phân khi đứng sau dấu `.`), và trả về `int` nếu kết quả không còn phần thập phân:
 
 ```php
-$price = Str::price('1.000.000');
-// 1000000
+$price = Str::price('1,000,000');
+// 1000000 (int)
+
+$price = Str::price('250000 đ');
+// 250000 (int)
+
+$price = Str::price('1,234.56');
+// '1234.56'
+
+$price = Str::price('1.234,56');
+// '1234.56'
 ```
+
+> **Lưu ý:** chuỗi chỉ chứa dấu chấm (ví dụ `'1.000.000'`) sẽ được trả về **nguyên trạng** (dấu chấm được coi là phân cách thập phân), không bị chuyển thành số nguyên.
 
 ### `Str::substr`
 Hàm `Str::substr` trả về phần chuỗi được chỉ định bởi tham số bắt đầu và độ dài:
@@ -283,4 +301,53 @@ $result = Str::of('  SkillDo CMS  ')
     ->lower()
     ->slug('-');
 // skilldo-cms
+```
+
+### `Str::isHtmlSpecialChars`
+Macro SkillDo. Kiểm tra chuỗi có chứa các HTML entity đã được escape (`&amp;`, `&quot;`, `&#039;`, `&lt;`, `&gt;`) hay không:
+
+```php
+$result = Str::isHtmlSpecialChars('Tom &amp; Jerry');
+// true
+
+$result = Str::isHtmlSpecialChars('Tom & Jerry');
+// false
+```
+
+### `Str::safeJson`
+Macro SkillDo. Decode một chuỗi JSON, escape các dấu nháy đơn trong mọi giá trị string (đệ quy với JSON/array lồng nhau) rồi trả về chuỗi JSON an toàn. Truyền `true` ở tham số thứ hai để nhận về mảng thay vì chuỗi JSON:
+
+```php
+$json = Str::safeJson('{"name":"O\'Brien"}');
+// '{"name":"O''Brien"}'
+
+$array = Str::safeJson('{"name":"O\'Brien"}', true);
+// ['name' => "O''Brien"]
+```
+
+### `Str::safeJsonString`
+Macro SkillDo. Escape dấu nháy đơn trong một chuỗi (nhân đôi `'` thành `''`):
+
+```php
+$result = Str::safeJsonString("O'Brien");
+// "O''Brien"
+```
+
+### `Str::colorToRgb`
+Macro SkillDo. Chuyển màu HEX (`#RRGGBB`) hoặc chuỗi `rgb(r, g, b)` thành mảng `['r' => ..., 'g' => ..., 'b' => ...]`. Nếu chuỗi không hợp lệ, trả về giá trị mặc định ở tham số thứ hai (mặc định `['r' => 0, 'g' => 0, 'b' => 0]`):
+
+```php
+$rgb = Str::colorToRgb('#ff8800');
+// ['r' => 255, 'g' => 136, 'b' => 0]
+
+$rgb = Str::colorToRgb('rgb(255, 136, 0)');
+// ['r' => 255, 'g' => 136, 'b' => 0]
+```
+
+### `Str::isStatic`
+Macro SkillDo. Kiểm tra một chuỗi dạng `Class::method` có trỏ tới một **static method** tồn tại hay không (dùng cho Ajax dispatcher / callback):
+
+```php
+$result = Str::isStatic('App\Ajax\Contact::send');
+// true nếu App\Ajax\Contact::send tồn tại và là static
 ```

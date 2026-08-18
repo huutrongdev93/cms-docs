@@ -1,14 +1,14 @@
 # HTTP Client
 
 - **File khai báo gốc:** `packages/skilldo/framework/src/Http/Http.php`
-- **Kế thừa:** `Illuminate\Http\Client\Factory`
+- **Cơ chế:** Static proxy (`__callStatic`) chuyển tiếp mọi lời gọi tới một instance `Illuminate\Http\Client\Factory` (singleton nội bộ, KHÔNG kế thừa class)
 - **Namespace API:** `SkillDo\Http\Http`
 
 ## 1. HTTP Client trong SkillDo là gì?
 
 SkillDo CMS v8 cung cấp một thư viện HTTP Client mạnh mẽ, thân thiện để tạo các **outbound HTTP requests** (Gửi yêu cầu giao tiếp với các server/API bên ngoài). 
 
-Thực chất, công cụ này là một class đóng gói (Wrapper) và gọi trực tiếp tới lõi xử lý `Illuminate\Http\Client\Factory` của Laravel, dựa trên trình xử lý HTTP nổi tiếng là **Guzzle HTTP Client**. Nhờ vậy, bạn có đầy đủ mọi tính năng mạnh mẽ của Guzzle nhưng cú pháp lại cực kỳ ngắn gọn và tự nhiên.
+Thực chất, công cụ này là một class đóng gói (Wrapper): mọi lời gọi static qua `SkillDo\Http\Http` được `__callStatic` chuyển tiếp tới lõi xử lý `Illuminate\Http\Client\Factory` của Laravel, dựa trên trình xử lý HTTP nổi tiếng là **Guzzle HTTP Client** (`guzzlehttp/guzzle ^7.9`). Nhờ vậy, bạn có đầy đủ mọi tính năng mạnh mẽ của Guzzle (kể cả các method khác của Factory như `withOptions()`, `withBasicAuth()`, `pool()`...) nhưng cú pháp lại cực kỳ ngắn gọn và tự nhiên.
 
 ## 2. Cách Sử Dụng HTTP Client
 

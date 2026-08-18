@@ -1,5 +1,21 @@
 # Commands
-Danh sách các lệnh được sử dụng trong plugin Devtool Skilldo CMS
+
+Danh sách đầy đủ **61 lệnh** của plugin DevTool trên SkillDo CMS v8.
+
+> **Lưu ý quan trọng:** DevTool **không có CLI**. Mọi lệnh chạy trong **Terminal của admin** (nút *Terminal* trên thanh header, chỉ hiện với tài khoản root), gửi qua ajax `POST /admin/ajax`. Không chạy được từ shell/SSH.
+
+Quy ước ký hiệu trong tài liệu:
+
+* `[<arg>]` — tham số **bắt buộc** <span class="badge text-bg-red">REQUIRED</span>
+* `[<arg>?]` — tham số **tùy chọn** <span class="badge text-bg-success">Optional</span>
+* `[<arg>=giá-trị]` — tham số tùy chọn có **giá trị mặc định**
+* `--option` — cờ tùy chọn
+
+Hai biến thể `:plugin` và `:theme` của cùng một lệnh chỉ khác nơi ghi file:
+
+* `:plugin` → ghi vào `plugins/<plugin>/…`
+* `:theme` → ghi vào **theme con** `views/<theme-child>/…` (trừ `make:lang:theme`, `make:widget*` ghi vào **theme cha**)
+
 <div class="card-command">
 
 #### ```help```
@@ -30,13 +46,13 @@ auth:logout
 #### ```user:username```
 Thay đổi tên đăng nhập của một user
 > **Arguments**
-* username-current - username của account muốn thay đổi username <span class="badge text-bg-red">REQUIRED</span>
-* username-new -  username mới của người dùng <span class="badge text-bg-red">REQUIRED</span>
+* usernameOld - username hiện tại của account <span class="badge text-bg-red">REQUIRED</span>
+* usernameNew - username mới <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-user:username [<username-current>] [<username-new>]
+user:username [<usernameOld>] [<usernameNew>]
 ```
 ```shell
-user:username hello xinchao 
+user:username hello xinchao
 ```
 </div>
 
@@ -45,18 +61,18 @@ user:username hello xinchao
 #### ```user:password```
 Thay đổi mật khẩu đăng nhập của một user
 > **Arguments**
-* username-current - username của account muốn thay đổi mật khẩu <span class="badge text-bg-red">REQUIRED</span>
-* password -  password muốn thay đổi <span class="badge text-bg-red">REQUIRED</span>
+* username - username của account muốn đổi mật khẩu <span class="badge text-bg-red">REQUIRED</span>
+* password - mật khẩu mới <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-user:username [<username-current>] [<username-new>]
+user:password [<username>] [<password>]
 ```
 ```shell
-user:password xinchao 1234Game 
+user:password xinchao 1234Game
 ```
 </div>
 
-
 ### Cache
+
 <div class="card-command">
 
 #### ```cache:clear```
@@ -76,17 +92,17 @@ cache:view
 ```
 </div>
 
-
 <div class="card-command">
 
 #### ```cache:lang```
-<span class="badge text-bg-pink">v.1.0.6</span> Xóa tất cả file cache của bản dịch ngôn ngữ
+Xóa tất cả file cache của bản dịch ngôn ngữ
 ```shell
 cache:lang
 ```
 </div>
 
 ### Cms
+
 <div class="card-command">
 
 #### ```cms:build:js```
@@ -97,17 +113,57 @@ cms:build:js
 
 </div>
 
-
 <div class="card-command">
 
 #### ```cms:version```
 Lấy thông tin phiên bản của cms
 > **Arguments**
-* type - loại lấy version (current ```default```, last) <span class="badge text-bg-success">Optional</span>
+* type - loại version cần lấy: `current` (mặc định), `last` <span class="badge text-bg-success">Optional</span>
 ```shell
-cms:version [<type>]
+cms:version [<type=current>]
 ```
 
+</div>
+
+### Builder
+
+Xuất / nhập cấu hình Page Builder của một section dưới dạng JSON. Section hợp lệ: `header`, `home`, `footer`.
+
+<div class="card-command">
+
+#### ```builder:export```
+Xuất section của Page Builder ra file JSON.
+File được ghi vào `storage/cms/builder/`, mặc định tên `<section>.json`.
+> **Arguments**
+* section - `header` | `home` | `footer` <span class="badge text-bg-red">REQUIRED</span>
+* file - tên file JSON đích <span class="badge text-bg-success">Optional</span>
+```shell
+builder:export [<section>] [<file>?]
+```
+```shell
+builder:export header
+builder:export home home-v2.json
+```
+</div>
+
+<div class="card-command">
+
+#### ```builder:import```
+Nhập section của Page Builder từ file JSON trong `storage/cms/builder/`.
+
+Trước khi ghi đè, lệnh **tự sao lưu** cấu hình hiện tại vào `storage/cms/builder/backups/<section>_backup_<ngày_giờ>.json`. Dùng `--no-backup` để bỏ qua bước này.
+> **Arguments**
+* section - `header` | `home` | `footer` <span class="badge text-bg-red">REQUIRED</span>
+* file - tên file JSON nguồn (mặc định `<section>.json`) <span class="badge text-bg-success">Optional</span>
+> **Options**
+* --no-backup - không sao lưu cấu hình hiện tại <span class="badge text-bg-success">Optional</span>
+```shell
+builder:import [<section>] [<file>?] [--no-backup]
+```
+```shell
+builder:import header
+builder:import home home-v2.json --no-backup
+```
 </div>
 
 ### Db
@@ -115,36 +171,11 @@ cms:version [<type>]
 <div class="card-command">
 
 #### ```db:empty```
-empty table, views, hoặc types được chỉ định
+Xóa sạch dữ liệu của một table
 > **Arguments**
-* table_name -  tên table muốn empty <span class="badge text-bg-red">REQUIRED</span>
+* table - tên table muốn empty <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-db:empty [<table_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```db:run:plugin```
-Thực thi file migration của một plugin được chỉ định
-> **Arguments**
-* plugin_name -  tên thư mục plugin muốn chạy migration <span class="badge text-bg-red">REQUIRED</span>
-* file_name -  tên file migration muốn chạy <span class="badge text-bg-success">optional</span>
-```shell
-db:run:plugin [<plugin_name>] [<file_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```db:run:theme```
-Thực thi file migration của theme hiện tại
-> **Arguments**
-* file_name -  tên file migration muốn chạy <span class="badge text-bg-success">optional</span>
-```shell
-db:run:plugin [<file_name>]
+db:empty [<table>]
 ```
 
 </div>
@@ -152,454 +183,136 @@ db:run:plugin [<file_name>]
 <div class="card-command">
 
 #### ```db:show```
-Hiển thị thông tin cơ sở dữ liệu
+Hiển thị thông tin tổng quan về database đang kết nối
 ```shell
 db:show
 ```
-
 </div>
 
 <div class="card-command">
 
 #### ```db:table```
-Hiển thị thông tin của một bảng trong cơ sở dữ liệu
+Hiển thị thông tin chi tiết của một table (cột, kiểu dữ liệu, index)
 > **Arguments**
-* table_name -  tên table muốn xem thông tin <span class="badge text-bg-red">REQUIRED</span>
+* table - tên table <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-db:table [<table_name>]
+db:table [<table>]
 ```
-
 </div>
 
+<div class="card-command">
+
+#### ```db:run:plugin```
+Thực thi file migration của một plugin được chỉ định.
+File nằm trong `plugins/<plugin>/database/`.
+> **Arguments**
+* plugin - tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* file - tên file migration, mặc định `database` <span class="badge text-bg-success">Optional</span>
+```shell
+db:run:plugin [<plugin>] [<file=database>]
+```
+```shell
+db:run:plugin sicommerce
+db:run:plugin sicommerce update-8-1-0
+```
+</div>
+
+<div class="card-command">
+
+#### ```db:run:theme```
+Thực thi file migration của theme con.
+File nằm trong `views/<theme-child>/database/`.
+> **Arguments**
+* file - tên file migration, mặc định `database` <span class="badge text-bg-success">Optional</span>
+```shell
+db:run:theme [<file=database>]
+```
+</div>
 
 <div class="card-command">
 
 #### ```db:seed```
-Tạo dữ liệu mẫu
-> **Options**
-* module -  tên module muốn tạo dữ liệu (hiện tại chỉ hỗ trợ post) <span class="badge text-bg-red">REQUIRED</span>
+Sinh dữ liệu giả ngẫu nhiên cho một module
 > **Arguments**
-* number -  số lượng dữ liệu muốn tạo nhỏ nhất 1 và lớn nhất là 50 (mặc định 10) <span class="badge text-bg-success">optional</span>
+* number - số lượng bản ghi, từ **1** đến **50**, mặc định 10 <span class="badge text-bg-success">Optional</span>
+> **Options**
+* --module= - module cần sinh dữ liệu (vd `post`) <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-db:seed --module=[<module>] [<number>]
+db:seed [--module=<module>] [<number=10>]
 ```
-
 ```shell
 db:seed --module=post 20
 ```
-
 </div>
 
 ### Lang
+
 <div class="card-command">
 
 #### ```lang:build```
-Build file json language từ plugin và theme
+Build file json ngôn ngữ
+> **Arguments**
+* type - loại ngôn ngữ cần build <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-lang:build
+lang:build [<type>]
 ```
 </div>
 
 ### License
+
 <div class="card-command">
 
 #### ```license```
-<span class="badge text-bg-pink">v.1.1.2</span> Hiên thị thông tin license hiện đang lưu của cms
+Hiển thị thông tin bản quyền đang sử dụng
 ```shell
 license
 ```
 </div>
 
-### License:change
 <div class="card-command">
 
 #### ```license:change```
-<span class="badge text-bg-pink">v.1.1.2</span> Hiên thị thông tin license hiện đang lưu của cms
+Thay đổi thông tin bản quyền
 > **Arguments**
-* key - mã key license <span class="badge text-bg-red">REQUIRED</span>
-* secret - mã secret license <span class="badge text-bg-red">REQUIRED</span>
+* key - license key <span class="badge text-bg-red">REQUIRED</span>
+* secretKey - secret key <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-license:change {key} {secret}
+license:change [<key>] [<secretKey>]
 ```
-</div>
-
-### Make
-<div class="card-command">
-
-#### ```make:command```
-Tạo lệnh Devtool mới
-> **Arguments**
-* name -  tên class của command <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:command [<name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```make:db:plugin```
-Tạo file migration cho một plugin được chỉ định.  
-File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/database```
-> **Arguments**
-* plugin_name -  tên thư mục plugin muốn tạo migration <span class="badge text-bg-red">REQUIRED</span>
-* file_name -  tên file migration muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:db:plugin [<plugin_name>] [<file_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```make:db:theme```
-Tạo file migration cho theme hiện tại  
-File được tạo nằm trong thư mục ```views/[theme]/database```
-> **Arguments**
-* file_name -  tên file migration muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:db:theme [<file_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```make:form-field:plugin```
-Tạo field mới cho một plugin được chỉ định  
-File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/core/Form/Field```
-> **Arguments**
-* plugin_name -  tên thư mục plugin muốn tạo field <span class="badge text-bg-red">REQUIRED</span>
-* file_name -  tên class field muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:form-field:plugin [<plugin_name>] [<file_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```make:form-field:theme```
-Tạo field mới cho theme hiện tại  
-File được tạo nằm trong thư mục ```views/[theme]/core/Form/Field```
-> **Arguments**
-* file_name -  tên class field muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:form-field:theme [<file_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```make:lang:plugin```
-Tạo bản dịch cho một plugin được chỉ định  
-File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/language/[local]```
-
-> **Arguments**
-* plugin_name -  tên thư mục plugin muốn tạo bản dịch <span class="badge text-bg-red">REQUIRED</span>
-* file_name -  tên file bản dịch muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:lang:plugin [<plugin_name>] [<file_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```make:lang:theme```
-Tạo bản dịch cho theme hiện tại  
-File được tạo nằm trong thư mục ```views/[theme]/language/[local]```
-
-> **Arguments**
-* file_name -  tên file bản dịch muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:lang:theme [<file_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```make:macro:plugin```
-Tạo file macro cho một plugin được chỉ định  
-File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/core/Macro```
-> **Arguments**
-* plugin_name -  tên thư mục plugin muốn tạo macro <span class="badge text-bg-red">REQUIRED</span>
-* file_name -  tên file macro muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:macro:plugin [<plugin_name>] [<file_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```make:macro:theme```
-Tạo file macro cho theme hiện tại  
-File được tạo nằm trong thư mục ```views/[theme]/core/Macro```
-
-> **Arguments**
-* file_name -  tên file macro muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:macro:theme [<file_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```make:popover:plugin```
-Tạo popover cho một plugin được chỉ định  
-File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/core/Form/Popover```
-> **Arguments**
-* plugin_name -  tên thư mục plugin muốn tạo popover <span class="badge text-bg-red">REQUIRED</span>
-* file_name -  tên class popover muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:popover:plugin [<plugin_name>] [<file_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```make:popover:theme```
-Tạo popover cho theme hiện tại  
-File được tạo nằm trong thư mục ```views/[theme]/core/Form/Popover```
-
-> **Arguments**
-* file_name -  tên class popover muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:popover:theme [<file_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```make:validate:plugin```
-Tạo validate rule cho một plugin được chỉ định  
-File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/core/Validate```
-
-> **Arguments**
-* plugin_name -  tên thư mục plugin muốn tạo validate <span class="badge text-bg-red">REQUIRED</span>
-* file_name -  tên class validate muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:validate:plugin [<plugin_name>] [<file_name>]
-```
-</div>
-
-<div class="card-command">
-
-#### ```make:validate:theme```
-Tạo validate rule cho theme hiện tại  
-File được tạo nằm trong thư mục ```views/[theme]/core/Validate```
-
-> **Arguments**
-* file_name -  tên class validate muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:validate:theme [<file_name>]
-```
-</div>
-
-<div class="card-command">
-
-#### ```make:column:plugin```
-<span class="badge text-bg-pink">v.1.0.2</span> Tạo table column cho một plugin được chỉ định  
-File được tạo nằm trong thư mục ```views/plugins/[plugin_name]/core/Table/Columns```
-
-> **Arguments**
-* plugin_name -  tên thư mục plugin muốn tạo validate <span class="badge text-bg-red">REQUIRED</span>
-* file_name -  tên class column muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:column:plugin [<plugin_name>] [<file_name>]
-```
-</div>
-
-<div class="card-command">
-
-#### ```make:column:theme```
-<span class="badge text-bg-pink">v.1.0.2</span> Tạo table column cho theme hiện tại  
-File được tạo nằm trong thư mục ```views/[theme]/core/Table/Columns```
-
-> **Arguments**
-* file_name -  tên class column muốn tạo <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:column:theme [<file_name>]
-```
-</div>
-
-<div class="card-command">
-
-#### ```make:plugin```
-Tạo cấu trúc thư mục cơ bản cho plugin
-> **Arguments**
-* plugin_name -  tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
-```shell
-make:plugin [<plugin_name>]
-```
-
-</div>
-
-<div class="card-command">
-
-#### ```make:widget```
-Tạo cấu trúc cho một widget mới
-
-> **Arguments**
-* folder -  tên thư mục widget (about, items, slider...) <span class="badge text-bg-red">REQUIRED</span>
-* class? -  tên class widget <span class="badge text-bg-success">OPTIONAL</span>
-* file? -  tên file widget <span class="badge text-bg-success">OPTIONAL</span>
-
-```shell
-make:widget [<folder>] [<class>] [<file>]
-```
-</div>
-
-<div class="card-command">
-
-#### ```make:widget:sidebar```
-Tạo cấu trúc cho một widget sidebar
-> **Arguments**
-* type - Loại widget sidebar (sidebar, list, detail) <span class="badge text-bg-red">REQUIRED</span>
-* folder -  tên thư mục widget sidebar (about, items, slider...) <span class="badge text-bg-red">REQUIRED</span>
-* class? -  tên class widget sidebar <span class="badge text-bg-success">OPTIONAL</span>
-* file? -  tên file widget sidebar <span class="badge text-bg-success">OPTIONAL</span>
-
-```shell
-make:widget:sidebar [<type>] [<folder>] [<class>] [<file>]
-```
-```shell
-make:widget:sidebar sidebar about
-```
-
-```shell
-make:widget:sidebar sidebar about widget_about_sidebar_style10
-```
-
-```shell
-make:widget:sidebar sidebar about widget_about_sidebar_style_10 about-sidebar-style-10
-```
-</div>
-
-
-<div class="card-command">
-
-#### ```make::taxonomy```
-<span class="badge text-bg-pink">v.1.0.3</span> Tạo cấu trúc cho một taxonomy  
-File được tạo nằm trong thư mục ```views/[theme]/theme-custom/taxonomies```
-> **Arguments**
-* post_type - Tên post type <span class="badge text-bg-red">REQUIRED</span>
-* cate_type? - Tên cate type nếu có <span class="badge text-bg-success">OPTIONAL</span>
-
-```shell
-make:taxonomy [<post_type>] [<cate_type>?]
-```
-_sau khi nhập `make::taxonomy` bạn có thể **enter** để nhập thông tin cho các arguments_
-</div>
-
-<div class="card-command">
-
-#### ```make::ajax```
-<span class="badge text-bg-pink">v.1.0.3</span> Tạo cấu trúc cho một ajax  
-File được tạo nằm trong thư mục ```views/[theme]/theme-custom/ajax```
-> **Arguments**
-* file - Tên file ajax <span class="badge text-bg-red">REQUIRED</span>
-
-```shell
-make:ajax [<file>]
-```
-</div>
-
-
-<div class="card-command">
-
-#### ```make::table```
-<span class="badge text-bg-pink">v.1.0.4</span> Tạo cấu trúc cho một table  
-File được tạo nằm trong thư mục ```views/[theme]/theme-custom/table```
-> **Arguments**
-* file - Tên file table <span class="badge text-bg-red">REQUIRED</span>
-* class - Tên class table <span class="badge text-bg-red">REQUIRED</span>
-
-```shell
-make:table [<file>] [<class>]
-```
-</div>
-
-
-<div class="card-command">
-
-#### ```make::model```
-<span class="badge text-bg-pink">v.1.0.4</span> Tạo cấu trúc cho một model  
-File được tạo nằm trong thư mục ```views/[theme]/theme-custom/model```
-> **Options**
-* --db - Điền tùy chọn này nếu muốn tạo kèm file database <span class="badge text-bg-green">Optional</span>
-> **Arguments**
-* file - Tên file model <span class="badge text-bg-red">REQUIRED</span>
-
-```shell
-make:model [<file>] [--db]
-```
-
-```php
-make:model Books
-```
-```php
-make:model Books --db
-```
-</div>
-
-<div class="card-command">
-
-#### ```make::module```
-<span class="badge text-bg-pink">v.1.0.5</span> Tạo cấu trúc cho một module  
-File được tạo nằm trong thư mục ```views/[theme]/theme-custom/modules```
-> **Arguments**
-* module - Tên file module <span class="badge text-bg-red">REQUIRED</span>
-* model - Tên class model <span class="badge text-bg-red">REQUIRED</span>
-* table - Tên table model <span class="badge text-bg-red">REQUIRED</span>
-
-```shell
-make:module [<module>] [<model>] [<table>]
-```
-_sau khi nhập `make::module` bạn có thể **enter** để nhập thông tin các arguments_
 </div>
 
 ### Plugin
+
 <div class="card-command">
 
 #### ```plugin```
-Lấy danh sách plugin hiện có hoặc chi tiết một plugin
+Hiển thị danh sách plugin hoặc thông tin của một plugin
 > **Arguments**
-* plugin_name? - Tên plugin muốn xem chi tiết <span class="badge text-bg-success">OPTIONAL</span>
-
+* name - tên thư mục plugin, mặc định `all` <span class="badge text-bg-success">Optional</span>
 ```shell
-plugin [<plugin_name>]
+plugin [<name=all>]
 ```
 </div>
 
 <div class="card-command">
 
 #### ```plugin:activate```
-Kích hoạt plugin
+Kích hoạt một plugin
 > **Arguments**
-* plugin_name - Tên plugin muốn kích hoạt <span class="badge text-bg-red">REQUIRED</span>
-
+* folder - tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-plugin:activate [<plugin_name>]
+plugin:activate [<folder>]
 ```
 </div>
 
 <div class="card-command">
 
 #### ```plugin:deactivate```
-Dừng kích hoạt plugin
-
+Ngừng kích hoạt một plugin
 > **Arguments**
-* plugin_name - Tên plugin muốn dừng kích hoạt <span class="badge text-bg-red">REQUIRED</span>
-
+* folder - tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-plugin:deactivate [<plugin_name>]
+plugin:deactivate [<folder>]
 ```
 </div>
 
@@ -608,8 +321,7 @@ plugin:deactivate [<plugin_name>]
 <div class="card-command">
 
 #### ```role:list```
-<span class="badge text-bg-pink">v.1.1.0</span> Lệnh lấy danh sách chức vụ có trong cms
-
+Hiển thị danh sách tất cả các nhóm quyền
 ```shell
 role:list
 ```
@@ -618,33 +330,387 @@ role:list
 <div class="card-command">
 
 #### ```role:cap```
-<span class="badge text-bg-pink">v.1.1.0</span> Lệnh lấy danh sách quyền của một chức vụ có trong cms
-
+Hiển thị danh sách quyền (capability) của một nhóm quyền
 > **Arguments**
-* role_name - Tên chức vụ muốn xem quyền <span class="badge text-bg-red">REQUIRED</span>
-
+* role - key của role <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-role:cap [<role_name>]
-```
-
-```php
-role:cap administrator
+role:cap [<role>]
 ```
 </div>
-
 
 ### Theme
 
 <div class="card-command">
 
-#### ```Theme:child:copy```
-Khi chạy lệnh này cms sẽ copy thư mục hoặc file đưa vào thư mục `theme-child`
-
+#### ```theme:child:copy```
+Sao chép một file hoặc thư mục từ **theme cha** sang **theme con**.
+Báo lỗi nếu theme đang dùng chính là theme con.
 > **Arguments**
-* path - đường dẫn đến thư mục hoặc file muốn copy <span class="badge text-bg-red">REQUIRED</span>
-
+* source - đường dẫn tương đối tính từ gốc theme cha <span class="badge text-bg-red">REQUIRED</span>
 ```shell
-theme:child:copy [<path>]
+theme:child:copy [<source>]
+```
+```shell
+theme:child:copy layouts/master.blade.php
+theme:child:copy elements/banner
 ```
 </div>
 
+### Make — Plugin & Command
+
+<div class="card-command">
+
+#### ```make:plugin```
+Tạo bộ khung một plugin mới trong `plugins/<folder>/`: `plugin.json`, `index.php`, `ActivatorService`, `DeactivatorService`, `routes/admin.php`.
+> **Arguments**
+* folder - tên thư mục plugin (kebab-case) <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:plugin [<folder>]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:command```
+Tạo một lệnh DevTool mới trong `plugins/DevTool/app/Console/<class>.php`.
+> **Arguments**
+* class - tên class command <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:command [<class>]
+```
+
+> Sau khi tạo lệnh PHP, phải bổ sung tên lệnh vào bảng autocomplete `TerminalDevTool.commands` trong `plugins/DevTool/assets/js/devtool.js` rồi chạy lại `cms:build:js`.
+</div>
+
+### Make — Cấu trúc code
+
+Nhóm lệnh có hai biến thể `:plugin` / `:theme`. Đích ghi file:
+
+| Lệnh | `:plugin` → `plugins/<plugin>/` | `:theme` → `views/<theme-child>/` |
+|---|---|---|
+| `make:ajax:*` | `app/Ajax/<Name>Ajax.php` | `app/Ajax/<Name>Ajax.php` |
+| `make:controller:*` | `app/Controllers/<Name>Controller.php` | `app/Controllers/<Name>Controller.php` |
+| `make:provider:*` | `app/Providers/<Name>ServiceProvider.php` | `app/Providers/<Name>ServiceProvider.php` |
+| `make:services:*` | `app/Services/<Name>Service.php` | `app/Services/<Name>Service.php` |
+| `make:supports:*` | `app/Supports/<Name>.php` | `app/Supports/<Name>.php` |
+| `make:macro:*` | `app/Macros/<Class>.php` | `app/Macros/<Class>.php` |
+| `make:middleware:*` | `app/Middlewares/<Class>.php` | `app/Middlewares/<Class>.php` |
+| `make:column:*` | `app/Cms/Table/Columns/<Class>.php` | `app/Cms/Table/Columns/<Class>.php` |
+| `make:form-field:*` | `app/Cms/Form/Field/<Class>.php` | `app/Cms/Form/Field/<Class>.php` |
+| `make:popover:*` | `app/Cms/Form/Popovers/<Class>.php` | `app/Cms/Form/Popovers/<Class>.php` |
+| `make:model:*` | `app/Models/<Class>.php` | `app/Models/<Class>.php` |
+| `make:db:*` | `database/<file>.php` | `database/<file>.php` |
+
+Tham số `name`/`class` chấp nhận dạng `Thu\Muc\Con\TenClass` để tạo file trong thư mục con kèm namespace tương ứng.
+
+<div class="card-command">
+
+#### ```make:ajax:plugin``` / ```make:ajax:theme```
+Tạo class xử lý Ajax.
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* name - tên class (hậu tố `Ajax` được thêm tự động) <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:ajax:plugin [<plugin>] [<name>]
+make:ajax:theme [<name>]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:controller:plugin``` / ```make:controller:theme```
+Tạo controller (hậu tố `Controller` được thêm tự động).
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* name - tên class <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:controller:plugin [<plugin>] [<name>]
+make:controller:theme [<name>]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:provider:plugin``` / ```make:provider:theme```
+Tạo Service Provider (hậu tố `ServiceProvider` được thêm tự động).
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* name - tên class <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:provider:plugin [<plugin>] [<name>]
+make:provider:theme [<name>]
+```
+
+> Provider tạo ra vẫn phải khai vào `providers` trong `plugin.json` / `theme-child.json` thì mới được nạp.
+</div>
+
+<div class="card-command">
+
+#### ```make:services:plugin``` / ```make:services:theme```
+Tạo class Service (hậu tố `Service` được thêm tự động).
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* name - tên class <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:services:plugin [<plugin>] [<name>]
+make:services:theme [<name>]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:supports:plugin``` / ```make:supports:theme```
+Tạo class Support (helper dùng chung).
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* name - tên class <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:supports:plugin [<plugin>] [<name>]
+make:supports:theme [<name>]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:macro:plugin``` / ```make:macro:theme```
+Tạo file macro.
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* class - tên file macro <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:macro:plugin [<plugin>] [<class>]
+make:macro:theme [<class>]
+```
+
+> `app/Macros` được **nạp theo file**, không qua PSR-4 — file macro không đặt namespace.
+</div>
+
+<div class="card-command">
+
+#### ```make:middleware:plugin``` / ```make:middleware:theme```
+Tạo middleware **và tự đăng ký alias** vào `middlewares.aliases` của `plugin.json` (bản `:plugin`) hoặc `theme-child.json` (bản `:theme`).
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* class - tên class middleware <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:middleware:plugin [<plugin>] [<class>]
+make:middleware:theme [<class>]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:column:plugin``` / ```make:column:theme```
+Tạo class column dùng cho bảng dữ liệu admin (`SKDObjectTable`).
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* class - tên class column <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:column:plugin [<plugin>] [<class>]
+make:column:theme [<class>]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:form-field:plugin``` / ```make:form-field:theme```
+Tạo class field cho Form **và tự đăng ký** vào `cms.form.fields` của `plugin.json` / `theme-child.json`.
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* class - tên class field <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:form-field:plugin [<plugin>] [<class>]
+make:form-field:theme [<class>]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:popover:plugin``` / ```make:popover:theme```
+Tạo class popover cho Form **và tự đăng ký** vào `cms.form.popover` của `plugin.json` / `theme-child.json`.
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* class - tên class popover <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:popover:plugin [<plugin>] [<class>]
+make:popover:theme [<class>]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:lang:plugin``` / ```make:lang:theme```
+Tạo file bản dịch cho **tất cả** ngôn ngữ đang bật.
+
+* `:plugin` → `plugins/<plugin>/language/<locale>/<file>.php`
+* `:theme` → `views/<theme-cha>/language/<locale>/<file>.php`
+
+> **Chú ý:** `make:lang:theme` ghi vào **theme cha**, không phải theme con — `LanguageServiceProvider` chỉ nạp bản dịch từ theme cha.
+
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* file - tên file bản dịch <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:lang:plugin [<plugin>] [<file>]
+make:lang:theme [<file>]
+```
+</div>
+
+### Make — Dữ liệu
+
+<div class="card-command">
+
+#### ```make:db:plugin``` / ```make:db:theme```
+Tạo file migration.
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* file - tên file, mặc định `database` <span class="badge text-bg-success">Optional</span>
+```shell
+make:db:plugin [<plugin>] [<file=database>]
+make:db:theme [<file=database>]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:model:plugin``` / ```make:model:theme```
+Tạo class Model từ tên bảng.
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* table - tên bảng dữ liệu <span class="badge text-bg-red">REQUIRED</span>
+> **Options**
+* --db - tạo kèm file migration trong `database/` <span class="badge text-bg-success">Optional</span>
+```shell
+make:model:plugin [<plugin>] [<table>] [--db]
+make:model:theme [<table>] [--db]
+```
+```shell
+make:model:theme books
+make:model:theme books --db
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:table```
+Tạo class bảng dữ liệu admin trong `app/Modules/Admin/<class>.php`.
+> **Arguments**
+* table - tên bảng dữ liệu <span class="badge text-bg-red">REQUIRED</span>
+* class - tên class table <span class="badge text-bg-red">REQUIRED</span>
+> **Options**
+* --plugin= - tạo trong plugin thay vì theme con <span class="badge text-bg-success">Optional</span>
+```shell
+make:table [<table>] [<class>] [--plugin=<plugin>]
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:module:plugin``` / ```make:module:theme```
+Tạo trọn bộ một module CRUD admin và **tự nối route** vào `routes/admin.php`:
+
+```
+app/Modules/Admin/<Module>/<Module>Table.php
+app/Modules/Admin/<Module>/<Module>Form.php
+app/Modules/Admin/<Module>/<Module>Service.php
+app/Models/<Module>.php
+app/Controllers/Admin/<Module>Controller.php
+bootstrap/<module>.php
+routes/admin-<module>.php
+```
+
+> **Arguments**
+* plugin - *(chỉ bản `:plugin`)* tên thư mục plugin <span class="badge text-bg-red">REQUIRED</span>
+* module - tên module <span class="badge text-bg-red">REQUIRED</span>
+* table - tên bảng dữ liệu <span class="badge text-bg-red">REQUIRED</span>
+```shell
+make:module:plugin [<plugin>] [<module>] [<table>]
+make:module:theme [<module>] [<table>]
+```
+```shell
+make:module:theme books books
+```
+</div>
+
+<div class="card-command">
+
+#### ```make:taxonomy```
+Tạo Service đăng ký taxonomy kèm hook `add_action('init', …)` trong `bootstrap/`.
+> **Arguments**
+* postType - tên post type <span class="badge text-bg-red">REQUIRED</span>
+* cateType - tên category type nếu có <span class="badge text-bg-success">Optional</span>
+> **Options**
+* --plugin= - tạo trong plugin thay vì theme con <span class="badge text-bg-success">Optional</span>
+```shell
+make:taxonomy [<postType>] [<cateType>?] [--plugin=<plugin>]
+```
+```shell
+make:taxonomy services service_categories
+```
+</div>
+
+### Make — Giao diện
+
+<div class="card-command">
+
+#### ```make:element```
+Tạo class element cho Page Builder trong `views/<theme-child>/elements/<folder>/` **và tự đăng ký** vào `elements/elements.json`.
+> **Arguments**
+* folder - tên thư mục element (chỉ chữ, số, dấu `-`) <span class="badge text-bg-red">REQUIRED</span>
+* class - tên class <span class="badge text-bg-success">Optional</span>
+* file - tên file `.widget.php` <span class="badge text-bg-success">Optional</span>
+> **Options**
+* --type= - nhóm đăng ký: `general` (mặc định), `header`, `footer` <span class="badge text-bg-success">Optional</span>
+```shell
+make:element [<folder>] [<class>?] [<file>?] [--type=general]
+```
+```shell
+make:element banner
+make:element menu-top --type=header
+```
+
+> Element `header`/`footer` chỉ dùng được trong đúng phạm vi đó; `general` dùng được ở mọi nơi.
+</div>
+
+<div class="card-command">
+
+#### ```make:widget```
+Tạo class widget trong `views/<theme-cha>/widget/<folder>/` **và tự đăng ký** vào `widget/widget.json`.
+> **Arguments**
+* folder - tên thư mục widget <span class="badge text-bg-red">REQUIRED</span>
+* class - tên class <span class="badge text-bg-success">Optional</span>
+* file - tên file widget <span class="badge text-bg-success">Optional</span>
+> **Options**
+* --type= - nhóm đăng ký: `block` (mặc định), `footer` <span class="badge text-bg-success">Optional</span>
+```shell
+make:widget [<folder>] [<class>?] [<file>?] [--type=block]
+```
+
+> `widget/widget.json` **chỉ tồn tại ở theme cha** — không có bản theme con.
+</div>
+
+<div class="card-command">
+
+#### ```make:widget:sidebar```
+Tạo class widget cho sidebar trong `views/<theme-cha>/widget/sidebar/<type>/<folder>/` và đăng ký vào `widget/widget.json`.
+> **Arguments**
+* type - nhóm sidebar: `sidebar`, `sidebar-list`, `sidebar-detail` <span class="badge text-bg-red">REQUIRED</span>
+* folder - tên thư mục widget <span class="badge text-bg-red">REQUIRED</span>
+* class - tên class <span class="badge text-bg-success">Optional</span>
+* file - tên file widget <span class="badge text-bg-success">Optional</span>
+```shell
+make:widget:sidebar [<type>] [<folder>] [<class>?] [<file>?]
+```
+</div>
+
+---
+
+## Những thay đổi so với v7
+
+| Thay đổi | Chi tiết |
+|---|---|
+| **Đã gỡ `make:validate:plugin` / `make:validate:theme`** | v8 không mở rộng được custom validate rule (`RuleCollection` khởi tạo `ValidatorFactory` mới mỗi lần). Dùng `Rule::make('Label')->custom(fn($v) => …)` thay thế. |
+| **Đường dẫn đổi hoàn toàn** | Các thư mục `theme-custom/`, `<theme>/core/`, `<theme>/Cms/`, `<plugin>/core/` **không còn tồn tại**. Code plugin nằm ở `plugins/<id>/app/`, code theme nằm ở `views/<theme-child>/app/`. |
+| **Lõi không quét thư mục nữa** | Tạo class mà quên đăng ký vào registry (`elements.json`, `widget.json`, `plugin.json`, `theme-child.json`) thì class **không bao giờ được nạp**. Các lệnh `make:*` đã tự ghi registry giúp. |
+| **Lệnh mới** | `builder:export`, `builder:import`, `make:element`, `make:controller:*`, `make:middleware:*`, `make:provider:*`, `make:services:*`, `make:supports:*`, `theme:child:copy`, `cache:lang`, `db:show`, `db:table`. |
+| **Tên lệnh chuẩn hóa** | `make:ajax`, `make:model`, `make:module`, `make:taxonomy` nay tách rõ hai biến thể `:plugin` / `:theme` (riêng `make:table` và `make:taxonomy` dùng option `--plugin=`). |

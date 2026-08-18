@@ -11,7 +11,7 @@
 | Tính chất                                                                                                             | Widget Block (Sidebar)                                                                                                                                                                                                                                                                 | Widget Element (Builder)                                                                                                                                                                                                                                                                 |
 |-----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Class Kế thừa**                                                                                                     | `SkillDo\Cms\Widget\Widget`                                                                                                                                                                                                                                                            | `SkillDo\Cms\Element\Element`                                                                                                                                                                                                                                                            |
-| **Vị trí widget.json** | `"widgets" -> "block"`                                                                                                                                                                                                                                                                 | `"elements" -> "general"` / `"header"`                                                                                                                                                                                                                                                   |
+| **Registry** | `widget/widget.json` → nhóm `"block"`                                                                                                                                                                                                                                                                 | `elements/elements.json` → nhóm `"general"` / `"header"`                                                                                                                                                                                                                                                   |
 | **Render Tiêu đề**                                                                                                    | Có tham số cấu hình riêng (Heading options)                                                                                                                                                                                                                                            | Thường tích hợp sẵn trong config                                                                                                                                                                                                                                                         |
 | **Tự động áp dụng**                                                                                                   | Không bắt buộc có icon() |
 | **Mục đích chính**                                                                                                    | Dùng cho Sidebar (dọc), Footer truyền thống                                                                                                                                                                                                                                            | Kéo thả trong giao diện Home/Page Builder                                                                                                                                                                                                                                                |
@@ -53,10 +53,10 @@ classDiagram
 
 ## 2. Cấu Trúc Thư Mục
 
-Thư mục chuẩn cho Widget Blocks nằm tại `views/theme-store/widget/blocks/`. Bạn nên chia vào các thư mục theo chức năng (như `about`, `posts`, `products`,...). Tại đây, ta lấy ví dụ một danh mục block tên là `demo_block`.
+Thư mục chuẩn cho Widget Blocks nằm tại `views/theme-store/widget/`. Bạn nên chia vào các thư mục theo chức năng (như `about`, `posts`, `products`,...). Tại đây, ta lấy ví dụ một danh mục block tên là `demo_block`.
 
 ```
-views/theme-store/widget/blocks/demo-block/style1/
+views/theme-store/widget/demo-block/style1/
 ├── demo_block_style_1.widget.php      # Class chính (extends Widget)
 ├── views/
 │   └── view.blade.php                 # Template hiển thị
@@ -71,7 +71,7 @@ views/theme-store/widget/blocks/demo-block/style1/
 
 ### Bước 1: Tạo file Widget Class
 
-Tạo file `views/theme-store/widget/blocks/demo-block/style1/demo_block_style_1.widget.php`:
+Tạo file `views/theme-store/widget/demo-block/style1/demo_block_style_1.widget.php`:
 
 ```php
 <?php
@@ -173,7 +173,7 @@ class widget_demo_block_style_1 extends Widget
 
 ### Bước 2: Tạo View Template
 
-Tạo file `views/theme-store/widget/blocks/demo-block/style1/views/view.blade.php`:
+Tạo file `views/theme-store/widget/demo-block/style1/views/view.blade.php`:
 
 ```blade
 <div class="demo-block-wrapper js_{{ $key ?? '' }}_{{ $id }}">
@@ -192,26 +192,23 @@ Tạo file `views/theme-store/widget/blocks/demo-block/style1/views/view.blade.p
 
 ### Bước 3: Đăng ký Block trong `widget.json`
 
-File cấu hình này quản lý toàn bộ Widget hiển thị trong hệ thống.
-Sửa file `views/theme-store/widget/widget.json`, tìm node `"widgets"`, thêm vào nhánh `"block"` (hoặc `"footer"`, tùy vị trí bạn muốn):
+File cấu hình này quản lý toàn bộ Widget Block của theme.
+Sửa file `views/theme-store/widget/widget.json` và thêm vào nhóm `"block"` (hoặc `"footer"`, `"sidebar"`… tùy vị trí bạn muốn):
 
 ```json
 {
-    "widgets": {
-        "block": {
-            "widget_demo_block_style_1": {
-                "path": "widget/blocks/demo-block/style1/demo_block_style_1.widget.php"
-            }
-        },
-        "footer": {
-            // ... các widget cho footer
-        },
-        "sidebar": {
-            // ... các widget cấu hình cụ thể cho loại sidebar
+    "block": {
+        "widget_demo_block_style_1": {
+            "path": "widget/demo-block/style1/demo_block_style_1.widget.php"
         }
     },
-    "elements": {
-        // ... khu vực Element Builder mới ...
+    "footer": {
+    },
+    "sidebar": {
+    },
+    "sidebar-list": {
+    },
+    "sidebar-detail": {
     }
 }
 ```
@@ -228,16 +225,30 @@ Với Block, Hệ thống **tự động thêm field cấu hình "Tiêu đề" k
 
 Bạn nhận được options trong mảng `$this->options->heading`.
 
-Để Render đúng cách ngoài Front-End, ta sử dụng Class Helper `ThemeWidget`:
+Để Render đúng cách ngoài Front-End, ta sử dụng Class Helper `Theme\Supports\ThemeWidget`:
+
 ```php
+use Theme\Supports\ThemeWidget;
+
 $headerHtml = ThemeWidget::heading(
-    $this->name,                  // Tên Widget
-    $this->options->heading,      // Config từ form Widget Setting
-    '.js_'.$this->key.'_'.$this->id // CSS Class để map Selector cho style động 
+    $this->name,                    // Tên Widget
+    $this->options->heading,        // Config từ form Widget Setting
+    '.js_'.$this->key.'_'.$this->id // CSS Class để map Selector cho style động
 );
 
 echo $headerHtml;
 ```
+
+**Cú pháp:** `ThemeWidget::heading(string $name, array|object $options, ?string $id = null): string`
+
+Hai helper liên quan trong cùng class:
+
+| Method | Mô tả |
+|---|---|
+| `headingCss($style = '', $options = [], $id = '')` | In CSS động cho tiêu đề (không trả chuỗi, `void`) |
+| `headingHtmlDefault($name)` | HTML tiêu đề mặc định khi widget chưa cấu hình gì |
+
+> `ThemeWidget` là class của **theme** (`views/theme-store/app/Supports/ThemeWidget.php`), có alias toàn cục `ThemeWidget`. Theme khác có thể không có class này.
 
 ---
 
@@ -325,6 +336,6 @@ public function widget(): void
 - [ ] Setup `tabs('generate')` và `tabs('style')` trong hàm `form()` và kết thúc bằng `parent::form()`
 - [ ] Trích xuất config title bằng `$this->options->heading` vào `ThemeWidget::heading()` trong hàm `widget()`
 - [ ] Sử dụng `cssSelector()` thay thế cho các API cấu hình CSS thủ công. Return `cssBuild()`.
-- [ ] Khai báo key Widget Class vào `widget.json` dưới mục root `"widgets"` -> `"block"` (hoặc nhóm mong muốn).
+- [ ] Khai báo key Widget Class vào `widget/widget.json` ở **nhóm cấp cao nhất** `"block"` (hoặc `"footer"`, `"sidebar"`, `"sidebar-list"`, `"sidebar-detail"`).
 - [ ] Chỉnh sửa LESS để style Front-end đúng chuẩn.
 - [ ] Setup `default()` để có trải nghiệm thả ra chạy luôn.

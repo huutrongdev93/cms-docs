@@ -215,7 +215,7 @@ Tạo tệp: `plugins/skd-hello-world/app/Controllers/Admin/HelloController.php`
 namespace SkdHelloWorld\Controllers\Admin;
 
 use SkillDo\Http\Request;
-use SkillDo\Facades\Response;
+use SkillDo\Http\Response;
 
 class HelloController 
 {
@@ -238,7 +238,7 @@ Tạo tệp: `plugins/skd-hello-world/routes/admin.php`
 
 ```php
 <?php
-use SkillDo\Facades\Route;       
+use SkillDo\Support\Facades\Route;       
 use SkdHelloWorld\Controllers\Admin\HelloController; 
 
 // Đăng Ký Định Tuyến (Route) Admin
@@ -260,9 +260,9 @@ Tạo tệp: `plugins/skd-hello-world/app/Providers/PluginServiceProvider.php`
 <?php
 namespace SkdHelloWorld\Providers;
 
-use SkillDo\Support\ServiceProvider;
+use SkillDo\ServiceProvider;
 use SkillDo\Cms\Menu\AdminMenu;   
-use SkillDo\Facades\Url;          
+use SkillDo\Cms\Support\Url;          
 
 class PluginServiceProvider extends ServiceProvider 
 {

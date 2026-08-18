@@ -29,7 +29,7 @@ class SkdHelloWorld
     public function active() 
     {
         // Thường dùng để khởi tạo Database Schema, Import Seed Data...
-        SkillDo\Facades\DB::schema()->create('my_hello_table', function($table) {
+        SkillDo\Database\DB::schema()->create('my_hello_table', function($table) {
             $table->increments('id');
             $table->string('message');
         });
@@ -39,7 +39,7 @@ class SkdHelloWorld
     public function uninstall() 
     {
         // Chức năng "Dọn dẹp": Gỡ bỏ bảng đã tạo, file cấu hình, file log, để không bỏ rơi rác.
-        SkillDo\Facades\DB::schema()->dropIfExists('my_hello_table');
+        SkillDo\Database\DB::schema()->dropIfExists('my_hello_table');
     }
 }
 ```

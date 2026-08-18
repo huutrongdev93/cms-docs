@@ -270,7 +270,7 @@ $cancelUrl = PaymentManager::getCancelUrl($order->id);
 ## Luồng Hoạt Động
 
 1. **Admin bật cổng**: Vào *Hệ thống → Thanh Toán*, cổng VNPay xuất hiện với tên, icon và form từ `VNPay::form()`.
-2. **Admin lưu cấu hình**: `VNPay::saveConfig()` được gọi, lưu API keys vào `options['payments']['vnpay']`.
+2. **Admin lưu cấu hình**: `VNPay::saveConfig()` được gọi, lưu API keys vào option `payments` (bảng `system`), nhánh `payments['vnpay']`.
 3. **Khách checkout**: `PaymentManager::allGateway()` tải `VNPay`, nếu `useGateway() === true` thì hiển thị.
 4. **Khách đặt hàng**: Controller gọi `$gateway->getGateway()->purchase($order)` → trả về redirect URL.
 5. **VNPay callback**: Controller nhận IPN, gọi `completePurchase()` để verify và cập nhật trạng thái đơn.

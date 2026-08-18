@@ -230,7 +230,7 @@ class YourPluginServiceProvider extends ServiceProvider
 | `ShippingManager::allGateway()` | Lấy tất cả gateway đã đăng ký (đã khởi tạo) |
 | `ShippingManager::gateway($key)` | Lấy một gateway theo key |
 | `ShippingManager::getConfig($key)` | Lấy config đã lưu trong DB |
-| `ShippingManager::saveConfig($key, $config)` | Lưu config vào DB (`options['cart_shipping']`) |
+| `ShippingManager::saveConfig($key, $config)` | Lưu config vào option `cart_shipping` (bảng `system`) |
 | `ShippingManager::create($key)` | Tạo instance của Gateway class |
 
 ---
@@ -255,7 +255,7 @@ add_filter('shipping_price_ghtk', function($price) {
 ## Luồng Hoạt Động
 
 1. **Admin bật cổng**: Vào *Hệ thống → Vận Chuyển*, cổng GHTK xuất hiện với form từ `Ghtk::form()`.
-2. **Admin lưu**: `Ghtk::saveConfig()` lưu Token, địa chỉ vào `options['cart_shipping']['ghtk']`.
+2. **Admin lưu**: `Ghtk::saveConfig()` lưu Token, địa chỉ vào option `cart_shipping` (bảng `system`), nhánh `cart_shipping['ghtk']`.
 3. **Khách checkout**: `ShippingManager::allGateway()` tải `Ghtk`, nếu `useGateway() === true` hiển thị lên.
 4. **Khách chọn phương thức + nhập địa chỉ**: Ajax gọi `GhtkGateway::getFee()` → trả về phí ship.
 5. **Khách đặt hàng**: Phí ship được lưu vào metadata đơn.

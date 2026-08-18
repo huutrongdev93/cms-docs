@@ -8,7 +8,7 @@ Hệ thống phân quyền trên SkillDo CMS v8 được xây dựng xoay quanh 
 
 ## 1. Nhóm Chức Vụ (Roles)
 
-Để liệt kê, lấy ra cụ thể thông tin, cập nhật, tạo mới hoặc xóa bỏ các chức vụ - ta có thể gọi lớp hỗ trợ (Facade) gốc `Role`. Bất kì thao tác thay đổi nào trên hệ thống này đều sẽ được tự động lưu vĩnh viễn vào trong Option (Cấu hình) Database.
+Để liệt kê, lấy ra cụ thể thông tin, cập nhật, tạo mới hoặc xóa bỏ các chức vụ - ta có thể gọi lớp hỗ trợ (Facade) gốc `Role`. Bất kì thao tác thay đổi nào trên hệ thống này đều sẽ được tự động lưu vĩnh viễn vào trong Option (Cấu hình) Database — dưới key option **`user_roles`** trong bảng `system`.
 
 ### 1.1 Các Method Tương tác Cơ Bản
 
@@ -45,7 +45,7 @@ if ($adminRole)
 {
     echo $adminRole->getName(); // Ví dụ: "Quản trị viên"
     
-    show_r($adminRole->getCapabilities()); // Ví dụ: ['login_admin' => true, 'edit_post' => true, ...]
+    show_r($adminRole->getCapabilities()); // Ví dụ: ['loggin_admin' => true, 'edit_post' => true, ...]
 } 
 else 
 {
@@ -75,7 +75,7 @@ use SkillDo\Cms\Support\Role;
 
 // Thêm mới chức vụ, cùng với bộ Array mảng chứa các khoá Quyền giới hạn là Value boolean = true
 Role::add('seller', 'Người bán hàng', [
-    'login_admin' => true,
+    'loggin_admin' => true,
     'add_product' => true,
     'edit_product' => true
 ]);
@@ -84,8 +84,9 @@ Role::add('seller', 'Người bán hàng', [
 
 | Method                             | Mô tả & Cách dùng                                                                                                                                |
 |------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Role::add($key, $name, $caps)`    | Tạo chức vụ mới nếu `key` chưa tồn tại. Gắn mảng Permission mặc định nếu có.                                                                     |
-| `Role::update($key, $name, $caps)` | Cập nhật Tên (`name` hiển thị) của `key` và đè lại quyền (`caps`) hiện tại. Lưu ý: Mảng capabilities được cấp sẽ chép đè list Quyền mặc định cũ. |
+| `Role::has($key)`                  | Kiểm tra chức vụ có tồn tại không. `Role::has('seller'); // true/false`                                                                          |
+| `Role::add($key, $name, $caps)`    | Tạo chức vụ mới nếu `key` chưa tồn tại (trả về object `Role`; trả về `false` nếu `key` đã tồn tại). Gắn mảng Permission mặc định nếu có.        |
+| `Role::update($key, $name, $caps)` | Cập nhật Tên (`name` hiển thị) của `key` và đè lại quyền (`caps`). Lưu ý: nếu `$caps` **rỗng** thì giữ nguyên bộ quyền cũ, chỉ đổi tên; nếu có giá trị thì chép đè toàn bộ quyền cũ. |
 | `Role::remove($key)`               | Xóa vĩnh viễn nhóm quyền này khỏi hệ thống. `Role::remove('seller');`                                                                            |
 
 ---
@@ -97,10 +98,10 @@ Các key thông thường bao gồm: `loggin_admin`, `edit_post`, `add_user`, .v
 
 Tương tự trên Class `Role`, bạn có thể lấy và thao tác riêng biệt các Quyền này gộp chung / hoặc tháo gỡ khỏi 1 chức vụ như sau:
 
-| Method                             | Mô tả & Cách dùng                                                                                                      |
-|------------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| `Role::addCap($role_key, $cap)`    | Gắn khả năng (quyền) `$cap` vào nhóm chức vụ `$role_key`. `Role::addCap('seller', 'delete_product');`              |
-| `Role::removeCap($role_key, $cap)` | Tháo, Gỡ bỏ khả năng thao tác `$cap` khỏi nhóm chức vụ `$role_key`. `Role::removeCap('seller', 'delete_product');` |
+| Method                                      | Mô tả & Cách dùng                                                                                                      |
+|---------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| `Role::addCap($role_key, $cap, $grant = true)` | Gắn khả năng (quyền) `$cap` vào nhóm chức vụ `$role_key`. Tham số `$grant` (mặc định `true`) cho phép gắn quyền ở trạng thái tắt nếu truyền `false`. `Role::addCap('seller', 'delete_product');` |
+| `Role::removeCap($role_key, $cap)`          | Tháo, Gỡ bỏ khả năng thao tác `$cap` khỏi nhóm chức vụ `$role_key`. `Role::removeCap('seller', 'delete_product');` |
 
 Nếu bạn đã có thẳng 1 đối tượng Object `Role`, bạn cũng có thể tự gọi method trực tiếp thay vì chui qua Facade:
 
@@ -115,16 +116,38 @@ if ($myRole->has('edit_theme')) {
     // Người này có khả năng Edit Theme
 }
 
-// Bổ sung hoặc tháo gỡ trực tiếp
-$myRole->add('delete_theme');
-$myRole->remove('delete_theme'); 
+// Bổ sung hoặc tháo gỡ trực tiếp (tự động lưu vào Option ngay)
+$myRole->add('delete_theme');          // add($cap, $grant = true)
+$myRole->remove('delete_theme');
+
+// Các method khác trên object Role
+$myRole->getKey();                     // key chức vụ, vd: 'administrator'
+$myRole->getName();                    // tên hiển thị
+$myRole->setName('Tên mới');           // đổi tên (cần gọi Role::make()->updateOption() nếu muốn lưu ngay)
+$myRole->setCapabilities([...]);       // thay toàn bộ quyền (tự lưu)
+```
+
+> Method `has($cap)` của object Role áp dụng filter `role_has_cap` (`$capabilities, $cap, $roleKey`) trước khi kiểm tra — plugin có thể can thiệp kết quả check quyền qua filter này.
+
+### Quyền trên từng User — `UserRole`
+
+Role gán cho từng user được lưu trong user meta `capabilities` (mảng `['role_key' => true]`). Class `SkillDo\Cms\Support\UserRole` (alias `\UserRole`) thao tác trực tiếp theo `$userId`:
+
+```php
+UserRole::hasCap($userId, 'edit_post');   // check quyền (áp dụng filter 'user_has_cap')
+UserRole::getCap($userId);                // toàn bộ capability (gộp từ các role + cap riêng)
+UserRole::get($userId);                   // danh sách key role của user
+UserRole::getName($userId);               // tên hiển thị role
+UserRole::set($userId, 'seller');         // thay toàn bộ role (action 'set_user_role')
+UserRole::add($userId, 'seller');         // gán thêm role (action 'set_user_role')
+UserRole::remove($userId, 'seller');      // gỡ role (action 'remove_user_role')
 ```
 
 ---
 
 ## 3. Cách thêm Nhóm Quyền và Danh Sách Quyền trong Plugin
 
-Trên giao diện CMS UI Quản lý & cấu hình Role (Chức năng `Phân Quyền User`), các chức quyền thường được gom lại riêng biệt thành Từng Module Tab như: `Bài viết`, `Sản phẩm`, `Đơn hàng`. Lõi hệ thống dùng một trình Builder để render View quản lý thông qua hai sự kiện Hooks hệ thống là `user_role_editor_label` và `user_role_editor_group`.
+Trên giao diện CMS UI Quản lý & cấu hình Role (Chức năng `Phân Quyền User` — do plugin **`user-role-editor`** cung cấp), các chức quyền thường được gom lại riêng biệt thành Từng Module Tab như: `Bài viết`, `Sản phẩm`, `Đơn hàng`. Plugin này render View quản lý thông qua hai Filter Hooks là `user_role_editor_label` và `user_role_editor_group`.
 
 Để code chuẩn mực, dễ bảo trì và làm việc theo hướng đối tượng (OOP), trong Plugin bạn nên tạo ra một file Service chuyên quản lý Label và Group phân quyền, thay vì tạo các function ẩn (Closure) trực tiếp vào Hook.
 

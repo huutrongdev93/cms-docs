@@ -26,18 +26,33 @@ public function register()
     $registerForm = ThemeAuthForm::register();
 
     // Bạn có thể sửa trực tiếp Form này qua Filter Hook `theme_auth_register_form`
-    
+
     Cms::setData('registerForm', $registerForm);
     return Cms::view('user-register');
 }
 ```
 
-Ở file Blade `user-register.blade.php`:
+Class `Theme\Supports\ThemeAuthForm` có hai method:
+
+| Method | Mô tả |
+|---|---|
+| `register()` | Form đăng ký — chạy qua filter `theme_auth_register_form` |
+| `reset(Request $request)` | Form đặt lại mật khẩu |
+
+Ở file Blade `user-register.blade.php`, render form bằng bộ ba `open()` / `html()` / `close()` của đối tượng `Form`:
+
 ```blade
 <div class="register-form">
-    {!! form_render($registerForm) !!}
+    {!! $registerForm->open('post', ['class' => 'auth-register-form']) !!}
+        {!! $registerForm->html() !!}
+        <div class="form-group col-md-12">
+            <button type="submit" class="btn btn-theme">Đăng ký</button>
+        </div>
+    {!! $registerForm->close() !!}
 </div>
 ```
+
+> Không có helper `form_render()` — đây là cách render form duy nhất.
 
 ---
 
@@ -52,28 +67,28 @@ Bạn dùng Class `AccountSidebar` để khai báo các nút bấm vào thanh Me
 ```php
 use Theme\Supports\AccountSidebar;
 
-add_action('theme_init', function() {
+add_action('theme_account_sidebar', function() {
     
-    // Thêm Menu Cha: Lịch sử đơn hàng
-    // Params: (slug, name, iconHtml, priority)
+    // addMenu(string $slug, string $name, string $icon, int $priority = 10, $action = null)
     AccountSidebar::getInstance()->addMenu(
-        'orders', 
-        'Lịch sử Đơn Hàng', 
-        '<i class="fa fa-shopping-cart"></i>', 
+        'orders',
+        'Lịch sử Đơn Hàng',
+        '<i class="fa fa-shopping-cart"></i>',
         15
     );
 
-    // Thêm Menu Con
-    // Params: (parentSlug, childSlug, name, priority)
+    // addSubMenu(string $parent, string $slug, string $name, int $priority = 10, $action = null)
     AccountSidebar::getInstance()->addSubMenu(
-        'orders', 
-        'orders/completed', 
-        'Đã Giao Thành Công', 
+        'orders',
+        'orders/completed',
+        'Đã Giao Thành Công',
         20
     );
 
 });
 ```
+
+Tham số `$action` (tuỳ chọn, cuối cùng) cho phép gán luôn handler ngay khi khai menu — khỏi phải gọi `AccountRouter::addRoute()` riêng.
 
 Hệ thống sẽ tự động vẽ thanh cài đặt khi ở màn hình `/account`.
 
@@ -85,7 +100,7 @@ Khi bấm vào Menu `orders` ở phía trên, User sẽ được đưa đến UR
 use Theme\Supports\AccountRouter;
 use SkillDo\Http\Request;
 
-add_action('theme_init', function() {
+add_action('theme_account_sidebar', function() {
 
     // Trả màn hình cho Slug 'orders'
     AccountRouter::getInstance()->addRoute('orders', function(Request $request) {
@@ -114,28 +129,71 @@ Trang mặc định ban đầu hiển thị khi vừa đăng nhập vào `/accou
 ```php
 use Theme\Supports\AccountDashboard;
 
-add_action('theme_init', function() {
+add_action('theme_account_init', function() {
 
     /**
-     * @param string $id (Mã Widget)
-     * @param string $name (Tên)
-     * @param int $priority
-     * @param mixed $action (Callback trả về HTML Component)
-     * @param string $size (normal, haft, full)
+     * add(
+     *   string $id,               // Mã widget
+     *   string $name,             // Tên
+     *   int    $priority = 10,
+     *   mixed  $action   = null,  // Callback / [Class::class, 'method'] / 'Class@method'
+     *   string $size     = 'normal',
+     *   bool   $enabled  = true
+     * )
      */
     AccountDashboard::getInstance()->add(
-        'wallet_stats', 
-        'Thống Kê Ví Tiền', 
-        5, 
+        'wallet_stats',
+        'Thống Kê Ví Tiền',
+        5,
         function() {
             // Tính số dư Ví
             $balance = UserWallet::getBalance(Auth::id());
             return '<div class="wallet-box"><h3>Số dư: '. number_format($balance) .'đ</h3></div>';
         },
-        'haft' // Widget chiếm nửa bề ngang
+        'wide'
     );
 
 });
 ```
 
-Hệ thống sẽ tự rải lưới Widget `wallet_stats` (cùng các Widget gốc do Core đăng ký như Thông tin Tài Khoản) ra màn hình Dashboard một cách rất ngăn nắp và khoa học! Mọi dữ liệu nằm chung kho `AccountStore::get('dashboard')` sắp xếp theo Priority.
+**Giá trị `$size`** được ghép thành class CSS `widget-{$size}` trên thẻ bọc. Theme-store định nghĩa sẵn ba mức trong `user-index.blade.php`:
+
+| `$size` | Class sinh ra | Ý nghĩa |
+|---|---|---|
+| `normal` *(mặc định)* | `.widget-normal` | Ô tiêu chuẩn |
+| `wide` | `.widget-wide` | Ô rộng |
+| `full` | `.widget-full` | Chiếm trọn hàng |
+
+> Giá trị khác vẫn được chấp nhận nhưng sẽ sinh ra class không có CSS tương ứng.
+
+Hệ thống tự rải lưới Widget `wallet_stats` (cùng các widget theme đăng ký sẵn như *Thông tin của bạn*) ra màn hình Dashboard, sắp xếp theo `$priority`. Dữ liệu nằm chung kho `AccountStore` (kế thừa `CmsStore`, container key `theme_account_store`) với ba nhánh `sidebar`, `routes`, `dashboard`.
+
+---
+
+## 3. Hai Hook Đăng Ký
+
+Theme-store phát hai action bên trong `Theme::config()->booted('accountSidebar', …)` tại `bootstrap/account.php`:
+
+| Hook | Dùng để |
+|---|---|
+| `theme_account_sidebar` | Đăng ký menu (`AccountSidebar`) và route (`AccountRouter`) |
+| `theme_account_init` | Đăng ký widget dashboard (`AccountDashboard`) |
+
+```php
+// plugins/<id>/bootstrap/web.php
+add_action('theme_account_sidebar', [AccountService::class, 'sidebar'], 30);
+add_action('theme_account_init',   [DashboardWidget::class, 'register']);
+```
+
+> [!NOTE]
+> Đây là API của **theme**, không phải của lõi. Plugin phụ thuộc vào nó là phụ thuộc mềm — nên kiểm tra `class_exists(\Theme\Supports\AccountSidebar::class)` trước khi gọi, phòng khi site dùng theme khác.
+
+**Định dạng `$action`** được `executeAction()` chấp nhận (cả `AccountSidebar` lẫn `AccountDashboard`):
+
+| Dạng | Ví dụ |
+|---|---|
+| Closure / callable | `function (Request $request) { … }` |
+| Chuỗi `Class@method` | `'App\Controllers\Web\UserOrderController@completed'` |
+| Mảng `[Class, method]` | `[App\Controllers\Web\AccountController::class, 'profile']` |
+
+Với hai dạng controller, đối tượng được khởi tạo qua IoC container (`app()->make()`) chứ không `new` trực tiếp, để không chạy lại các `do_action('init')`, `theme_init`… lần thứ hai trong cùng request.

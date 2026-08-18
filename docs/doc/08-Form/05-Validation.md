@@ -1,6 +1,6 @@
 ### Khởi Tạo Xác Thực
 Để xác thực cho form bạn cần thêm quy tắc xác thực vào field khi khởi tạo,
-Quy tắc xác thực được tạo bằng đối tượng `SkillDo\Validate\Rule`:
+Quy tắc xác thực được tạo bằng phương thức static `make` của `SkillDo\Validate\Rule` (trả về đối tượng `SkillDo\Validate\RuleCollection` chứa chuỗi các quy tắc):
 
 ```php
 use SkillDo\Validate\Rule;
@@ -13,7 +13,7 @@ $form->text('myField', [
 ### Xác Thực
 #### Xác thực bằng form
 Để xác thực các request của một form đã hợp lệ hay chưa bạn sử dụng phương thức `validate` của class `SkillDo\Http\Request`.
-Phương thức validate của request nhận vào một đối số có thể là đối tượng `Form`, `FormAdmin` hoặc `SkillDo\Validate\Rule` và trả về đối tượng `SkillDo\Validate\Validate`
+Phương thức validate của request nhận vào một đối số có thể là đối tượng `Form`, `FormAdmin` hoặc một mảng các quy tắc (`['field' => Rule::make()...]`) và trả về đối tượng `SkillDo\Validate\Validate`
 
 ```php
 use SkillDo\Validate\Rule;
@@ -39,7 +39,7 @@ if($validate->fails()) {
 }
 ```
 
-Để lấy danh sách message lỗi khi xác thực bạn sử dụng phương thức `error`, phương thức sẽ trả về một đối tượng là `SKD_Error`
+Để lấy danh sách message lỗi khi xác thực bạn sử dụng phương thức `errors`, phương thức sẽ trả về một đối tượng là `SKD_Error`
 
 ```php
 $validate = $request->validate($form);
@@ -183,11 +183,11 @@ Xác thực màu ở các định dạng rgba như rgba(255, 255, 255, 1)
 Rule::make()->colorRGBA();
 ```
 
-####  `colorHex`
+####  `colorHEX`
 Xác thực màu ở các định dạng `hex` như #0000FF, #00F
 
 ```php
-Rule::make()->colorHex();
+Rule::make()->colorHEX();
 ```
 
 ####  `date`
@@ -335,13 +335,14 @@ Kiểm tra xem giá trị trường được kiểm tra có nhỏ hơn hoặc b�
 
 **Tham số:**
 
-| Params | Type  |                         Description | Default |
-|--------|:-----:|------------------------------------:|:-------:|
-| $max   | float |                   Con số để so sánh |         |
-| $equal | bool  | cho phép giá trị 2 trường bằng nhau |  true   |
+| Params | Type   |                                                              Description | Default |
+|--------|:------:|-------------------------------------------------------------------------:|:-------:|
+| $max   | float  |                                                        Con số để so sánh |         |
+| $equal | bool   |                                      cho phép giá trị 2 trường bằng nhau |  true   |
+| $type  | string | ép kiểu dữ liệu so sánh (`string`, `numeric`, `array`, `file`), nếu không truyền sẽ tự nhận diện theo value |  null   |
 
 ```php
-Rule::make()->max(float $max, bool $equal);
+Rule::make()->max(float $max, bool $equal = true, $type = null);
 ```
 
 ####  `greaterThan`
@@ -367,20 +368,43 @@ Kiểm tra xem giá trị trường được kiểm tra có lớn hơn hoặc b�
 
 **Tham số:**
 
-| Params | Type  |                         Description | Default |
-|--------|:-----:|------------------------------------:|:-------:|
-| $min   | float |                   Con số để so sánh |         |
-| $equal | bool  | cho phép giá trị 2 trường bằng nhau |  true   |
+| Params | Type   |                                                              Description | Default |
+|--------|:------:|-------------------------------------------------------------------------:|:-------:|
+| $min   | float  |                                                        Con số để so sánh |         |
+| $equal | bool   |                                      cho phép giá trị 2 trường bằng nhau |  true   |
+| $type  | string | ép kiểu dữ liệu so sánh (`string`, `numeric`, `array`, `file`), nếu không truyền sẽ tự nhận diện theo value |  null   |
 
 ```php
-Rule::make()->min(float $min, bool $equal);
+Rule::make()->min(float $min, bool $equal = true, $type = null);
 ```
 
 ####  `string`
-Trường được xác thực phải là một chuỗi
+Trường được xác thực phải là một chuỗi (hoặc số)
 
 ```php
 Rule::make()->string();
+```
+
+####  `array`
+Trường được xác thực phải là một mảng
+
+```php
+Rule::make()->array();
+```
+
+####  `file`
+Xác thực file tải lên (đuôi file và kích thước file)
+
+**Tham số:**
+
+| Params      | Đối số |  Type  |                                              Description | Default |
+|-------------|:------:|:------:|----------------------------------------------------------:|:-------:|
+| $types      |        | array  |             Danh sách đuôi file cho phép (jpg, png, pdf...) |         |
+| array $args |  min   | mixed  | Kích thước file tối thiểu (số bytes hoặc chuỗi như `500KB`) |    0    |
+|             |  max   | mixed  |   Kích thước file tối đa (số bytes hoặc chuỗi như `2MB`)    |    0    |
+
+```php
+Rule::make()->file(['jpg', 'png'], ['min' => '10KB', 'max' => '2MB']);
 ```
 
 ####  `url`
@@ -408,7 +432,8 @@ Xác thực value là duy nhất
 | $column     |               | string |                                      Cột so sánh trong table |         |
 | array $args |    ignore     | string |                             Giá trị bỏ qua không cần so sánh |         |
 |             | ignore_column | string | Cột bỏ qua giá trị ignore, nếu không điền sẽ lấy cột $column |         |
-|             |   callback    | clouse |       Function callback điều chỉnh điều kiện so sánh dữ liệu |         |
+|             |   callback    | Closure |       Function callback điều chỉnh điều kiện so sánh dữ liệu, nhận vào và trả về query builder |         |
+|             |  handleValue  | Closure |       Function xử lý lại value trước khi so sánh |         |
 
 ```php
 Rule::make()->unique('users', 'email', [
@@ -417,13 +442,15 @@ Rule::make()->unique('users', 'email', [
 //kiểm tra email của users có trùng lập không nhưng bỏ qua nếu field trùng với admin@gmail.com
 
 Rule::make()->unique('users', 'phone', [
-    'callback' => function (Qr $args) {
-        $args->where('status', 'public');
-        return $args;
+    'callback' => function (\Illuminate\Database\Query\Builder $query) {
+        $query->where('status', 'public');
+        return $query;
     }
 ]);
-//kiểm tra email của những users có trạng thái public có trùng lập không
+//kiểm tra phone của những users có trạng thái public có trùng lập không
 ```
+
+> Rule `unique` chỉ xác thực ở server, không xác thực ở client (JS)
 
 ####  `phone`
 Kiểm tra số điện thoại
@@ -482,6 +509,7 @@ Kiểm tra giá trị nhập vào dự theo function custom của bạn
 | Params   |  Type   |                                                            Description | Default |
 |----------|:-------:|-----------------------------------------------------------------------:|:-------:|
 | $closure | Closure | function kiểm tra trả về `true` nếu hợp lệ và `false` nếu không hợp lệ |         |
+| $message | string  |                                          message lỗi khi không hợp lệ |   ''    |
 
 ```php
 Rule::make()->custom(function ($value) {
@@ -494,51 +522,34 @@ Rule::make()->custom(function ($value) {
 
 ##  Error Messages
 
-Sau khi xác thực, nếu xác thực bị `fail` hệ thống sẽ trả về cho bạn một đối tượng `SKD_Error` trong đó chứa các thông báo lỗi mặc định.
-Nếu cần, bạn có thể cung cấp các thông báo lỗi của bạn cho phiên bản trình xác thực thay vì các thông báo lỗi mặc định do Skilldo cung cấp. 
-bằng cách sử dụng phương thức `errorMessage`:
+Sau khi xác thực, nếu xác thực bị `fail` hệ thống sẽ trả về cho bạn một đối tượng `SKD_Error` trong đó chứa các thông báo lỗi mặc định (lấy từ file ngôn ngữ `validation`).
+
+Nếu cần, bạn có thể thay thông báo lỗi mặc định bằng thông báo của riêng bạn bằng cách ghi đè key `message` của từng rule trong thuộc tính public `rules` của `RuleCollection`. Message hỗ trợ placeholder `:attribute` (label của field) và các tham số của rule (`:max`, `:min`...):
 
 ```php
 use SkillDo\Validate\Rule;
+
+$rule = Rule::make('My Field')->notEmpty()->integer()->max(10);
+
+$rule->rules['notEmpty']['message'] = 'Không được để trống trường :attribute';
+
+//Các rule so sánh theo kiểu dữ liệu (min, max, between, file) có message là mảng con theo kiểu
+$rule->rules['max']['message']['numeric'] = 'Vui lòng điền số cho trường :attribute nhỏ hơn :max';
 
 $form = new Form();
 
 $form->text('myField', [
     'label' => 'My Field',
-    'validations' => Rule::make()
-                            ->notEmpty()
-                            ->integer()
-                            ->max(10)
-                            ->errorMessage([
-                                 'notEmpty' => 'Không được để trống trường :attribute',                      
-                                 'max' => [
-                                    'numeric' => 'Vui long điền số cho trường :attribute nhỏ hơn :max'
-                                 ]                    
-                            ])
+    'validations' => $rule
 ]);
 ```
 
-Hoặc
+Riêng rule `custom` nhận message lỗi qua tham số thứ 2:
 
 ```php
-use SkillDo\Validate\Validate;
-use SkillDo\Validate\Rule;
-
-$request = request();
-
-$validate = $request->validate([
-    'myField' => Rule::make()->notEmpty()->integer()->max(10)
-        ->errorMessage([
-             'notEmpty' => 'Không được để trống trường :attribute',                      
-             'max' => [
-                'numeric' => 'Vui long điền số cho trường :attribute nhỏ hơn :max'
-             ]                    
-        ]),
-]);
-
-if($validate->fails()) {
-    $errors = $validate->errors();
-}
+Rule::make('My Field')->custom(function ($value) {
+    return is_numeric($value);
+}, 'Trường :attribute phải là số');
 ```
 
 ## Xác Thực JS
@@ -554,13 +565,14 @@ Ngoài xác thực trên server cms còn cung cấp xác thực trên client khi
 | color       |                                                    |             |
 | colorRGB    |                                                    |             |
 | colorRGBA   |                                                    |             |
-| colorHex    |                                                    |             |
+| colorHEX    |                                                    |             |
 | ip          |                                                    |             |
 | ipv4        |                                                    |             |
 | ipv6        |                                                    |             |
-| ipv6        |                                                    |             |
+| identical   |                                                    |             |
 | file        |                                                    |             |
-| lessThan    |                                                    |             |
+| lessThan    |       phải truyền `$fieldId` khi tạo rule          |             |
+| greaterThan |       phải truyền `$fieldId` khi tạo rule          |             |
 | email       |                                                    |             |
 | phone       |                                                    |             |
 | between     | phải có rule là string, file, numeric hoặc integer |             |
@@ -569,3 +581,5 @@ Ngoài xác thực trên server cms còn cung cấp xác thực trên client khi
 | date        |                                                    |             |
 | before      |                                                    |             |
 | after       |                                                    |             |
+
+> Rule `unique` chỉ chạy ở server, không được xác thực ở client

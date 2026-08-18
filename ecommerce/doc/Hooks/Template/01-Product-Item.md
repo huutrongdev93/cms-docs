@@ -6,28 +6,61 @@ Product Item là khối UI hiển thị một sản phẩm thu gọn trong Grid 
 
 ## Sơ Đồ Hooks
 
+View render khối sản phẩm là `views/loop/item_product.blade.php`. Sáu action được phát theo đúng thứ tự sau — **không có** hook cha tên `product_object`:
+
 ```
-product_object           (hook cha - chứa toàn bộ product item card)
-├── product_object_image (vùng ảnh đại diện)
-└── product_object_info  (vùng thông tin: tiêu đề, giá)
-    ├── priority = product.object.title.position → Title
-    └── priority = product.object.price.position → Price
+<div class="item product-item">
+  product_item_before                (đầu card)
+  <div class="product">
+      product_object_before_image    (trước thẻ <a> bọc ảnh)
+      <a href="...">
+          product_object_image       (vùng ảnh đại diện)
+      </a>
+      product_object_after_image     (sau thẻ <a> bọc ảnh)
+  </div>
+  <div class="title">
+      product_object_info            (vùng thông tin: tiêu đề, giá)
+        ├── priority = product.object.title.position → Title
+        └── priority = product.object.price.position → Price
+  </div>
+  product_item_after                 (cuối card)
+</div>
 ```
 
 ---
 
 ## Danh Sách Hook
 
-| Hook Name              | Priority Mặc Định | Class::Method          | Vị Trí                     | Tham Số             |
-|:-----------------------|:-----------------:|:-----------------------|:---------------------------|:--------------------|
-| `product_object_image` |        10         | `ProductObject::image` | Vùng ảnh đại diện sản phẩm | `$product` (Object) |
-| `product_object_info`  |      config*      | `ProductObject::title` | Tên sản phẩm               | `$product` (Object) |
-| `product_object_info`  |      config*      | `ProductObject::price` | Giá sản phẩm               | `$product` (Object) |
+Mọi action đều nhận một tham số: `$product` (object sản phẩm).
 
-> **(*) Priority** của `title` và `price` được lấy từ config Admin:  
-> - `Config::get('product.object.title.position')` (thường = 10)  
-> - `Config::get('product.object.price.position')` (thường = 20)  
+| Hook Name                    | Priority Mặc Định | Handler mặc định       | Vị Trí                              |
+|:-----------------------------|:-----------------:|:-----------------------|:------------------------------------|
+| `product_item_before`        |        —          | *(không có)*           | Ngay đầu card                        |
+| `product_object_before_image`|        —          | *(không có)*           | Trước thẻ `<a>` bọc ảnh              |
+| `product_object_image`       |        10         | `ProductObject::image` | Bên trong thẻ `<a>` — vùng ảnh       |
+| `product_object_after_image` |        —          | *(không có)*           | Sau thẻ `<a>` bọc ảnh                |
+| `product_object_info`        |      config*      | `ProductObject::title` | Tên sản phẩm                         |
+| `product_object_info`        |      config*      | `ProductObject::price` | Giá sản phẩm                         |
+| `product_item_after`         |        —          | *(không có)*           | Cuối card                            |
+
+> **(*) Priority** của `title` và `price` lấy từ config Commerce:
+> - `Config::get('product.object.title.position')` — mặc định **10**
+> - `Config::get('product.object.price.position')` — mặc định **20**
+>
 > Admin có thể hoán đổi vị trí giá và tên từ trang cài đặt Commerce.
+
+> [!NOTE]
+> Handler `title` chỉ được đăng ký khi `product.object.title.show` bật; tương tự `price` với `product.object.price.show`. Tắt trong Admin thì hook vẫn phát nhưng không có handler mặc định nào chạy.
+
+### Filter điều khiển kích thước ảnh
+
+| Filter | Giá trị mặc định | Mô tả |
+|:---|:---:|:---|
+| `product_object_image_type` | `source` | Kiểu ảnh dùng cho khối sản phẩm (`source`, `large`, `medium`, `thumb`) |
+
+```php
+add_filter('product_object_image_type', fn() => 'medium');
+```
 
 ---
 

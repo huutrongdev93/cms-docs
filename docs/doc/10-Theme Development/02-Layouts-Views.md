@@ -10,76 +10,97 @@ Cấu trúc giao diện sẽ chia thành 2 khái niệm là **Layouts** (Sườn
 
 ## 1. Hệ Thống Layouts (Khung Sườn Bên Ngoài)
 
-Tất cả Layout bắt buộc nằm trong thư mục: `views/ten-theme/layouts/`. 
-Mỗi layout là một file HTML đầy đủ cấu trúc khung trang.
+Tất cả Layout bắt buộc nằm trong thư mục: `views/<theme>/layouts/` (số nhiều).
+`Template::setLayout()` tự ghép tiền tố `layouts/` vào tên layout, nên khi khai báo bạn chỉ ghi tên file, không kèm thư mục.
 
-### Danh Sách Layout Mặc Định
+### Danh Sách Layout Mặc Định (theme-store)
 
 | File | Mô tả |
 |---|---|
-| `template-home.blade.php` | Khung layout riêng của trang chủ |
-| `template-full-width.blade.php` | Khung tràn viền (Không có sidebar) |
-| `template-sidebar-right.blade.php` | Khung có sidebar phải |
-| `template-sidebar-left.blade.php` | Khung có sidebar trái |
-| `template-user.blade.php` | Layout khu vực hiển thị trang tài khoản Dashboard |
-| `template-empty.blade.php` | Layout rỗng (Không có header/footer) |
+| `template-home.blade.php` | Khung layout trang chủ |
+| `template-home-3.blade.php` | Khung trang chủ biến thể 3 (có sidebar phải) |
+| `template-full-width.blade.php` | Khung tràn viền (không sidebar) |
+| `template-full-width-banner.blade.php` | Tràn viền + banner |
+| `template-sidebar.blade.php` | Khung có sidebar (hai bên) |
+| `template-sidebar-left.blade.php` | Sidebar trái |
+| `template-sidebar-right.blade.php` | Sidebar phải |
+| `template-sidebar-banner-content.blade.php` | Sidebar hai bên + banner trong khối nội dung |
+| `template-sidebar-banner-full.blade.php` | Sidebar hai bên + banner tràn viền |
+| `template-sidebar-left-banner-content.blade.php` | Sidebar trái + banner trong khối nội dung |
+| `template-sidebar-left-banner-full.blade.php` | Sidebar trái + banner tràn viền |
+| `template-sidebar-right-banner-content.blade.php` | Sidebar phải + banner trong khối nội dung |
+| `template-sidebar-right-banner-full.blade.php` | Sidebar phải + banner tràn viền |
+| `template-user.blade.php` | Khu vực trang tài khoản (Dashboard thành viên) |
+| `template-empty.blade.php` | Layout rỗng — cũng là layout **mặc định dự phòng** |
 
 ### Cách Khởi Tạo Một Layout Tuỳ Chỉnh
-Bạn có thể tạo một file Layout bất kì (VD: `template-demo.blade.php`) và nhúng các khối Header/Footer bằng hàm `Theme::partial()`. Nội dung tự động của View sẽ đổ vào Layout thông qua hàm `{!! Theme::content() !!}`.
+
+Tạo một file Layout bất kì trong `layouts/` (VD: `template-demo.blade.php`) và nhúng các khối Header/Footer bằng `Theme::resources()`. Nội dung của View sẽ đổ vào Layout qua `{!! Theme::content() !!}`.
 
 ```blade
 {{--
-Layout-name: Template Tùy Chỉnh 
+Layout-name: Template Tùy Chỉnh
 --}}
 <!DOCTYPE html>
 <html lang="{{ Language::current() }}" @do_action('in_tag_html')>
-    {!! Theme::partial('include/head') !!}
+    {!! Theme::resources('common/head') !!}
     <body @do_action('in_tag_body')>
-        <!-- Nhúng Gọi file header nằm ở views/my-theme/include/header.blade.php -->
-        {!! Theme::partial('include/header') !!}
+        {{-- views/<theme>/resources/layout/header.blade.php --}}
+        {!! Theme::resources('layout/header') !!}
 
         <div class="container my-layout">
-            <!-- ĐÂY LÀ KHU VỰC TỰ ĐỘNG ĐỔ VIEW VÀO LAYOUT -->
+            {{-- KHU VỰC TỰ ĐỘNG ĐỔ VIEW VÀO LAYOUT --}}
             {!! Theme::content() !!}
         </div>
 
         @do_action('template_wrapper_after')
-        {!! Theme::partial('include/footer') !!}
+        {!! Theme::resources('layout/footer') !!}
     </body>
 </html>
 ```
 
-*(Ghi chú: Comment `{{-- Layout-name: ... --}}` trên đầu giúp Quản trị viên nhìn thấy Layout của bạn trong Menu chọn Giao Diện ở Admin Panel).*
+> [!IMPORTANT]
+> Comment `{{-- Layout-name: ... --}}` ở đầu file **chỉ là chú thích cho lập trình viên** — không có bộ phân tích nào đọc nó. Danh sách layout hiển thị cho quản trị viên được khai **cứng trong mảng PHP** `ThemeLayout::layouts()` tại `views/theme-store/app/Supports/ThemeLayout.php`. Muốn layout mới xuất hiện trong màn hình chọn giao diện, phải thêm một mục vào mảng đó:
+>
+> ```php
+> 'layout-demo' => [
+>     'label'    => 'Demo',
+>     'image'    => 'layout/layout-demo.png',
+>     'template' => 'template-demo',   // tên file trong layouts/
+>     'type'     => 'page',            // home | page | ...
+>     'banner'   => false,
+> ],
+> ```
 
 ---
 
 ## 2. Hệ Thống Views (Giao Diện Nội Dung Chi Tiết)
 
-Views là phần giao diện lõi sẽ được nạp động vào thẻ `{!! Theme::content() !!}` của Layout. Các file Views chính nằm thẳng ở thư mục Root của Theme: `views/ten-theme/`.
+Views là phần giao diện lõi sẽ được nạp động vào thẻ `{!! Theme::content() !!}` của Layout. Các file Views chính nằm thẳng ở thư mục gốc của Theme: `views/<theme>/`.
 
-### Danh Sách Views Mặc Định
+### Danh Sách Views Mặc Định (theme-store)
 
-| Hệ Thống Tự Quét File | Chức Năng |
+| File | Chức Năng |
 |---|---|
-| `home-index.blade.php` | View dành cho Trang Chủ |
-| `page-detail.blade.php` | Giao diện nội dung Chi tiết Trang tĩnh (Pages) |
-| `post-index.blade.php` | Danh sách bài viết (Chuyên mục / Blog / Danh mục Sp) |
-| `post-detail.blade.php` | Chi tiết nội dung 1 Bài viết (Hoặc 1 Sản phẩm) |
-| `user-login.blade.php` | Form Auth: Đăng nhập |
-| `user-register.blade.php`| Form Auth: Đăng ký |
-| `user-forgot.blade.php` | Form Auth: Quên mật khẩu |
-| `user-profile.blade.php` | Giao diện Dashboard Thành Viên |
-| `404-error.blade.php` | Giao diện Lỗi 404 Not Found |
+| `home-index.blade.php` | Trang chủ |
+| `page-detail.blade.php` | Chi tiết trang tĩnh (Page) |
+| `page-lien-he.blade.php` | View riêng cho trang có slug `lien-he` (ví dụ override theo slug) |
+| `post-index.blade.php` | Danh sách bài viết (chuyên mục / blog) |
+| `post-detail.blade.php` | Chi tiết một bài viết |
+| `search-index.blade.php` | Trang kết quả tìm kiếm |
+| `user-login.blade.php` | Form đăng nhập |
+| `user-register.blade.php` | Form đăng ký |
+| `user-forgot.blade.php` | Form quên mật khẩu |
+| `user-reset.blade.php` | Form đặt lại mật khẩu |
+| `user-password.blade.php` | Form đổi mật khẩu |
+| `user-profile.blade.php` | Trang hồ sơ thành viên |
+| `user-index.blade.php` | Trang tổng quan tài khoản |
+| `user-dispatch.blade.php` | View điều hướng khu vực tài khoản |
+| `404-error.blade.php` | Trang lỗi 404 |
+| `empty.blade.php` | View rỗng |
 
-Tương tự Layout, bạn có thể tạo lựa chọn View cho người dùng Admin bằng Comment.
-```blade
-{{--
-View-name: List Bài Viết Template Dạng Gạch Khối
---}}
-<div class="post-grid"> 
-   <!-- html vòng lặp item --> 
-</div>
-```
+> [!NOTE]
+> Không có cơ chế `{{-- View-name: ... --}}` — comment này **không tồn tại** trong hệ thống. View được chọn tự động theo quy tắc fallback ở mục 3 bên dưới, hoặc gán cứng qua cột `theme_view` của từng bài viết/trang.
 
 ---
 
@@ -87,29 +108,54 @@ View-name: List Bài Viết Template Dạng Gạch Khối
 
 Một trong những công cụ Controller mạnh nhất của V8 Web là sự hỗ trợ từ class `SkillDo\Cms\Support\ThemeLayoutView`. Nó điều khiển cách hệ thống nhận diện việc phải nạp file View và Layout nào tùy theo Đường link hoặc Dữ liệu Bài viết.
 
-Ví dụ ở Controller ngoài Front-end xử lý hiển thị Bài Viết Chi Tiết (`PostController`):
+Ví dụ ở Controller front-end xử lý trang chi tiết bài viết (`App\Controllers\Web\PostController`):
+
 ```php
-$layout = new ThemeLayoutView('post', $object);
+$template = new ThemeLayoutView('post_detail', $object);
 
-return Cms::view($layout->view(), $layout->layout());
+return Cms::view(
+    apply_filters('theme_post_detail_view', $template->view(), $object),
+    apply_filters('theme_post_detail_layout', $template->layout(), $object)
+);
 ```
-Nhờ class `ThemeLayoutView`, V8 cung cấp tính năng **Nghĩ Ngầm Ưu Tiên Mức (Fallback Override)** hoàn toàn tự động, nghĩa là nó sẽ quét các file trong Theme theo thứ tự để chọn Giao Diện:
 
-### Cách Quét Layout Cho 1 Bài Viết (Category / Post / Page)
-Thứ tự Ưu Tiên Tìm Kiếm Layout:
-1. `layout/template-post-{slug}.blade.php` *(Nếu file này có tồn tại, ưu tiên dùng layout riêng cho URL này)*
-2. `layout/template-post-{post_type}.blade.php` *(Nếu File này tồn tại, áp dụng cho toàn bộ model post_type)*
-3. Trở về Layout mà Admin đã Cấu Hình Tùy Chọn trong Menu Theme Setting.
-4. Trở về Layout mặc định là `template-empty` nếu chả có gì.
+**Tham số `$page`** phải là một trong các key mà class xử lý — không phải `'post'`:
 
-### Cách Quét View Cho 1 Bài Viết (Category / Post / Page)
-Thứ tự Ưu Tiên Tìm Kiếm View (Ruột):
-1. `post-{slug}.blade.php` *(Áp dụng cấu trúc view riêng biệt cho URL cứng)*
-2. `post-{post_type}.blade.php` *(Ví dụ: tạo file `post-product.blade.php` là nó thành view riêng cho sản phẩm!)*
-3. Trở về View Mặc định chung như `post-index.blade.php` hoặc `post-detail.blade.php`.
+| `$page` | Dùng cho |
+|---|---|
+| `post_detail` | Trang chi tiết bài viết |
+| `post_index` | Trang danh sách bài viết / danh mục / thẻ |
+| `page_detail` | Trang tĩnh (Page) |
+| *key tuỳ ý* | Plugin tự đặt (vd `room_type_detail`); rơi vào nhánh `default` và dùng filter `template_layout_{page}` / `template_view_{page}` |
 
-**Ví dụ:** Bạn có kiểu bài viết tên là `product`. Để giao diện trang chi tiết Sản phẩm tách biệt khỏi trang chi tiết Bài Viết Tin Tức thông thường: 
-👉 Bạn chỉ cần tạo file `views/theme-store/post-product.blade.php`. Ngay lập tức `ThemeLayoutView` sẽ bốc file đó lên vẽ trang!
+### Cách Quét View Cho 1 Bài Viết
+
+Thứ tự ưu tiên (`viewPost()`):
+
+1. Cột `theme_view` của chính bản ghi (nếu quản trị viên gán cứng view cho bài đó)
+2. `post-{slug}.blade.php`
+3. `post-{post_type}.blade.php` *(vd tạo `post-product.blade.php` là thành view riêng cho sản phẩm)*
+4. Mặc định `post-detail.blade.php` (trang danh sách là `post-index.blade.php`)
+
+Mỗi bước đều kiểm tra **theme con trước, theme cha sau**. Kết quả cuối chạy qua filter `post_detail_view`.
+
+**Ví dụ:** bạn có post type `product`. Tạo file `views/theme-child/post-product.blade.php` là trang chi tiết sản phẩm dùng ngay view đó.
+
+### Cách Quét Layout Cho 1 Bài Viết
+
+Thứ tự ưu tiên (`layoutPost()`):
+
+1. Cột `theme_layout` của chính bản ghi
+2. Nếu bài viết có bố cục Page Builder (`builderKey`) → luôn dùng `template-empty`
+3. `layout/template-post-{slug}`
+4. `layout/template-post-{post_type}`
+5. Cấu hình của quản trị viên: `Theme::config()->get('layouts', 'post.detail')`
+6. Mặc định `template-empty`
+
+> [!WARNING]
+> **Bước 3 và 4 hiện không hoạt động.** `ThemeLayoutView` kiểm tra sự tồn tại của file theo đường dẫn `layout/template-post-…` (thư mục **số ít**), trong khi layout thật lại được render từ thư mục `layouts/` (`Template::setLayout()` ghép tiền tố `layouts/`). Không theme nào có thư mục `layout/`, nên hai bước override theo slug / post type luôn bị bỏ qua.
+>
+> Cho tới khi lõi sửa lại, hãy chọn layout riêng bằng **cột `theme_layout`** của bài viết, hoặc bằng cấu hình layout trong phần Giao diện của Admin.
 
 ---
 
@@ -117,31 +163,45 @@ Thứ tự Ưu Tiên Tìm Kiếm View (Ruột):
 
 Để cắt component code của 1 View ra nhiều file cho sạch, **bạn không sử dụng `@include`**. Bạn gọi qua các dịch vụ của Theme vì chúng có khả năng hiểu được khi nào đang ở `Theme Mẹ`, khi nào đang được tùy chỉnh đè tại thư mục `Theme Child`.
 
-#### 1. `Theme::view(string $path, array $data = [])`
-Render và xuất hiện thẳng (In) file Blade. (Đường dẫn gốc tính từ thư mục Theme đang Active).
+#### 1. `Theme::partial(string $path, array $data = []): string`
+Hàm nền tảng — **trả về** chuỗi HTML. Đường dẫn tính từ gốc theme; view được phân giải qua namespace `theme::` nên tự ưu tiên **theme con**, không có thì lấy **theme cha**.
 
-```php
-Theme::view('include/header', ['title' => 'Trang chủ']);
-```
-
-#### 2. `Theme::partial(string $path, array $data = []): string`
-Trả về HTML string dạng Component con, ưu ái lớn cho Khái Niệm Theme Child. Nếu ở Theme-Child có file đè tên tương tự, nó ngắt lấy Theme Child. 
+Nếu không truyền `$data`, hàm tự lấy toàn bộ dữ liệu view đang có (`app('data')`).
 
 ```blade
-{!! Theme::partial('include/footer') !!}
-{!! Theme::partial('loop/post-item', ['post' => $post]) !!}
+{!! Theme::partial('resources/layout/footer') !!}
+{!! Theme::partial('resources/post/item', ['post' => $post]) !!}
 ```
 
-#### 3. `Theme::include(string $path, array $data = []): string`
-Tương tự Partial, nhưng Hàm này mặc định chui thẳng vào trong thư mục con `include/` để tìm file cho ngắn gọn.
+> Đường dẫn đã mang namespace riêng (element của plugin, vd `travel::elements/tour-box/views/view`) thì được giữ nguyên, không bị ghép thêm `theme::`.
+
+#### 2. `Theme::view(string $path, array $data = []): void`
+Giống `partial()` nhưng **echo thẳng** ra output thay vì trả về chuỗi (`return void`).
+
+```php
+Theme::view('resources/layout/header', ['title' => 'Trang chủ']);
+```
+
+#### 3. `Theme::resources(string $file, array $data = []): string`
+Đường tắt của `partial('resources/' . $file)`. Đây là hàm **các layout của theme-store đang dùng**.
 
 ```blade
-<!-- Thay vì gọi 'include/header' dài dòng qua partial, dùng include luôn: -->
-{!! Theme::include('header', $data) !!}
+{!! Theme::resources('common/head') !!}
+{!! Theme::resources('layout/header') !!}
+{!! Theme::resources('layout/sidebar-right') !!}
 ```
 
-#### 4. `theme_include(string $file)`
-Sử dụng khi bạn muốn Import trực tiếp 1 File Lõi `.php` (Chạy logic backend, mảng config) ở thư mục Theme vào (ưu tiên Theme Child).
+#### 4. `Theme::include(string $file, array $data = []): string`
+Đường tắt của `partial('include/' . $file)`.
+
+> [!NOTE]
+> theme-store **không có thư mục `include/`** — nó dùng `resources/`. Hàm này chỉ dùng được nếu theme của bạn tự tạo thư mục `include/`. Với theme mặc định, hãy dùng `Theme::resources()`.
+
+#### 5. `theme_include(string $path = '', array $data = []): mixed`
+Helper của theme (khai trong `views/theme-store/app/helpers/helper.php`) — `include` trực tiếp một file **PHP thuần** (chạy logic, trả về mảng config), ưu tiên theme con rồi mới đến theme cha. Trả về `null` nếu file không tồn tại.
+
 ```php
-theme_include('app/theme-setting/theme-setting.php');
+$config = theme_include('app/Options/header.php');
 ```
+
+> Đường dẫn tính từ gốc theme. Muốn lấy đường dẫn tuyệt đối đã phân giải theo theme con/cha thì dùng `theme_include_path($path)`.

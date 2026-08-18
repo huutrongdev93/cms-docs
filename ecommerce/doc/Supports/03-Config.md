@@ -3,7 +3,9 @@
 **Class**: `\Ecommerce\Supports\Config`  
 **Namespace**: `Ecommerce\Supports`
 
-Class `Config` là lớp truy cập cấu hình cho toàn bộ Sicommerce. Tất cả config được lưu trong database (bảng `options`, key `ecommerce_config`) và được load vào Laravel config container với prefix `sicommerce::`.
+Class `Config` là lớp truy cập cấu hình cho toàn bộ Sicommerce. Toàn bộ config override được lưu trong **một** option duy nhất `ecommerce_config` (bảng `system`) và được nạp vào config container với prefix `sicommerce::`.
+
+> Class này **không có alias toàn cục** — luôn `use Ecommerce\Supports\Config;`.
 
 ---
 
@@ -16,7 +18,7 @@ Lấy một giá trị config theo key dạng dot-notation.
 use Ecommerce\Supports\Config;
 
 // Lấy layout trang sản phẩm
-$layout = Config::get('general.layout');
+$layout = Config::get('general.layout_products');
 
 // Số sản phẩm mỗi trang
 $perPage = Config::get('product.index.per_page');
@@ -28,7 +30,7 @@ $hasBrands = Config::get('general.brands'); // true/false
 $cols = Config::get('product.index.per_row.desktop'); // 4
 
 // Cấu hình đặt hàng
-$layoutDetail = Config::get('general.layout');
+$layoutDetail = Config::get('general.layout_products');
 $weightUnit   = Config::get('general.weight_unit'); // 'gram', 'kg'...
 
 // Thông tin đơn hàng
@@ -37,7 +39,7 @@ $securityKey = Config::get('order.securityKey');
 
 Tương đương với:
 ```php
-config('sicommerce::general.layout');
+config('sicommerce::general.layout_products');
 ```
 
 ### `Config::all()`
@@ -56,7 +58,7 @@ Cập nhật một key trong config (lưu vào DB và làm mới container).
 Config::update('product.index.per_page', 20);
 
 // Cập nhật layout
-Config::update('general.layout', 'layout-products-2');
+Config::update('general.layout_products', 'layout-products-2');
 ```
 
 ### `Config::save($config)`
@@ -78,10 +80,15 @@ Config được định nghĩa trong `plugins/sicommerce/config/`. Dưới đây
 
 | Key | Mô Tả | Giá Trị Mặc Định |
 |:---|:---|:---|
-| `general.layout` | Layout trang danh sách SP | `layout-products-1` |
-| `general.brands` | Bật/tắt tính năng Thương hiệu | `false` |
+| `general.layout_products` | Layout trang sản phẩm | `layout-products-1` |
+| `general.ecommerce` | Bật/tắt toàn bộ module giỏ hàng – thanh toán – đơn hàng | `true` |
+| `general.brands` | Bật/tắt module Thương hiệu (menu + field chỉ hiện khi bật) | `0` |
+| `general.extras` | Bật/tắt Extra Product Options | `false` |
+| `general.product_shipping_info` | Bật/tắt thông tin khối lượng & kích thước sản phẩm | `1` |
 | `general.weight_unit` | Đơn vị cân nặng | `gram` |
-| `general.currency_symbol` | Ký hiệu tiền tệ | — |
+| `general.jsClass.addCart` | Class JS xử lý thêm giỏ ở trang chi tiết | `AddToCartHandler` |
+| `general.jsClass.cartSidebar` | Class JS xử lý giỏ hàng sidebar | `CartHandler` |
+| `general.jsClass.checkout` | Class JS xử lý trang thanh toán | `CheckoutHandler` |
 
 ### `product` – Cấu hình sản phẩm
 
@@ -109,8 +116,18 @@ Config được định nghĩa trong `plugins/sicommerce/config/`. Dưới đây
 
 | Key | Mô Tả |
 |:---|:---|
+| `checkout.fields` | Danh sách trường hiển thị ở form thanh toán |
+| `checkout.require` | Danh sách trường bắt buộc nhập |
+| `checkout.policy_url` | Đường dẫn trang điều khoản / chính sách |
 | `checkout.payment.default` | Cổng thanh toán mặc định được chọn sẵn |
 | `checkout.shipping.default` | Đơn vị vận chuyển mặc định |
+| `checkout.getInvoice` | Bật/tắt tùy chọn xuất hóa đơn |
+| `checkout.taxType` | Cách tính thuế: `0` không thuế, `1` theo sản phẩm, `2` theo đơn hàng |
+| `checkout.taxRate` | Thuế suất áp dụng |
+| `checkout.isShippingTaxable` | Phí vận chuyển có chịu thuế không |
+| `checkout.taxShippingRate` | Thuế suất áp dụng cho phí vận chuyển |
+
+> Đổi bất kỳ key nào trong `product.object.*` (style của khối sản phẩm) thì phải gọi lại `Prd::buildStyle()` để build lại CSS.
 
 ---
 
@@ -121,7 +138,7 @@ Config được định nghĩa trong `plugins/sicommerce/config/`. Dưới đây
 use Ecommerce\Supports\Config;
 
 // Kiểm tra theme đang dùng layout nào
-$layout = Config::get('general.layout');
+$layout = Config::get('general.layout_products');
 if($layout == 'layout-products-2') {
     // Plugin custom giao diện cho layout 2
 }

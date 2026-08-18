@@ -92,16 +92,29 @@ remove_action('product_detail_info', [\Ecommerce\Template\ProductsDetail::class,
 |:---|:---:|:---|:---|
 | `product_detail_tabs` | 10 | Render toàn bộ Tab (Mô tả, Thông số, Đánh giá) | `$object` |
 
-Để thêm một tab tùy chỉnh, hãy dùng filter `product_detail_tabs_data`:
+Để thêm một tab tùy chỉnh, hãy dùng filter **`product_tabs`**. Mỗi tab là một mảng gồm `title`, `priority` (thứ tự) và `callback` (hàm render, nhận `$object`):
+
 ```php
-add_filter('product_detail_tabs_data', function($tabs, $product) {
+add_filter('product_tabs', function($tabs) {
     $tabs['chinh-sach'] = [
-        'label'   => 'Chính sách',
-        'content' => '<p>Chính sách đổi trả của chúng tôi...</p>',
+        'title'    => 'Chính sách',
+        'priority' => 60,
+        'callback' => function($object) {
+            echo '<p>Chính sách đổi trả của chúng tôi...</p>';
+        },
     ];
     return $tabs;
-}, 10, 2);
+});
 ```
+
+Tab mặc định do CMS đăng ký là `content` (Mô tả sản phẩm, `priority` 50).
+
+Hai action bao quanh nội dung tab mặc định:
+
+| Hook Name | Loại | Mô tả |
+|:---|:---|:---|
+| `product_detail_tab_content_before` | action | Chèn HTML trước nội dung tab mô tả |
+| `product_detail_tab_content_after` | action | Chèn HTML sau nội dung tab mô tả |
 
 ---
 

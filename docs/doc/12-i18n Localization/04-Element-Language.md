@@ -1,110 +1,153 @@
 # Đa Ngôn Ngữ Cho Element
 
-SkillDo CMS v8 sở hữu một trình dựng trang (Page Builder) vô cùng linh hoạt được xây dựng xoay quanh các khối hình gọi là **Elements**. Khi người dùng nhấp vào một Element, CMS sẽ hiển thị ra một Bảng Điều Khiển (Form Fields) để người dùng có thể nhập cấu hình (Ví dụ chọn Font, Điều màu nút bấm...).
+SkillDo CMS v8 sở hữu một trình dựng trang (Page Builder) xoay quanh các khối gọi là **Element**. Khi người dùng nhấp vào một Element, CMS hiển thị bảng điều khiển (Form Fields) để nhập cấu hình.
 
-Vấn đề đặt ra là: Nếu người dùng chuyển CMS sang Tiếng Anh, làm sao để Bảng Điều Khiển của cái khối hình (Element) đó hiển thị Label Tiếng Anh chứ không bị cứng chữ "Đổi Màu Chữ" ở phần Field?
-
----
-
-## 1. Cơ chế hoạt động của Element Field & Ngôn Ngữ
-
-Mỗi Element của bạn là một class thừa kế từ `Namespace\Cms\Element\Element`. 
-Trong đó, phương thức trả về danh sách các Fields sẽ sử dụng thư viện **Form Builder** (Tạo form) gọi ở `input` hoặc mảng Controls.
-
-Và thay vì điền chuỗi tĩnh (Ví dụ `'label' => 'Màu sắc'`), bộ Form Field của Element hỗ trợ hàm `trans()` để tự động render dịch dựa vào file ngôn ngữ. Lợi thế là Element có thể gọi lại ngôn ngữ của **Bất cứ hệ thống nào** (Lõi Hệ Thống, Từ Theme hay Từ Plugin).
-
-### Cách gọi ngôn ngữ phổ biến nhất
-
-- Các Element gốc nằm trong Core Framework sử dụng Namespace Global: `trans('system.color')` (Màu sắc) hoặc `trans('system.font_size')` (Kích cỡ chữ).
-- Các Element do Theme phát triển sử dụng tệp trong Theme: `trans('theme::element.custom_button.color')`
-- Các Element do Plugin cấp lấy Prefix: `trans('skd-seo::admin.keywords')`
-- **ĐẶC BIỆT (Element Namespace riêng):** Nếu bạn làm những Builder Element lớn, phức tạp và tách file language độc lập cho từng Element (chứ không viết tập trung vào 1 file `theme.php`), CMS cung cấp Namespace theo Tên Element. VD Tên class Widget là `AuthButton` -> Element id là `auth-button` -> gọi: `trans('auth-button::style.color')`.
+Vấn đề: nếu người dùng chuyển CMS sang tiếng Anh, làm sao để nhãn của các trường trong bảng điều khiển — và cả nội dung element render ra ngoài trang — hiển thị đúng ngôn ngữ?
 
 ---
 
-## 2. Cách Khai Báo Ngôn Ngữ Phổ Biến Trong 1 Class Element (Ví Cụ Cụ Thể)
+## 1. Ba cách gọi ngôn ngữ trong Element
 
-Đây là ví dụ điển hình khi bạn là Deverloper viết Theme và tạo một Element "Giới Thiệu Banner" dạng kéo thả. Ban đầu tên Label Tiếng Việt, giờ biến nó thành biến linh động Tiếng Anh/Việt.
+Element là class kế thừa `SkillDo\Cms\Element\Element`. Mọi nhãn đều đi qua hàm `trans()`, khác nhau ở **namespace** đứng trước `::`.
 
-**Bước 1:** Chuẩn bị 2 file ngôn ngữ ở Theme `theme-store/language/`. 
+| Nguồn ngôn ngữ | Cách gọi | Ghi chú |
+|---|---|---|
+| Ngôn ngữ **lõi** | `trans('general.phone')`, `trans('button.save')` | Không có namespace. File nằm ở `language/{locale}/` |
+| Ngôn ngữ **theme** | `trans('theme::post.readmore')` | File nằm ở `views/<theme-cha>/language/{locale}/` |
+| Ngôn ngữ **plugin** | `trans('skd-seo::admin.keywords')` | File nằm ở `plugins/<plugin-id>/language/{locale}/` |
+| Ngôn ngữ **riêng của element** | `trans('e-<đường-dẫn>::<file>.<key>')` | Xem mục 2 |
+
+> Các file ngôn ngữ lõi hiện có: `ajax.php`, `alert.php`, `auth.php`, `button.php`, `field.php`, `form.php`, `general.php`, `lang-js.php`, `table.php`, `validation.php`. Trước khi tạo file riêng, hãy mở các file này xem đã có sẵn chuỗi bạn cần chưa.
+
+---
+
+## 2. Namespace ngôn ngữ riêng của Element
+
+Khi element lớn và bạn muốn tách file ngôn ngữ độc lập, chỉ cần tạo thư mục `language/{locale}/` **ngay cạnh file `.widget.php`**. `LanguageServiceProvider::loadElementTranslations()` sẽ tự đăng ký namespace.
+
+Quy tắc đặt tên namespace: lấy phần đường dẫn **sau thư mục `elements`**, nối các cấp bằng dấu chấm, thêm tiền tố `e-`.
+
+| Đường dẫn thư mục element | Namespace ngôn ngữ |
+|---|---|
+| `elements/search-bar/language` | `e-search-bar` |
+| `elements/auth-button/style1/language` | `e-auth-button.style1` |
+| `elements/translate/language` | `e-translate` |
+
+> Element của **theme con** được nạp sau nên tự động ghi đè element cùng đường dẫn của theme cha.
+>
+> Namespace chỉ được đăng ký cho element **đã khai trong `elements/elements.json`** — tạo thư mục `language/` mà quên đăng ký element thì namespace không tồn tại.
+
+---
+
+## 3. Ví dụ đầy đủ
+
+**Bước 1 — Tạo file ngôn ngữ** cạnh file widget:
+
+```
+views/theme-child/elements/intro-banner/
+├── intro-banner.widget.php
+├── language/
+│   ├── vi/main.php
+│   └── en/main.php
+└── views/view.blade.php
+```
+
 ```php
-// File vi/element.php
+// language/vi/main.php
 return [
-    'banner' => [
-        'title' => 'Khối Banner Giới Thiệu',
-        'heading_label' => 'Tiêu đề lớn',
-        'desc_label'    => 'Mô tả tóm tắt ngắn gọn',
-    ]
-];
-
-// File en/element.php
-return [
-    'banner' => [
-        'title' => 'Intro Banner Block',
-        'heading_label' => 'Main Heading',
-        'desc_label'    => 'Short Summary Description',
-    ]
+    'title'         => 'Khối Banner Giới Thiệu',
+    'heading_label' => 'Tiêu đề lớn',
+    'desc_label'    => 'Mô tả tóm tắt ngắn gọn',
+    'readmore'      => 'Xem thêm',
 ];
 ```
 
-**Bước 2:** Cấu trúc Class Element và Inject Hàm `trans()`
+```php
+// language/en/main.php
+return [
+    'title'         => 'Intro Banner Block',
+    'heading_label' => 'Main Heading',
+    'desc_label'    => 'Short Summary Description',
+    'readmore'      => 'Read more',
+];
+```
 
-Vào file class Element của Theme bạn, gọi hàm này cho hàm khởi tạo, nhãn trường và các tuỳ chỉnh.
+**Bước 2 — Class Element.**
+
+Lưu ý: file `.widget.php` của element **không đặt namespace** — class nằm ở phạm vi global. Class bắt buộc phải hiện thực 4 phương thức của `ElementInterface`: `icon()`, `category()`, `form()`, `widget()`.
 
 ```php
-namespace Theme\ThemeStore\Elements;
+<?php
 
-use SkillDo\Cms\Element\Element;      // Cơ sở Class Element
-use SkillDo\Cms\Form\Form;    // Class Form tạo input
+use SkillDo\Cms\Element\Element;
+use SkillDo\Cms\Form\Form;
 
-class IntroBanner extends Element {
+class IntroBannerElement extends Element
+{
+    public function __construct()
+    {
+        // Tham số 2 là tên hiển thị trong cột kéo thả -> dịch được
+        parent::__construct('IntroBannerElement', trans('e-intro-banner::main.title'));
 
-    // Đây là Tiêu Đề của Khối hình bên cột kéo thả Trái
-    public function name() {
-        return trans('theme::element.banner.title'); 
+        $this->assets('assets/intro-banner.css');
+
+        $this->setTags('banner', 'intro');
     }
 
-    // Các Thiết Lập Nằm Ở Panel (Khi Click Vào Vùng Không Gian Builder)
-    public function controls() {
-        return [
-            // Khung Nhập Tiêu Đề
-            [
-                'field' => 'heading',
-                // Hàm trans() dùng làm lable dịch để hiển thị người dùng (tiếng việt/anh tùy hệ thống)
-                'label' => trans('theme::element.banner.heading_label'),
-                'type' => 'text',
-                'value' => 'SkillDo Framework'
-            ],
-
-            // Khung Nhập Tóm Tắt
-            [
-                'field' => 'description',
-                'label' => trans('theme::element.banner.desc_label'),
-                'type' => 'textarea',
-            ]
-        ];
+    public function icon(): string
+    {
+        return '<i class="fa-duotone fa-solid fa-rectangle-ad"></i>';
     }
 
-    // Nơi Render ra Màn Hình (Tất Nhiên Nội Dung Data do Admin Nhập là Tĩnh - Nhưng Class Wrapper Tĩnh)
-    public function render() {
-         
-         // In Data Ra Thôi
-         echo "<div class='banner'>";
-         echo "<h2>". $this->val('heading') ."</h2>";
-         echo "<p>". $this->val('description') ."</p>";
+    public function category(): string
+    {
+        return 'general';
+    }
 
-         // Hoặc Nếu Cần Gắn Label "Read More" cứng
-         echo "<a href='#'>". trans('theme::button.read_more') ."</a>";
-         echo "</div>";
+    public function form(): void
+    {
+        $this->tabs('generate')->adds(function (Form $form)
+        {
+            $form->text('heading', [
+                'label'    => trans('e-intro-banner::main.heading_label'),
+                'language' => true,   // cho phép nhập nội dung theo từng ngôn ngữ
+            ]);
+
+            $form->textarea('description', [
+                'label'    => trans('e-intro-banner::main.desc_label'),
+                'language' => true,
+            ]);
+        });
+    }
+
+    public function widget()
+    {
+        return $this->view('view', [
+            'options' => $this->options,
+        ]);
     }
 }
 ```
 
+**Bước 3 — File view.**
+
+```blade
+<div class="intro-banner">
+    <h2>{!! $options->heading !!}</h2>
+    <p>{!! $options->description !!}</p>
+    <a href="#">{{ trans('e-intro-banner::main.readmore') }}</a>
+</div>
+```
+
 ---
 
-## 3. Tận dụng Ngôn Ngữ Nhúng Sẵn Trong Framework (Core Fields)
+## 4. Nội dung người dùng nhập (`'language' => true`)
 
-Việc dịch từng chút một các từ căn bản ('margin', 'padding', 'color', 'background-color') là RẤT vô ích. 
-Do vậy bộ Framework đã cấu hình một gói Language rất lớn tại `language/vi/system.php` chỉ dùng cho CMS Element & Widget. 
+Hai loại nội dung cần phân biệt:
 
-Vì thế thay vì tự bịa thêm file `element.color`, bạn có thể lấy `trans('system.color')`. Tất cả những biến số cơ bản nhất của Website Design đã được xây dựng tại Core, bạn chỉ cần mở các file Language hệ thống bên trong `sourcev8/language` để tham khảo trước khi tự rẽ một file riêng.
+| Loại | Cách xử lý |
+|---|---|
+| **Nhãn giao diện** (label field, chữ trên nút mặc định) | Do lập trình viên viết → dùng `trans()` |
+| **Nội dung do người dùng nhập** (tiêu đề banner, mô tả) | Do người dùng nhập → thêm `'language' => true` vào field |
+
+Khi field khai `'language' => true`, Page Builder hiển thị thêm ô nhập cho từng ngôn ngữ và lưu giá trị vào key kèm hậu tố ngôn ngữ (`heading_en`). Phương thức `Element::translations()` tự tráo giá trị đúng ngôn ngữ hiện tại vào `$this->options->heading` trước khi render — bạn **không cần** tự xử lý.

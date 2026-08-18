@@ -2,7 +2,7 @@
 
 Trong SkillDo CMS (tương tự như Laravel Framework), **Macro** và **Mixin** là những công cụ vô cùng mạnh mẽ cho phép bạn có thể tự động "nhúng" thêm các phương thức (method) mới vào một Class Core có sẵn của hệ thống mà không hề yêu cầu bạn phải sửa đổi trực tiếp mã nguồn gốc của Class đó. 
 
-Tính năng này được hỗ trợ bởi Trait `Illuminate\Support\Traits\Macroable` và có mặt rải rác trên rất nhiều Class tiện ích toàn cục (Ví dụ: `Arr`, `Str`, `Admin`, `Auth`, `Theme`, `Url`,...).
+Tính năng này được hỗ trợ bởi Trait `Illuminate\Support\Traits\Macroable` và có mặt rải rác trên rất nhiều Class tiện ích toàn cục (Ví dụ: `Arr`, `Str`, `Admin`, `Auth`, `Theme`, `Url`, `Path`, `Cache`, `Router`,...).
 
 ---
 
@@ -19,14 +19,18 @@ Macro là một cách để định nghĩa và chèn thêm **một function riê
 ```php
 namespace MyPlugin\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use SkillDo\ServiceProvider;
 use Illuminate\Support\Arr;
 
 class MyPluginServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function register(): void
     {
-        // Khai báo tiêm method toUpper vào Str/Arr
+    }
+
+    public function boot(): void
+    {
+        // Khai báo tiêm method toUpper vào Arr
         Arr::macro('toUpper', function ($array) {
             return array_map(function ($value) {
                 return is_string($value) ? strtoupper($value) : $value;
@@ -89,13 +93,17 @@ Sau đó, ở trong Service Provider, bạn chỉ cần dùng lệnh `mixin()` �
 ```php
 namespace MyPlugin\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use SkillDo\ServiceProvider;
 use Illuminate\Support\Str;
 use MyPlugin\Supports\StringHelpers;
 
 class MyPluginServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function register(): void
+    {
+    }
+
+    public function boot(): void
     {
         // Áp dụng gộp toàn bộ các Helper bên ngoài vào Class tĩnh Str
         Str::mixin(new StringHelpers());
@@ -118,18 +126,48 @@ echo Str::toKebab('Hello World'); // Kết Quả: "hello-world"
 
 ## Danh Sách Các Class Hỗ Trợ Macroable
 
-SkillDo CMS v8 tích hợp Trait Macroable tự động trên mạng lưới rộng lớn các Facades và Services lõi, nổi bật gồm:
+Các class lõi đã được xác minh có Trait Macroable trong source:
 
+**Illuminate (mặc định của Laravel components):**
 - `\Illuminate\Support\Str` (Xử lý chữ)
 - `\Illuminate\Support\Arr` (Xử lý mảng Array)
-- `\SkillDo\Cms\Support\Admin` (Hỗ trợ Helper Admin)
+- Các Facade Illuminate khác (`Illuminate\Support\Facades\File`, `Cache`...)
+
+**Framework (`SkillDo\*`):**
+- `\SkillDo\Cache\Cache` (Cache lõi)
+- `\SkillDo\Routing\Router` (Router — ví dụ macro `Route::localized()`)
 - `\SkillDo\Support\Auth` (Xác thực đăng nhập cấp lõi)
-- `\SkillDo\Cms\Support\Cms` (Hệ sinh thái Controller Cấp Lõi)
-- `\SkillDo\Cms\Support\Device` (Hỗ trợ cấu hình thiết bị)
-- `\SkillDo\Cms\Support\Language` (Đa ngôn ngữ)
 - `\SkillDo\Support\Path` (Quản lý Đường dẫn Cứng)
+- Các Service builder: `ServiceBuilder`, `ServiceCms`, `ServiceLocation`, `ServiceLocationV2`
+
+**CMS (`SkillDo\Cms\*`):**
+- `\SkillDo\Cms\Support\Admin` (Hỗ trợ Helper Admin)
+- `\SkillDo\Cms\Support\Language` (Đa ngôn ngữ)
 - `\SkillDo\Cms\Support\Theme` (Hỗ trợ Frontend Theme)
-- `\SkillDo\Cms\Support\Url` (Hệ URL URL Routing Cấp Lõi)
-- Các công cụ Core Helper như `FileHandler`, `Utils`...
+- `\SkillDo\Cms\Support\Url` (Hệ URL Routing Cấp Lõi)
+- `\SkillDo\Cms\Support\SKDService`, `\SkillDo\Cms\Support\Utils`
+- `\SkillDo\Cms\Location\Location`, `Location2`
+
+---
+
+## Các Macro Có Sẵn Của Hệ Thống
+
+Bootstrapper `SkillDo\Bootstrap\RegisterMacros` đăng ký sẵn một loạt macro vào `Str`/`Arr` ngay khi boot — dùng được ở mọi nơi:
+
+| Macro | Công dụng |
+|---|---|
+| `Str::clear($value)` | Lọc bỏ ký tự đặc biệt + strip HTML tags |
+| `Str::ascii($value)` | Chuyển tiếng Việt có dấu (và ký hiệu đặc biệt) về không dấu |
+| `Str::slug($title, $separator = '-')` | Tạo slug URL (hỗ trợ tiếng Việt) |
+| `Str::isHtmlSpecialChars($input)` | Kiểm tra chuỗi chứa HTML entity đã escape |
+| `Str::price($price)` | Parse chuỗi giá tiền (xử lý cả `.` và `,`) về số |
+| `Str::isSerialized($value)` | Kiểm tra chuỗi có phải dữ liệu PHP serialize |
+| `Str::safeJson($json, $asArray = false)` | Decode JSON và escape an toàn đệ quy |
+| `Str::safeJsonString($value)` | Escape dấu nháy đơn trong chuỗi |
+| `Str::colorToRgb($color, $default)` | Chuyển màu HEX/rgb() thành mảng `['r','g','b']` |
+| `Str::isStatic('Class::method')` | Kiểm tra method có phải static |
+| `Arr::unset(&$target, $key)` | Unset key trong mảng theo dot-notation (hỗ trợ `*`) |
+
+`CmsServiceProvider` đăng ký thêm: `Cache::cmsRoute()`, `Route::localized()` (sinh route đa ngôn ngữ), `Path::plugin()` / `Path::admin()` / `Path::theme()` / `Path::themeChild()`, và các macro trên Facade `File` của Illuminate: `File::clear()`, `File::convert()`, `File::getSizeInBytes()`, `File::getExtension()`, `File::getExtensionType()`.
 
 > *Khuyến nghị:* Hãy gom toàn bộ các file Class độc lập dùng để hỗ trợ Mixin dồn vào một thư mục như `app/Macro/` hoặc `app/Supports/` ở bên trong module/plugin để có tính tổ chức tốt nhất.

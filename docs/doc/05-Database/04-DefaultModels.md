@@ -8,6 +8,10 @@ Các Model đều nằm trong hai package chính:
 - **Framework (API):** `packages/skilldo/framework/src/Api/Models/`
 - **Namespace** `SkillDo\Api\Models`
 
+**Về alias:** `CmsServiceProvider::aliases()` đăng ký các Model CMS dưới namespace alias **`SkillDo\Model\*`** (vd: `SkillDo\Model\Post`, `SkillDo\Model\User`...). Chỉ riêng **`\Gallery`** và **`\GalleryItem`** có alias gốc (root alias) trỏ thẳng vào Model. Lưu ý hai alias gốc dễ nhầm:
+- `\Language` → `SkillDo\Cms\Support\Language` (class hỗ trợ đa ngôn ngữ, **không phải** Model `SkillDo\Cms\Models\Language`)
+- `\ThemeMenu` → `SkillDo\Cms\Menu\ThemeMenu` (class quản lý menu, **không phải** Model `SkillDo\Cms\Models\ThemeMenu`)
+
 ---
 
 ## 1. CMS Models
@@ -19,7 +23,7 @@ Các Model đều nằm trong hai package chính:
 | **File**          | `cms/src/Models/Post.php`                    |
 | **Namespace**     | `SkillDo\Cms\Models\Post`                    |
 | **Bảng DB**       | `{prefix}post`                               |
-| **Alias ngắn**    | `\Post`                                      |
+| **Alias**         | `SkillDo\Model\Post`                         |
 | **Traits**        | `SoftDeletes`, `ModelRoute`, `ModelLanguage` |
 | **Route type**    | `post`                                       |
 | **Language type** | `post`                                       |
@@ -59,7 +63,7 @@ $id = Post::create([
 | **File** | `cms/src/Models/PostCategory.php` |
 | **Namespace** | `SkillDo\Cms\Models\PostCategory` |
 | **Bảng DB** | `{prefix}categories` |
-| **Alias ngắn** | `\PostCategory` |
+| **Alias** | `SkillDo\Model\PostCategory` |
 | **Traits** | `ModelRoute`, `ModelLanguage` |
 | **Route type** | `post_categories` |
 | **Language type** | `post_categories` |
@@ -70,21 +74,56 @@ $id = Post::create([
 ```php
 use SkillDo\Cms\Models\PostCategory;
 
-// Lấy toàn bộ danh mục dạng cây phẳng (flat tree)
-$categories = PostCategory::tree()->get();
+// Lấy toàn bộ danh mục dạng cây phẳng (flat tree, duyệt cha → con) — trả về array
+$categories = PostCategory::tree();
 
-// Lấy dạng mảng phân cấp lồng nhau (nested)
-$categories = PostCategory::multilevel()->get();
+// Lấy dạng phân cấp lồng nhau (mỗi item có ->child) — trả về Collection
+$categories = PostCategory::multilevel();
 
-// Lấy danh mục dạng options cho select box (id => name)
-$options = PostCategory::options()->get();
+// Lấy danh mục dạng options cho select box (id => name) — trả về Collection
+$options = PostCategory::options();
 
 // Lấy danh mục theo cate_type riêng (dùng cho portfolio, project...)
-$categories = PostCategory::where('cate_type', 'portfolio_categories')->get();
+$categories = PostCategory::where('cate_type', 'portfolio_categories')->tree();
 
-// Lấy danh mục của một bài viết cụ thể
-$categories = PostCategory::getsByPost(5)->get();
+// Lấy danh mục của một bài viết cụ thể — trả về Collection
+$categories = PostCategory::getsByPost(5);
 ```
+
+> **Lưu ý:** `tree()`, `multilevel()`, `options()`, `getsByPost()` là các scope **thực thi query ngay và trả về kết quả** (array/Collection) — không chain `->get()` phía sau. Các điều kiện `where(...)` phải đặt **trước** khi gọi scope.
+
+---
+
+### `Tag` — Thẻ
+
+| Thuộc tính | Giá trị |
+|---|---|
+| **File** | `cms/src/Models/Tag.php` |
+| **Namespace** | `SkillDo\Cms\Models\Tag` |
+| **Bảng DB** | `{prefix}tags` + bảng nối `{prefix}tag_relationships` |
+| **Alias** | `SkillDo\Model\Tag` |
+| **Traits** | `ModelLanguage` |
+| **Language type** | `tags` |
+| **Có từ** | phiên bản **8.1.3** |
+
+**Mô tả:** Phân loại **phẳng, không phân cấp** cho nội dung. Khác với `PostCategory`, thẻ dùng bảng riêng và **không ghi vào bảng `routes`** — toàn bộ trang lưu trữ dùng chung một route `/tag/{slug}`, nên `slug` chỉ cần duy nhất trong phạm vi bảng `tags`.
+
+**Ví dụ sử dụng:**
+```php
+use SkillDo\Cms\Models\Tag;
+use SkillDo\Cms\Support\TagService;
+
+// Thẻ của một bài viết
+$tags = TagService::getsByObject($postId);
+
+// Danh sách [id => name] cho select
+$options = Tag::query()->options();
+
+// Lọc bài viết theo thẻ
+$posts = Post::where('public', 1)->whereByTag($tag)->get();
+```
+
+> Chi tiết đầy đủ (bật thẻ cho post type khác, field nhập thẻ, hook mở rộng): xem [Thẻ (Tag)](../06-Cms/Tags.md).
 
 ---
 
@@ -95,7 +134,7 @@ $categories = PostCategory::getsByPost(5)->get();
 | **File** | `cms/src/Models/Page.php` |
 | **Namespace** | `SkillDo\Cms\Models\Page` |
 | **Bảng DB** | `{prefix}page` |
-| **Alias ngắn** | `\Page` |
+| **Alias** | `SkillDo\Model\Page` |
 | **Traits** | `SoftDeletes`, `ModelRoute`, `ModelLanguage` |
 | **Route type** | `page` |
 | **Language type** | `page` |
@@ -120,12 +159,12 @@ echo $page->content;
 | **File** | `cms/src/Models/User.php` |
 | **Namespace** | `SkillDo\Cms\Models\User` |
 | **Bảng DB** | `{prefix}users` |
-| **Alias ngắn** | `\User` |
+| **Alias** | `SkillDo\Model\User` |
 | **Traits** | `SoftDeletes` |
 
-**Mô tả:** Model quản lý tài khoản người dùng. Tích hợp sẵn validation username/email, hash mật khẩu Argon2id, cập nhật Role tự động khi `saved`.
+**Mô tả:** Model quản lý tài khoản người dùng. Tích hợp sẵn validation username/email, hash mật khẩu Argon2id (fallback Bcrypt nếu PHP không hỗ trợ, tự migrate hash MD5 cũ khi đăng nhập), cập nhật Role tự động khi `saved`. Dùng Eloquent Builder riêng: `SkillDo\Database\Eloquent\UserBuilder`.
 
-**Các cột chính:** `username`, `password`, `salt`, `firstname`, `lastname`, `email`, `phone`, `status`, `role`
+**Các cột chính:** `username`, `password`, `salt`, `firstname`, `lastname`, `email`, `phone`, `status`, `activation_key`, `role`
 
 **Ví dụ sử dụng:**
 ```php
@@ -161,9 +200,9 @@ $posts = $user->posts()->get();
 | **File** | `cms/src/Models/Gallery.php` |
 | **Namespace** | `SkillDo\Cms\Models\Gallery` |
 | **Bảng DB** | `{prefix}group` (dùng chung với ThemeMenu, phân biệt bởi `object_type = 'gallery'`) |
-| **Alias ngắn** | `\Gallery` |
+| **Alias** | `\Gallery`, `SkillDo\Model\Gallery` |
 
-**Mô tả:** Model quản lý Album/Group gallery. Khi xóa Album sẽ tự động xóa toàn bộ `GalleryItem` bên trong.
+**Mô tả:** Model quản lý Album/Group gallery. Global scope tự thêm `object_type = 'gallery'`. Khi xóa Album sẽ tự động xóa toàn bộ `GalleryItem` bên trong (theo `group_id`). Có các helper static `Gallery::addOption()`, `Gallery::getOption()`, `Gallery::removeOption()` (ủy quyền cho `GalleryOption`).
 
 ```php
 use SkillDo\Cms\Models\Gallery;
@@ -220,8 +259,8 @@ use SkillDo\Cms\Models\ThemeMenu;
 // Lấy menu theo vị trí (location)
 $menu = ThemeMenu::getByLocation('header');
 
-// Lấy tất cả menu
-$menus = ThemeMenu::get();
+// Lấy tất cả menu — dùng all(), KHÔNG dùng get() (get() tĩnh chỉ trả về 1 bản ghi)
+$menus = ThemeMenu::all();
 ```
 
 ---
@@ -302,7 +341,7 @@ echo $route->method;     // detail
 | **Namespace** | `SkillDo\Cms\Models\Language` |
 | **Bảng DB** | `{prefix}language` |
 | **Primary Key** | `language_id` |
-| **Alias ngắn** | `\Language` |
+| **Alias ngắn** | `SkillDo\Model\Language` (**không phải** `\Language`) |
 
 **Mô tả:** Model nội bộ của hệ thống, lưu trữ bản dịch của các đối tượng (`Post`, `Page`, `Product`...). Được quản lý tự động bởi Trait `ModelLanguage` — **thông thường không cần thao tác trực tiếp**.
 
@@ -320,15 +359,41 @@ echo $route->method;     // detail
 
 ---
 
-### `ElementBuilderTemplate` — Template Element Builder
+### `ElementBuilderBlock` — Block Dùng Lại
 
 | Thuộc tính | Giá trị |
 |---|---|
-| **File** | `cms/src/Models/ElementBuilderTemplate.php` |
-| **Namespace** | `SkillDo\Cms\Models\ElementBuilderTemplate` |
-| **Bảng DB** | `{prefix}element_builder_templates` |
+| **File** | `cms/src/Models/ElementBuilderBlock.php` |
+| **Namespace** | `SkillDo\Cms\Models\ElementBuilderBlock` |
+| **Bảng DB** | `{prefix}element_builder_blocks` |
 
-**Mô tả:** Model nội bộ lưu trữ các template được tạo bởi Element Builder.
+**Mô tả:** Model nội bộ lưu các block được lưu lại để tái sử dụng nhiều nơi trong Page Builder.
+
+---
+
+### `ElementBuilderDraft` — Bản Nháp
+
+| Thuộc tính | Giá trị |
+|---|---|
+| **File** | `cms/src/Models/ElementBuilderDraft.php` |
+| **Namespace** | `SkillDo\Cms\Models\ElementBuilderDraft` |
+| **Bảng DB** | `{prefix}element_builder_draft` |
+
+**Mô tả:** Model nội bộ lưu bản nháp đang chỉnh sửa trong Page Builder (chưa xuất bản).
+
+---
+
+### `ElementBuilderHistories` — Lịch Sử Chỉnh Sửa
+
+| Thuộc tính | Giá trị |
+|---|---|
+| **File** | `cms/src/Models/ElementBuilderHistories.php` |
+| **Namespace** | `SkillDo\Cms\Models\ElementBuilderHistories` |
+| **Bảng DB** | `{prefix}element_builder_histories` |
+
+**Mô tả:** Model nội bộ lưu lịch sử phiên bản của từng section (giới hạn 20 phiên bản/section).
+
+> Chi tiết kiến trúc Page Builder: xem [Builder Architecture](../06-Cms/Builder-Architecture.md).
 
 ---
 
@@ -379,19 +444,24 @@ Các Model này được dùng bởi hệ thống **REST API** của Framework. 
 
 | Model | Alias | Bảng | Traits chính |
 |---|---|---|---|
-| `Post` | `\Post` | `post` | SoftDeletes, ModelRoute, ModelLanguage |
-| `PostCategory` | `\PostCategory` | `categories` | ModelRoute, ModelLanguage |
-| `Page` | `\Page` | `page` | SoftDeletes, ModelRoute, ModelLanguage |
-| `User` | `\User` | `users` | SoftDeletes |
-| `Gallery` | `\Gallery` | `group` | — |
-| `GalleryItem` | `\GalleryItem` | `galleries` | — |
-| `ThemeMenu` | `\ThemeMenu` | `group` | — |
-| `ThemeMenuItem` | `\ThemeMenuItem` | `menu` | — |
-| `Widget` | `\Widget` | `widget` | — |
-| `Router` | `\Router` | `routes` | — |
-| `Language` | `\Language` | `language` | — |
+| `Post` | `SkillDo\Model\Post` | `post` | SoftDeletes, ModelRoute, ModelLanguage |
+| `PostCategory` | `SkillDo\Model\PostCategory` | `categories` | ModelRoute, ModelLanguage |
+| `Page` | `SkillDo\Model\Page` | `page` | SoftDeletes, ModelRoute, ModelLanguage |
+| `User` | `SkillDo\Model\User` | `users` | SoftDeletes |
+| `Tag` | `SkillDo\Model\Tag` | `tags` | ModelLanguage |
+| `Gallery` | `SkillDo\Model\Gallery`, `\Gallery` | `group` | — |
+| `GalleryItem` | `SkillDo\Model\GalleryItem`, `\GalleryItem` | `galleries` | — |
+| `ThemeMenu` | `SkillDo\Model\ThemeMenu` | `group` | — |
+| `ThemeMenuItem` | `SkillDo\Model\ThemeMenuItem` | `menu` | — |
+| `Widget` | `SkillDo\Model\Widget` | `widget` | — |
+| `Router` | `SkillDo\Model\Router` | `routes` | — |
+| `Language` | `SkillDo\Model\Language` | `language` | — |
 | `ElementBuilderSection` | — | `element_builder_sections` | — |
-| `ElementBuilderTemplate` | — | `element_builder_templates` | — |
+| `ElementBuilderBlock` | — | `element_builder_blocks` | — |
+| `ElementBuilderDraft` | — | `element_builder_draft` | — |
+| `ElementBuilderHistories` | — | `element_builder_histories` | — |
 | `AccessToken` | — | `oauth_access_tokens` | HasUuids |
 | `RefreshToken` | — | `oauth_refresh_tokens` | HasUuids |
 | `ApiKey` | — | `api_keys` | — |
+
+> **Cảnh báo về alias gốc:** chỉ `\Gallery` và `\GalleryItem` là alias gốc trỏ vào Model. `\Language` và `\ThemeMenu` là alias gốc của **class hỗ trợ** (`SkillDo\Cms\Support\Language`, `SkillDo\Cms\Menu\ThemeMenu`), không phải Model cùng tên. Các Model khác **không có alias gốc** — dùng `SkillDo\Model\*` hoặc `SkillDo\Cms\Models\*`.

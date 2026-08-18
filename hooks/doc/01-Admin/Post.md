@@ -1,75 +1,54 @@
 ### Trang danh sách post
 
-#### điều kiện lấy total
-Thay đổi điều kiện lấy ra tổng số post dùng cho phân trang
+> **Thay đổi ở v8:** hai hook `admin_post_{postType}_controllers_index_args` và `admin_post_{postType}_controllers_index_objects` **đã bị gỡ bỏ**, và tham số truyền vào không còn là `Qr` (lớp này không còn tồn tại) mà là **Eloquent Query Builder**.
+>
+> Muốn can thiệp điều kiện lấy danh sách, hãy override `queryFilter()` trong lớp Table của module.
 
-| **Loại Hook**                                          | **Platform** |                                   **Version** |
-|--------------------------------------------------------|:------------:|----------------------------------------------:|
-| <span class="badge text-bg-green">apply_filters</span> |     cms      | <span class="badge text-bg-cyan">7.0.0</span> |
+#### Điều kiện lấy total
+Thay đổi điều kiện query dùng để đếm tổng số post cho phân trang. Đây là hook **động** — tên hook ghép theo `postType`.
 
-```php
-$args = apply_filters('admin_post_<postType>_controllers_index_args_before_count', Qr $args)
-```
-**Params**: biến Qr
-
-**Return**: biến Qr
+| Hooks                                                        | **Loại Hook**                                   | **Platform** |                                   **Version** |
+|--------------------------------------------------------------|-------------------------------------------------|:------------:|----------------------------------------------:|
+| `admin_post_{postType}_controllers_index_args_before_count`  | <span class="badge text-bg-green">filter</span> |     cms      | <span class="badge text-bg-cyan">7.0.0</span> |
 
 ```php
-function my_custom_admin_post_count(Qr $args): void
-{
-    return $args;
-}
-add_filter('admin_post_post_controllers_index_args_before_count', 'my_custom_admin_post_count');
+$query = apply_filters('admin_post_'.$postType.'_controllers_index_args_before_count', $query);
 ```
+**Params**: `$query` (`SkillDo\Database\Eloquent\Builder`)
 
-
-#### điều kiện lấy list
-Thay đổi điều kiện lấy ra danh sách post
-
-| **Loại Hook**                                          | **Platform** |                                   **Version** |
-|--------------------------------------------------------|:------------:|----------------------------------------------:|
-| <span class="badge text-bg-green">apply_filters</span> |     cms      | <span class="badge text-bg-cyan">4.0.0</span> |
+**Return**: `$query`
 
 ```php
-$args = apply_filters('admin_post_<postType>_controllers_index_args', Qr $args)
-```
-**Params**: biến Qr
+use SkillDo\Database\Eloquent\Builder;
 
-**Return**: biến Qr
+add_filter('admin_post_post_controllers_index_args_before_count', function (Builder $query) {
+    return $query->where('featured', 1);
+});
+```
+
+#### Loại trừ cột khi select
+Thay đổi danh sách cột bị loại trừ khỏi câu `select` của bảng danh sách post.
+
+| Hooks                                          | **Loại Hook**                                   | **Platform** |                                   **Version** |
+|------------------------------------------------|-------------------------------------------------|:------------:|----------------------------------------------:|
+| `admin_post_{postType}_select_exclusion`       | <span class="badge text-bg-green">filter</span> |     cms      | <span class="badge text-bg-cyan">8.0.0</span> |
 
 ```php
-function my_custom_admin_post(Qr $args): void
-{
-    return $args;
-}
-add_filter('admin_post_post_controllers_index_args', 'my_custom_admin_post');
+$postSelect = apply_filters('admin_post_'.$postType.'_select_exclusion', [...]);
 ```
 
+#### Form lọc & tìm kiếm
 
-
-#### danh sách post
-Thay danh sách post đã lấy ra
-
-| **Loại Hook**                                          | **Platform** |                                   **Version** |
-|--------------------------------------------------------|:------------:|----------------------------------------------:|
-| <span class="badge text-bg-green">apply_filters</span> |     cms      | <span class="badge text-bg-cyan">7.0.0</span> |
+| Hooks                          | **Loại Hook**                                   | **Platform** |                                   **Version** |
+|--------------------------------|-------------------------------------------------|:------------:|----------------------------------------------:|
+| `admin_post_table_form_filter` | <span class="badge text-bg-green">filter</span> |     cms      | <span class="badge text-bg-cyan">8.0.0</span> |
+| `admin_post_table_form_search` | <span class="badge text-bg-green">filter</span> |     cms      | <span class="badge text-bg-cyan">8.0.0</span> |
 
 ```php
-$objects = apply_filters('admin_post_<postType>_controllers_index_objects', array $objects, Qr $args);
+$form = apply_filters('admin_post_table_form_filter', $form, $postType, $cateType);
+$form = apply_filters('admin_post_table_form_search', $form, $request, $postType, $cateType);
 ```
-**Params**:
-* _$objects (array)_ : danh sách post đã lấy được từ database
-* _$args (Qr)_ : điều kiện lấy post từ database
 
-**Return**: $objects
-
-```php
-function my_custom_admin_post_objects($objects, Qr $args): array
-{
-    return $objects;
-}
-add_filter('admin_post_post_controllers_index_objects', 'my_custom_admin_post_objects', 10, 2);
-```
 ##### admin_post_action_bar_heading
 Tạo ra danh sách buttons dưới tiêu đề trang
 
@@ -195,7 +174,7 @@ Tạo ra danh sách buttons cho column action
 | <span class="badge text-bg-green">apply_filters</span> |     cms      | <span class="badge text-bg-cyan">7.0.0</span> |
 
 ```php
-$buttons = apply_filters('admin_post_table_columns_action', array $buttons, $item);
+$buttons = apply_filters('table_post_columns_action', array $buttons, $item);
 ```
 **Params**:
 * _$buttons (array)_ : danh sách buttton
@@ -208,7 +187,7 @@ function my_custom_admin_post_table_column_action_buttons($buttons, $item): arra
 {
     return $buttons;
 }
-add_filter('admin_post_table_columns_action', 'my_custom_admin_post_table_column_action_buttons', 10, 2);
+add_filter('table_post_columns_action', 'my_custom_admin_post_table_column_action_buttons', 10, 2);
 ```
 
 ### Thêm & Câp nhật post

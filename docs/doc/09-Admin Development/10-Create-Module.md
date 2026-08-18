@@ -25,7 +25,7 @@ Model giúp tương tác với cơ sở dữ liệu (`skilldo_projects`).
 ```php
 namespace MyPlugin\Models;
 
-class Project extends \SkillDo\Cms\Models\Model
+class Project extends \SkillDo\Database\Eloquent\Model
 {
     protected string $table = 'projects';
 

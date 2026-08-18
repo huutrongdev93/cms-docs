@@ -94,38 +94,70 @@ add_action('checkout_after_success', function($order) {
 
 ## Hook Kiểm Tra Trước Khi Đặt Hàng
 
-### `checkout_before_success`
-Được kích hoạt trước khi lưu đơn hàng. Dùng để validate thêm dữ liệu:
+Quy trình đặt hàng đi qua ba hook theo thứ tự:
+
+| Hook | Loại | Mô tả |
+|:---|:---|:---|
+| `cart_checkout_input` | filter | Can thiệp dữ liệu người dùng gửi lên trước khi xử lý |
+| `cart_checkout_process` | action | Chạy ngay trước bước kiểm tra lỗi |
+| `cart_checkout_errors` | filter | Trả về `SKD_Error` để **chặn** đơn hàng |
+
+### `cart_checkout_errors`
+Được gọi trước khi lưu đơn hàng. Trả về một `SKD_Error` thì đơn sẽ bị từ chối và khách nhận được thông báo lỗi:
+
 ```php
-add_filter('checkout_before_success', function($errors, $data) {
+add_filter('cart_checkout_errors', function($errors) {
+
+    // Đã có lỗi từ nơi khác thì giữ nguyên
+    if(is_skd_error($errors)) return $errors;
+
     // Kiểm tra tồn kho
     foreach (Scart::getItems() as $item) {
         $product = Product::find($item['id']);
         if($product && $product->stock < $item['qty']) {
-            $errors[] = 'Sản phẩm "'.$item['name'].'" không đủ hàng!';
+            return new SKD_Error('stock', 'Sản phẩm "'.$item['name'].'" không đủ hàng!');
         }
     }
+
     return $errors;
-}, 10, 2);
+});
 ```
+
+> Hook `checkout_before_success` **không tồn tại** — dùng `cart_checkout_errors` để chặn đơn, và `checkout_after_success` để chạy tác vụ sau khi đơn đã lưu.
 
 ---
 
 ## Form Fields Checkout – Tuỳ biến
 
-Để thêm/xoá trường trong form thanh toán, dùng filter `checkout_billing_fields`:
+Để thêm/xoá trường trong form thanh toán, dùng filter `checkout_fields`:
+
 ```php
-add_filter('checkout_billing_fields', function($fields) {
+add_filter('checkout_fields', function($fields) {
     // Thêm trường mã số thuế
     $fields['tax_code'] = [
-        'label'    => 'Mã số thuế (nếu cần hoá đơn VAT)',
-        'type'     => 'text',
-        'required' => false,
-        'position' => 50,
+        'name'        => 'tax_code',
+        'label'       => 'Mã số thuế (nếu cần hoá đơn VAT)',
+        'type'        => 'text',
+        'id'          => 'billing_tax_code',
+        'priority'    => 50,   // thứ tự hiển thị
+        'start'       => 12,   // số cột grid chiếm chỗ
+        'placeholder' => 'Nhập mã số thuế',
     ];
     return $fields;
 });
 ```
+
+Các key của một field: `name`, `label`, `type`, `id`, `priority` (thứ tự), `start` (số cột grid), `placeholder`.
+
+Ngoài ra còn các hook bao quanh form:
+
+| Hook | Loại | Mô tả |
+|:---|:---|:---|
+| `checkout_before_billing_form` / `checkout_after_billing_form` | action | Chèn HTML trước/sau khối thông tin giao hàng |
+| `checkout_before_invoice_form` / `checkout_after_invoice_form` | action | Chèn HTML trước/sau khối hoá đơn |
+| `checkout_after_submit` | action | Chèn HTML sau nút đặt hàng |
+| `checkout_discounts` | filter | Can thiệp phần giảm giá |
+| `checkout_ajax_order_review` | filter | Can thiệp khối tóm tắt đơn khi cập nhật bằng ajax |
 
 > **Xem thêm**: Để tích hợp cổng thanh toán mới, xem [Gateway/01-Payment-Gateway.md](../../Gateway/01-Payment-Gateway.md).
 > Để tích hợp đơn vị vận chuyển mới, xem [Gateway/02-Shipping-Gateway.md](../../Gateway/02-Shipping-Gateway.md).
