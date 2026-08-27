@@ -29,6 +29,8 @@
 
 <span class="badge text-bg-red">Fix</span> Page Builder — element rỗng vẫn bấm chọn được, context menu hiện đúng tên element, element con giữ nguyên style, và cột trong hàng có khoảng cách không còn tràn ngang.
 
+<span class="badge text-bg-red">Fix</span> Trình quản lý tệp — tải lên video và file dung lượng lớn nay ra đúng một file hoàn chỉnh, và giới hạn mỗi file nâng lên 100 MB.
+
 <span class="badge text-bg-red">Fix</span> Panel tìm kiếm của theme hiển thị trên cả desktop lẫn mobile.
 
 <span class="badge text-bg-red">Fix</span> Widget khu vực `footer-top` hiển thị đúng vị trí.
