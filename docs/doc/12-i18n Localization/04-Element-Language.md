@@ -33,13 +33,53 @@ Quy tắc đặt tên namespace: lấy phần đường dẫn **sau thư mục `
 | `elements/auth-button/style1/language` | `e-auth-button.style1` |
 | `elements/translate/language` | `e-translate` |
 
-> Element của **theme con** được nạp sau nên tự động ghi đè element cùng đường dẫn của theme cha.
->
 > Namespace chỉ được đăng ký cho element **đã khai trong `elements/elements.json`** — tạo thư mục `language/` mà quên đăng ký element thì namespace không tồn tại.
 
 ---
 
-## 3. Ví dụ đầy đủ
+## 3. Theme con ghi đè ngôn ngữ element của theme cha
+
+Mỗi namespace element được nạp từ **hai** thư mục, theo thứ tự ưu tiên tăng dần:
+
+1. Thư mục `language/` cạnh file `.widget.php` của element (ở theme cha, theme con, hoặc trong plugin).
+2. Thư mục **cùng đường dẫn tương đối** bên `views/theme-child/`.
+
+Hai thư mục này được **trộn theo từng key** (xem [cơ chế Merge](./01-Core-Language.md)), nên theme con chỉ cần khai lại đúng chuỗi muốn sửa.
+
+Điểm đáng giá nhất: bạn **không cần khai lại element trong `elements.json`** của theme con chỉ để đổi vài chữ. Chỉ cần tạo đúng thư mục ngôn ngữ theo đường dẫn tương đối:
+
+```text
+views/theme-store/elements/intro-banner/
+├── intro-banner.widget.php
+└── language/vi/main.php              <-- bản gốc: title, heading_label, readmore…
+
+views/theme-child/elements/intro-banner/
+└── language/vi/main.php              <-- CHỈ khai key muốn đổi, không cần .widget.php
+```
+
+`views/theme-child/elements/intro-banner/language/vi/main.php`:
+```php
+<?php
+return [
+    'readmore' => 'Tìm hiểu thêm',   // đổi mỗi chuỗi này
+];
+```
+
+Kết quả: `trans('e-intro-banner::main.title')` vẫn lấy của theme cha, riêng `trans('e-intro-banner::main.readmore')` lấy của theme con.
+
+Cách này cũng áp dụng được cho element **do plugin cung cấp**: tạo `views/theme-child/elements/<tên-element>/language/{locale}/` là dịch lại được chuỗi của element đó mà không phải sửa file trong plugin.
+
+:::note Khi nào element bị thay hẳn thay vì merge
+Nếu theme con khai lại element **cùng key** trong `elements/elements.json`, đó là thay hẳn element (class + view + ngôn ngữ đều lấy của theme con) — lúc này chỉ còn một thư mục ngôn ngữ nên không có gì để merge.
+:::
+
+:::warning Tạo thư mục ngôn ngữ mới phải xoá cache
+Lần đầu tạo thư mục `language/` bên theme con phải bấm xoá cache ở admin thì namespace mới được quét lại và đăng ký.
+:::
+
+---
+
+## 4. Ví dụ đầy đủ
 
 **Bước 1 — Tạo file ngôn ngữ** cạnh file widget:
 
@@ -141,7 +181,7 @@ class IntroBannerElement extends Element
 
 ---
 
-## 4. Nội dung người dùng nhập (`'language' => true`)
+## 5. Nội dung người dùng nhập (`'language' => true`)
 
 Hai loại nội dung cần phân biệt:
 

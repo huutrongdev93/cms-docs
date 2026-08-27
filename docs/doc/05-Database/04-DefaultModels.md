@@ -322,14 +322,26 @@ foreach ($items as $item) {
 
 **Mô tả:** Model nội bộ của hệ thống, lưu trữ bảng mapping giữa `slug` URL và Controller xử lý tương ứng. Được quản lý tự động bởi Trait `ModelRoute` — **thông thường không cần thao tác trực tiếp**.
 
+Từ **8.2.0** bảng có thêm cột `language`: `NULL` = slug dùng chung mọi ngôn ngữ (toàn bộ dữ liệu
+trước 8.2.0), `'en'` = slug chỉ dành cho tiếng Anh. Một đối tượng vì thế có thể có **nhiều** dòng.
+
 ```php
 use SkillDo\Cms\Models\Router;
 
-// Tìm route theo slug
-$route = Router::where('slug', 'san-pham-a')->first();
-echo $route->controller; // Ecommerce\Controllers\Web\ProductController
-echo $route->method;     // detail
+// Slug của một đối tượng theo từng ngôn ngữ — khoá '*' là slug dùng chung
+Router::localizedSlugs('products', 12);   // ['*' => 'ao-so-mi', 'en' => 'blue-shirt']
+
+// Dòng route của một đối tượng ở một ngôn ngữ (lùi về dòng dùng chung nếu chưa dịch)
+Router::findForObject('products', 12, 'en');
 ```
+
+:::warning Đừng tra route bằng `where('slug', ...)` nữa
+Một slug giờ có thể ứng với nhiều dòng, và hai đối tượng khác nhau được phép dùng chung một slug
+ở hai ngôn ngữ khác nhau. Việc phân giải URL công khai do
+`SkillDo\Cms\Routing\SlugResolver` đảm nhiệm; muốn biết một đối tượng render bằng controller nào
+thì dùng `Router::findAnyForObject()`. Xem
+[Đường dẫn riêng cho từng ngôn ngữ](../12-i18n%20Localization/05-Slug-Per-Language.md).
+:::
 
 ---
 

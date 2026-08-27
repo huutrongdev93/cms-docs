@@ -15,7 +15,8 @@ Class `Url` cung cấp các helper tĩnh để tạo và xử lý URL trong Skil
 | [Url::slug](#urlslug)       |   [Url::isYoutube](#urlisyoutube)     | [Url::forgot](#urlforgot)     |
 | [Url::fileManager](#urlfilemanager) | [Url::language](#urllanguage) | [Url::download](#urldownload) |
 | [Url::path](#urlpath)       |       [Url::asset](#urlasset)         | [Url::tag](#urltag)           |
-| [Url::pathHash](#urlpathhash) |     [Url::search](#urlsearch)       |                               |
+| [Url::pathHash](#urlpathhash) |     [Url::search](#urlsearch)       | [Url::localized](#urllocalized) |
+|                             |                                       | [Url::localizedSlugs](#urllocalizedslugs) |
 
 
 ### `Url::is()`
@@ -90,6 +91,33 @@ Url::permalink('san-pham-a')
 // Ngôn ngữ mặc định: https://domain.com/san-pham-a
 // Ngôn ngữ en:       https://domain.com/en/san-pham-a
 ```
+
+**Đây là hàm dùng cho hầu hết mọi trường hợp** — link bài viết, sản phẩm, danh mục ngay trong
+trang. Từ 8.2.0 mỗi ngôn ngữ có thể có slug riêng, nhưng cách viết **không đổi**: cột `slug` của
+đối tượng đã được thay theo ngôn ngữ đang xem, nên cùng một dòng code cho ra URL đúng:
+
+```php
+// đang xem tiếng Việt
+Url::permalink($post->slug);   // https://domain.com/vi/gioi-thieu
+
+// đang xem tiếng Anh — CÙNG dòng code đó
+Url::permalink($post->slug);   // https://domain.com/en/about-us
+```
+
+:::warning Không dùng được để dựng URL cho ngôn ngữ KHÁC
+`permalink()` luôn dựng theo `Language::current()`. Đưa nó vào vòng lặp qua các ngôn ngữ sẽ ra
+**cùng một URL** cho tất cả:
+
+```php
+// ❌ Bộ chuyển ngôn ngữ viết thế này sẽ trỏ mọi ngôn ngữ về cùng một trang
+foreach (Language::listKey() as $lang) {
+    $url = Url::permalink($post->slug);
+}
+```
+
+Cần URL của ngôn ngữ khác thì dùng [`Url::language()`](#urllanguage),
+[`Url::localized()`](#urllocalized) hoặc [`Url::localizedSlugs()`](#urllocalizedslugs).
+:::
 
 ### `Url::path()`
 Hàm `Url::path` trả về đường dẫn tính từ **gốc site, KHÔNG kèm tên miền**.
@@ -241,13 +269,62 @@ Url::slug()
 ```
 
 ### `Url::language()`
-Hàm `Url::language` trả về URL của trang hiện tại nhưng chuyển sang ngôn ngữ khác.
+Hàm `Url::language` trả về URL của **chính trang hiện tại** nhưng ở một ngôn ngữ khác. Đây là hàm
+dành cho bộ chuyển ngôn ngữ.
 
 ```php
 // Đang ở: https://domain.com/san-pham-a
 Url::language('en')
 // https://domain.com/en/san-pham-a
 ```
+
+Từ **8.2.0**, khi mỗi ngôn ngữ có slug riêng, hàm này tra theo **đối tượng đang hiển thị** chứ
+không đổi tiền tố trên URL hiện tại nữa:
+
+```php
+// Đang ở: https://domain.com/vi/gioi-thieu
+Url::language('en')
+// https://domain.com/en/about-us      (slug tiếng Anh của chính trang đó)
+```
+
+Đối tượng được lấy từ `Cms::getData('object')` rồi `Cms::getData('category')`; plugin có thể chỉ
+định qua filter `url_language_object`. Trang không gắn với đối tượng nào (trang chủ, tìm kiếm,
+tài khoản) vẫn dùng cách đổi tiền tố như cũ.
+
+### `Url::localized()`
+Hàm `Url::localized` trả về URL tuyệt đối của **một đối tượng** ở **tất cả** các ngôn ngữ. Dùng cho
+thẻ `hreflang`, sitemap và canonical đa ngữ — những nơi cần liệt kê mọi ngôn ngữ cùng lúc.
+
+```php
+Url::localized($post)
+// [
+//   'vi' => 'https://domain.com/vi/gioi-thieu',
+//   'en' => 'https://domain.com/en/about-us',
+// ]
+```
+
+Ngôn ngữ chưa dịch slug sẽ **tự lùi về slug dùng chung**, nên kết quả luôn là URL dùng được.
+Trả về mảng rỗng nếu tham số không phải đối tượng có route (`page`, `post`, `products`…).
+
+### `Url::localizedSlugs()`
+Giống `Url::localized()` nhưng trả về **slug thô, chưa kèm tiền tố ngôn ngữ**. Dùng khi bạn cần tự
+ghép URL theo quy ước riêng.
+
+```php
+Url::localizedSlugs($post)
+// ['vi' => 'gioi-thieu', 'en' => 'about-us']
+```
+
+:::tip Chọn hàm nào
+| Bạn đang làm gì | Dùng |
+|---|---|
+| Link ngay trong trang | [`Url::permalink()`](#urlpermalink) |
+| Bộ chuyển ngôn ngữ | `Url::language()` |
+| hreflang / sitemap / canonical | `Url::localized()` |
+| Tự ghép URL từ slug | `Url::localizedSlugs()` |
+
+Chi tiết cơ chế: [Đường dẫn riêng cho từng ngôn ngữ](../12-i18n%20Localization/05-Slug-Per-Language.md).
+:::
 
 ### `Url::download()`
 Hàm `Url::download` tải một file từ URL về server (HTTP client, timeout 120 giây, ghi trực tiếp xuống file) và lưu vào đường dẫn chỉ định. Trả về `true` nếu thành công, `false` nếu response không thành công; ném lại `Exception` nếu có lỗi kết nối.

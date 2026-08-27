@@ -11,6 +11,59 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ`  |
 
+### version 8.2.0 - 27.08.2026
+
+<span class="badge text-bg-green">Add</span> Đa ngôn ngữ — mỗi ngôn ngữ có thể dùng một đường dẫn riêng thay vì chung một slug. Site nâng cấp lên giữ nguyên toàn bộ đường dẫn cũ, không có URL nào tự đổi; muốn dùng thì bật ở **Cấu hình hệ thống → Đường dẫn** (tab chỉ hiện trên site nhiều ngôn ngữ), tại đó cũng có công cụ sinh slug cho dữ liệu đang có.
+
+<span class="badge text-bg-green">Add</span> `Url::localized()` và `Url::localizedSlugs()` để lấy đường dẫn của một đối tượng ở ngôn ngữ khác — dùng cho language switcher, hreflang và sitemap. Nếu bạn đang dựng link bằng cách đổi tiền tố ngôn ngữ trên đường dẫn hiện tại thì nên chuyển sang hai hàm này, vì cách cũ chỉ đúng khi mọi ngôn ngữ dùng chung slug.
+
+<span class="badge text-bg-green">Add</span> `FormAdmin::slugField()` — ô nhập đường dẫn dành cho form quản trị, tự tách thành từng ngôn ngữ khi tính năng ở trên được bật. Plugin muốn có mặt trong công cụ sinh slug thì đăng ký qua filter `slug_backfill_modules`.
+
+<span class="badge text-bg-green">Add</span> Trạng thái website: công khai / đóng / đóng riêng trang chủ / mở bằng mật khẩu. Trang thông báo bảo trì đổi được bằng filter `cms_maintenance_html`. Khu vực quản trị, trang cài đặt và trang cập nhật luôn vào được kể cả khi site đang đóng. <span class="badge text-bg-yellow">Hòa</span>
+
+<span class="badge text-bg-green">Add</span> Page Builder — bảng cấu trúc trang (Ctrl+I): xem cây hàng / cột / element, tìm nhanh và thêm hàng ngay trong bảng, khỏi phải rà bằng mắt trong khung xem thử.
+
+<span class="badge text-bg-blue">Update</span> Cache — viết driver riêng giờ chỉ cần cài `has` / `get` / `save` / `delete` / `flush`, những thứ suy ra được đã có sẵn ở lớp cha.
+
+<span class="badge text-bg-blue">Update</span> Tăng cường kiểm tra quyền và làm sạch dữ liệu ở khu vực quản trị
+
+<span class="badge text-bg-red">Fix</span> Page Builder — element rỗng vẫn bấm chọn được, context menu hiện đúng tên element, element con giữ nguyên style, và cột trong hàng có khoảng cách không còn tràn ngang.
+
+<span class="badge text-bg-red">Fix</span> Panel tìm kiếm của theme hiển thị trên cả desktop lẫn mobile.
+
+<span class="badge text-bg-red">Fix</span> Widget khu vực `footer-top` hiển thị đúng vị trí.
+
+<span class="badge text-bg-red">Fix</span> Lỗi không xóa được menu <span class="badge text-bg-yellow">Tâm</span>
+
+> Bản này có thay đổi cơ sở dữ liệu. Cài qua trình cập nhật trong quản trị thì migration chạy tự động; nếu bung mã nguồn đè thủ công, vào `/upgrade` một lần để hoàn tất.
+
+### version 8.1.8 - 25.08.2026
+
+<span class="badge text-bg-red">Fix</span> Page Builder — CSS xem trước bị ngược thứ tự với website chạy thật
+
+<span class="badge text-bg-red">Fix</span> Page Builder — Element con trong container mất toàn bộ style
+
+<span class="badge text-bg-red">Fix</span> Page Builder — Mở khóa admin quyền sắp xếp lại nội dung <span class="badge text-bg-yellow">Tâm</span>
+
+<span class="badge text-bg-green">Add</span> Element — thêm hook `element_aos_options` cho phép mở rộng class hiệu ứng <span class="badge text-bg-yellow">Tâm</span>
+
+
+### version 8.1.7 - 19.08.2026
+
+<span class="badge text-bg-green">Add</span> Thêm cơ chế nạp thêm `theme-child/language` vào namespace `theme::`
+
+<span class="badge text-bg-green">Add</span> Thêm field `letterSpacing` vào field Typography
+
+<span class="badge text-bg-green">Add</span> Mail - Bổ sung `SkillDo\Support\Mail::attach` để đính kèm file khi gửi mail
+
+<span class="badge text-bg-red">Fix</span> Page Builder - Fix lỗi class CSS tuỳ chỉnh ở tab nâng cao và hiệu ứng cuộn không có tác dụng
+
+<span class="badge text-bg-red">Fix</span> Page Builder - Fix lỗi row xung đột `background` trong `boxStyle` và `background`
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi Option::get mất `$default` khi option không tồn tại
+
+<span class="badge text-bg-red">Fix</span> Fix lỗi xóa hàng loạt ở table Page/Post/Tag
+
 ### version 8.1.6 - 17.08.2026
 
 <span class="badge text-bg-red">Fix</span> Page Builder — hiệu ứng khi cuộn (AOS) cho mọi element

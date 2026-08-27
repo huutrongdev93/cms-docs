@@ -66,8 +66,7 @@ echo trans('skd-seo::admin.save');
 ### Tại sao Cú Pháp Này Hiệu Quả?
 
 1. **Tuyệt đối không đụng hàng:** Giả sử CMS Core cũng có `admin.php->title` là *Thiết lập chung*, và bạn dùng `trans('admin.title')`. Nhờ thêm namespace của Plugin (`trans('skd-seo::admin.title')`), hệ thống nhận diện việc tìm kiếm nằm ở Thư mục Plugin bạn chứ không lộn xộn vào Admin CMS Core.
-2. **Cho phép Theme tự ghi đè Plugin:** Tính năng vượt trội của Framework là khi Theme của dự án gọi lệnh `trans('skd-seo::admin.title')` nhưng Frontend muốn chữ này biến thành "Thiết lập SEO Khách hàng" chứ không dùng chữ do tác giả Plugin viết ra, Theme CÓ QUYỀN ghi đè! 
-- *SkillDo Framework cho phép tìm tệp `vi/skd-seo/admin.php` ngay bên trong thư mục `language/` của Theme của bạn trước khi đi tới thư mục Plugin.*
+2. **Theme vẫn ghi đè được chuỗi của Plugin:** khi dự án muốn `trans('skd-seo::admin.title')` hiển thị "Thiết lập SEO Khách hàng" thay cho chữ do tác giả Plugin viết, Theme có thể chồng thêm một tầng ngôn ngữ lên namespace của Plugin — xem mục 5.
 
 ---
 
@@ -92,3 +91,46 @@ class CustomPackageServiceProvider extends ServiceProvider {
 ```
 
 Và giờ bạn dùng thoải mái: `trans('custom-pkg::file.key')`
+
+
+---
+
+## 5. Ghi đè chuỗi của Plugin từ Theme
+
+Namespace của Plugin **không bị khoá ở một thư mục**. `addNamespace()` chồng thêm thư mục chứ không thay thế, và thư mục đăng ký sau có ưu tiên cao hơn. Vì file trùng tên được [trộn theo từng key](./01-Core-Language.md), Theme chỉ cần khai đúng những chuỗi muốn đổi.
+
+Cách làm: đăng ký thêm một thư mục vào **đúng namespace của Plugin**, ở nơi chạy sau `LanguageServiceProvider` — ví dụ file bootstrap của theme con.
+
+`views/theme-child/bootstrap/theme-child.php`:
+```php
+<?php
+
+use SkillDo\Support\Path;
+
+// Chồng thêm một tầng ngôn ngữ lên namespace của plugin skd-seo
+app('translator')->addNamespace('skd-seo', Path::themeChild('language/skd-seo'));
+app('translator')->buildFileLoader();
+```
+
+`views/theme-child/language/skd-seo/vi/admin.php`:
+```php
+<?php
+return [
+    // Chỉ khai key muốn đổi, các key còn lại vẫn lấy của plugin
+    'title' => 'Thiết lập SEO Khách hàng',
+];
+```
+
+Kết quả:
+```php
+trans('skd-seo::admin.title');  // 'Thiết lập SEO Khách hàng'  <- của theme
+trans('skd-seo::admin.save');   // 'Lưu thiết lập SEO'          <- vẫn của plugin
+```
+
+Nếu bạn có Service Provider riêng cho theme/module, dùng `loadTranslationsFrom()` như mục 4 cũng cho kết quả y hệt — miễn là nó chạy **sau** khi plugin đã đăng ký namespace của mình.
+
+:::warning
+Đường dẫn thư mục phải theo đúng cấu trúc `<thư-mục>/<locale>/<tên-file>.php`, tức là `language/skd-seo/vi/admin.php` chứ không phải `language/vi/skd-seo/admin.php`.
+
+Lần đầu tạo thư mục này phải bấm xoá cache ở admin thì hệ thống mới quét lại.
+:::
