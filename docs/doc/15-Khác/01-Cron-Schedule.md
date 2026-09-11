@@ -12,11 +12,16 @@ Vào giao diện Cronjob của Cpanel, hoặc Terminal dòng lệnh gõ `crontab
 
 ```bash
 # Cron chạy trên CÙNG server với CMS (gọi localhost — không cần token)
-*/5 * * * * wget -q -O - http://127.0.0.1/schedule-run > /dev/null 2>&1
+# Header Host để máy chủ web chọn đúng site khi trên máy có nhiều website.
+*/5 * * * * wget -q -O - --header="Host: {domain-cua-ban.com}" http://127.0.0.1/schedule-run > /dev/null 2>&1
 
 # Cron gọi từ máy khác / qua domain — BẮT BUỘC kèm token
 */5 * * * * wget -q -O - "https://{domain-cua-ban.com}/schedule-run?token={SCHEDULE_RUN_TOKEN}" > /dev/null 2>&1
 ```
+
+> **Bàn giao cho khách thì chỉ đường sang admin.** Vào **Cấu hình hệ thống → Cronjob**: trang đó in sẵn câu lệnh gọi qua tên miền với đúng địa chỉ site và điền luôn token thật nếu `.env` đã có (chưa có thì cảnh báo ngay tại chỗ). Trang admin **cố ý chỉ hiện một câu lệnh** để khách khỏi phải chọn — bản gọi thẳng `127.0.0.1` ở trên dành cho dev cài trực tiếp trên máy chủ và chỉ có trong tài liệu này.
+>
+> **Bẫy hay gặp:** gọi `wget https://ten-mien-cua-ban.com/schedule-run` từ chính máy chủ **không** được coi là localhost — tên miền phân giải ra IP công cộng nên `REMOTE_ADDR` là IP đó, và cron nhận `403` âm thầm mỗi lần chạy. Muốn dùng tên miền thì phải kèm token; muốn khỏi token thì phải gọi thẳng `127.0.0.1` như câu lệnh đầu.
 
 > **Lưu ý (xác thực — từ v8.0.2):** Route được đăng ký trong `routes/api.php`, handler là `App\Controllers\Admin\ScheduleController@run`. Endpoint **không còn mở công khai**: chỉ chấp nhận request từ **localhost** (`127.0.0.1` / `::1`), hoặc request kèm token khớp với biến môi trường **`SCHEDULE_RUN_TOKEN`** trong `.env` — truyền qua header `X-Schedule-Token` hoặc query `?token=...`. Nếu chưa cấu hình token thì chỉ localhost được phép; request không hợp lệ nhận `403 Forbidden`.
 >
@@ -70,6 +75,54 @@ class ScheduledTasksProvider extends ServiceProvider {
     }
 }
 ```
+
+---
+
+## 2b. Khai Báo Tác Vụ Để Người Bàn Giao Website Biết Site Cần Cronjob
+
+`Schedule::call()` chỉ giữ một closure. Nhìn vào bộ lập lịch không ai biết tác vụ đó của plugin nào, làm gì, và hỏng ra sao nếu máy chủ quên cài cron. Vì vậy **mọi plugin có đăng ký lịch chạy đều phải khai báo qua filter `cms_cronjob_tasks`**. Danh sách khai báo hiện thành bảng ở **Cấu hình hệ thống → Cronjob**, kèm cảnh báo "website này cần cronjob".
+
+Đặt `add_filter` ngay cạnh chỗ `Schedule::call()` trong `boot()` của Service Provider — sửa lịch là thấy luôn dòng phải sửa theo:
+
+```php
+public function boot(): void
+{
+    Schedule::call([ReleaseExpiredHold::class, 'handle'])->everyFiveMinutes();
+
+    Schedule::call([ReminderCheckin::class, 'handle'])->dailyAt('09:00');
+
+    add_filter('cms_cronjob_tasks', [static::class, 'cronjobTasks']);
+}
+
+public static function cronjobTasks($tasks): array
+{
+    $tasks['hotel-booking:release-expired-hold'] = [
+        'label'       => 'Trả phòng của đơn giữ chỗ quá hạn',
+        'description' => 'Thiếu cron thì phòng bị khoá vĩnh viễn, website báo hết phòng trong khi thực tế còn trống.',
+        'source'      => 'Plugin Đặt phòng khách sạn',
+        'interval'    => 'Mỗi 5 phút',
+    ];
+
+    return $tasks;
+}
+```
+
+| Khóa | Bắt buộc | Nội dung |
+|---|---|---|
+| `label` | Có | Tên tác vụ. Mục thiếu `label` bị bỏ qua, không vẽ ra dòng trống |
+| `description` | Không | **Điều gì hỏng nếu không có cron** — đây mới là thứ người bàn giao cần đọc, đừng chỉ chép lại tên hàm |
+| `source` | Không | Plugin/giao diện nào sinh ra tác vụ |
+| `interval` | Không | Tần suất viết cho người đọc ("Mỗi 5 phút", "Hằng ngày 09:00") |
+
+Khóa của mảng nên đặt dạng `{id-plugin}:{ten-tac-vu}` để hai lần đăng ký không nhân đôi dòng. Một plugin có nhiều tác vụ thì khai mỗi tác vụ một dòng, đừng gộp — bảng này là chỗ duy nhất người vận hành nhìn thấy chúng. Truyền thẳng một chuỗi thay cho mảng cũng được, khi đó chuỗi là `label`.
+
+Trang cronjob còn đối chiếu số dòng khai báo với số event thật trong bộ lập lịch. Nhiều event hơn số dòng thì trang báo "có plugin quên khai báo" — dùng dấu hiệu này để soát lại sau khi thêm lịch mới.
+
+**Nhãn báo ở trang Cấu hình hệ thống.** Khi có ít nhất một tác vụ được khai báo, mục *Cronjob* mang thêm một nhãn nhỏ: đỏ **Cần cài cronjob** nếu chưa thấy cron gọi tới, xanh kèm số tác vụ nếu cron đang chạy. Trạng thái này dựa trên nhịp tim mà `ScheduleController@run` ghi vào cache mỗi lần được gọi; quá 15 phút không thấy nhịp thì coi như chưa chạy. Nhờ vậy người bàn giao website nhìn trang Cấu hình hệ thống là biết còn thiếu gì, không phải mở từng mục.
+
+Nhãn này là khoá `badge` của mảng tab — mọi mục trong `admin_system_tabs` đều dùng được, trả về HTML (thường là `Admin::badge`) khi có việc cần làm và chuỗi rỗng khi không.
+
+Điểm gọi filter nằm ở `Admin\Modules\System\Cronjob::tasks()`.
 
 ---
 

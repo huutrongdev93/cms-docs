@@ -11,6 +11,82 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ`  |
 
+### version 8.2.4 - 11.09.2026
+
+<span class="badge text-bg-green">Add</span> Cấu hình hệ thống → Cronjob nay cho biết cron của máy chủ có đang chạy hay không và lần chạy gần nhất là lúc nào, kèm câu lệnh đặt cron dựng sẵn để sao chép. Trang cũng liệt kê các tác vụ định kỳ đang có; plugin và giao diện tự khai tác vụ của mình qua filter `cms_cronjob_tasks`.
+
+<span class="badge text-bg-green">Add</span> Mỗi mục trong trang Cấu hình hệ thống hiển thị được một nhãn nhỏ để báo mục đó đang cần bạn xử lý. Khai thêm khoá `badge` khi đăng ký tab qua filter `admin_system_tabs`.
+
+<span class="badge text-bg-blue">Update</span> Ảnh trong khu quản trị luôn giữ đúng tỉ lệ. Việc tự kèm chiều rộng và chiều cao thật của file, thêm ở 8.2.3, nay chỉ áp dụng cho giao diện ngoài site, và cũng được bỏ qua khi bạn đã tự khai kích thước trong `style` của thẻ ảnh.
+
+<span class="badge text-bg-blue">Update</span> Giao diện dùng tính năng tự kèm kích thước ảnh cần có quy tắc `img { height: auto }`. Theme mặc định đã có sẵn; theme con nào bỏ quy tắc này thì nên thêm lại, hoặc đặt `dimensions` thành `false` trong `config/media.php`.
+
+<span class="badge text-bg-red">Fix</span> Mở một đường dẫn trang chi tiết không tồn tại nay hiển thị trang 404 bình thường, kể cả khi giao diện có gắn thêm hook theo từng loại trang.
+
+### version 8.2.3 - 09.09.2026
+
+<span class="badge text-bg-green">Add</span> Ảnh do `Image::` sinh ra nay tự kèm chiều rộng và chiều cao thật của file, nên trình duyệt chừa sẵn chỗ và trang không bị đẩy khi ảnh tải xong. Ảnh nằm trên CDN hoặc tên miền khác thì không đọc được, bạn tự khai bằng `->size()` hoặc `->width()->height()`. Muốn tắt hẳn thì đặt `dimensions` thành `false` trong `config/media.php`.
+
+<span class="badge text-bg-green">Add</span> Hai method mới cho ảnh: `->eager()` cho ảnh nằm trong màn hình đầu (banner, ảnh đại diện trang chi tiết) để trình duyệt tải trước, và `->lazy()` cho phần còn lại. Mặc định vẫn là lazy nên bạn chỉ cần gọi `->eager()` ở đúng vài chỗ.
+
+<span class="badge text-bg-green">Add</span> Ba header mới có thể cấu hình trong `config/security-headers.php`: `referrer_policy`, `strict_transport_security` và `dns_prefetch_control`. Header HTTPS chỉ được gửi khi site thật sự chạy qua HTTPS.
+
+<span class="badge text-bg-blue">Update</span> Ảnh dùng lazy loading sẵn có của trình duyệt thay vì thư viện JavaScript. Cách khai cũ `->attributes(['lazy' => 'default'])` vẫn chạy như trước, element và theme của bạn không phải sửa gì.
+
+<span class="badge text-bg-blue">Update</span> Giao diện ngoài nhẹ hơn khoảng 300 KB JavaScript: jQuery UI, es6-shim và thư viện lazy load đã được gỡ vì không còn đoạn mã nào gọi tới. Theme con hay plugin nào thật sự cần thì nạp lại trong hook `theme_custom_assets`.
+
+<span class="badge text-bg-blue">Update</span> Người dùng phóng to được trang trên điện thoại. Trang nào bắt buộc phải khoá thì ghi đè riêng cho trang đó qua filter `theme_head_meta_tags`.
+
+<span class="badge text-bg-blue">Update</span> Trang kết quả tìm kiếm không còn được đưa vào chỉ mục của công cụ tìm kiếm, nhưng liên kết trong kết quả vẫn được đi tiếp. Áp dụng kể cả khi site không cài plugin SEO.
+
+<span class="badge text-bg-blue">Update</span> Request của khách chưa đăng nhập không còn tạo phiên làm việc trên máy chủ. Ít rác trên đĩa hơn, và CDN cache được các trang công khai như `sitemap.xml`.
+
+<span class="badge text-bg-red">Fix</span> Page Builder — khoảng cách, nền, bo góc và khoảng hở của hàng và cột hiển thị ngoài site đúng như bạn thấy trong trình dựng. Bản cập nhật tự dựng lại các bản CSS đã lưu; nếu bạn bung mã nguồn đè thay vì cập nhật qua quản trị thì vào `/upgrade` một lần. <span class="badge text-bg-yellow">Tâm</span>
+
+<span class="badge text-bg-red">Fix</span> View để lại file biên dịch rỗng — thường gặp ngay sau khi cập nhật — nay tự biên dịch lại thay vì hiển thị khối trắng.
+
+<span class="badge text-bg-red">Fix</span> Chính sách cache của trang chi tiết do đúng controller của trang đó quyết định, không còn tầng luật thứ hai đè lên.
+
+### version 8.2.2 - 07.09.2026
+
+<span class="badge text-bg-green">Add</span> Page Builder — hai filter mới cho plugin tự dựng trình dựng riêng: `element_builder_permissions` để mở/khoá quyền thao tác, và `builder_index_layouts` để lọc khuôn của mình khỏi danh sách khuôn giao diện của theme. Hook nhớ tự giới hạn theo route của bạn.
+
+<span class="badge text-bg-green">Add</span> Theme — bảng dài trong nội dung bài viết và mô tả sản phẩm tự cuộn ngang trên điện thoại. Element hoặc ajax chèn HTML mới thì gọi `Theme.contentTable.refresh(scope)` để áp lại.
+
+<span class="badge text-bg-green">Add</span> Theme — kiểu chữ mặc định cho vùng nội dung soạn bằng trình soạn thảo: cỡ tiêu đề, khoảng cách và viền bảng đã cân đối sẵn. Mọi chỉnh tay trong trình soạn thảo vẫn được ưu tiên. Đổi tông màu bảng trong theme-child qua các biến `--content-line`, `--content-head-bg`, `--content-zebra-bg`.
+
+<span class="badge text-bg-blue">Update</span> Site cài mới luôn dùng InnoDB cho toàn bộ bảng, không còn phụ thuộc mặc định của máy chủ. Site cũ đang nằm ở MyISAM được chuyển dần sang InnoDB mỗi lần cập nhật; bảng quá lớn sẽ bỏ qua để bạn chạy tay ngoài giờ. Muốn ép engine khác thì khai `DB_ENGINE` trong `.env`.
+
+<span class="badge text-bg-blue">Update</span> Đăng nhập qua API — token làm mới nay theo từng phiên đăng nhập, nên xử lý một phiên bất thường không còn đăng xuất các thiết bị khác của cùng tài khoản.
+
+<span class="badge text-bg-red">Fix</span> Page Builder — bản nháp tự động lưu đúng ngay từ lần đầu của mỗi khu vực, và không còn ảnh hưởng tới bản nháp của khu vực khác.
+
+<span class="badge text-bg-red">Fix</span> Page Builder — dán element vào bên trong vùng chứa của element cha (hộp sidebar, hộp nội dung, tab) nay vào đúng vị trí.
+
+<span class="badge text-bg-red">Fix</span> Quản trị — một tooltip lỗi do theme hoặc plugin ghi đè cấu hình Bootstrap không còn làm hỏng form vừa nạp bằng ajax.
+
+<span class="badge text-bg-red">Fix</span> Theme — nút gọi ở thanh điều hướng trên điện thoại quay số được kể cả khi số hotline nhập kèm dấu cách, và tự ẩn khi chưa khai số.
+
+### version 8.2.1 - 03.09.2026
+
+<span class="badge text-bg-blue">Update</span> Tham số thứ ba của các field trong form quản trị là **vị trí** của field, không phải giá trị. muốn đặt giá trị thì dùng `$form->setFieldValue($name, $value)`.
+
+<span class="badge text-bg-blue">Update</span> `Cms::version()` luôn trả về phiên bản mã nguồn đang chạy, kể cả ngay sau khi cập nhật.
+
+<span class="badge text-bg-red">Fix</span> Page Builder — bấm **Xuất bản** không còn làm theme mất font, logo hay đổi màu cho tới lần dọn cache kế tiếp.
+
+<span class="badge text-bg-red">Fix</span> Thiết lập lưu ở **Giao diện** giữ nguyên sau mỗi lần dọn cache.
+
+<span class="badge text-bg-red">Fix</span> Nâng phiên bản mã nguồn mà bản đó không có thay đổi cơ sở dữ liệu thì không còn bị đưa sang trang `/upgrade`.
+
+<span class="badge text-bg-red">Fix</span> Trang danh sách trong quản trị dùng được trên điện thoại: phân trang tự xuống dòng, bảng cuộn ngang thay vì vỡ chữ.
+
+<span class="badge text-bg-red">Fix</span> Field ngày/giờ trong form quản trị lưu và hiển thị lại đúng với định dạng `dd/mm/yyyy`.
+
+<span class="badge text-bg-red">Fix</span> `AdminMenu::add()` và `addSub()` giữ nguyên URL có chữ `admin/` nằm ở giữa đường dẫn, menu không còn trỏ sai.
+
+<span class="badge text-bg-red">Fix</span> Nút xác nhận hàng loạt trong bảng dữ liệu gửi kèm khoá `id` bên cạnh `data`.
+
 ### version 8.2.0 - 27.08.2026
 
 <span class="badge text-bg-green">Add</span> Đa ngôn ngữ — mỗi ngôn ngữ có thể dùng một đường dẫn riêng thay vì chung một slug. Site nâng cấp lên giữ nguyên toàn bộ đường dẫn cũ, không có URL nào tự đổi; muốn dùng thì bật ở **Cấu hình hệ thống → Đường dẫn** (tab chỉ hiện trên site nhiều ngôn ngữ), tại đó cũng có công cụ sinh slug cho dữ liệu đang có.
