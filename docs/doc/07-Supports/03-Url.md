@@ -186,14 +186,16 @@ Url::search('áo thun', 'product')
 > Cùng quy ước với `Url::tag()`: đường dẫn tuyệt đối theo gốc site + tự kèm tiền tố ngôn ngữ, để form tìm kiếm đặt ở header luôn trỏ đúng dù đang đứng ở trang có URL sâu bao nhiêu đoạn.
 
 ### `Url::fileManager()`
-Hàm `Url::fileManager` trả về URL của trình quản lý file (Responsive File Manager) dùng trong admin. Nhận thêm chuỗi query params; tự động thêm `callback=responsive_filemanager_callback` nếu chưa có.
+Hàm `Url::fileManager` trả về URL dialog của trình quản lý tệp dùng trong admin. Nhận thêm chuỗi query params; tự động thêm `callback=responsive_filemanager_callback` nếu chưa có.
+
+Từ 8.2.5 trình quản lý tệp là gói `skilldo/filemanager` (thay Responsive FileManager ở `vendor/rpsfmng`), mở tại `{admin}/filemanager`, cần quyền `file_manager`. Tham số và cách trả kết quả (`field_id`, `callback`, `crossdomain`/postMessage `sender: 'responsivefilemanager'`) giữ nguyên như cũ; URL cũ `vendor/rpsfmng/dialog.php?...` vẫn được chuyển tiếp sang dialog mới.
 
 ```php
 Url::fileManager()
-// https://domain.com/vendor/rpsfmng/dialog.php?editor=mce_0
+// https://domain.com/admin/filemanager?editor=mce_0
 
 Url::fileManager('type=1&field_id=image')
-// ...dialog.php?editor=mce_0&callback=responsive_filemanager_callback&type=1&field_id=image
+// ...admin/filemanager?editor=mce_0&callback=responsive_filemanager_callback&type=1&field_id=image
 ```
 
 > **Lưu ý:** Để lấy segment URL hiện tại, dùng `request()->segments()` hoặc `request()->segment($n)` thay vì `Url::` (class `Url` không có method `segment`).

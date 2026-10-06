@@ -33,8 +33,8 @@ const config = {
 					lastVersion: 'current',
 					versions: {
 						current: {
-							label: '8.0.0',
-							path: '8.0.0',
+							label: '8.4.0',
+							path: '8.4.0',
 						},
 					},
 				},
@@ -91,6 +91,26 @@ const config = {
 						label: '1.0.0',
 						path: '1.0.0',
 					},
+				},
+			},
+		],
+		[
+			'@docusaurus/plugin-client-redirects',
+			{
+				/*
+				 * Bản hiện hành đổi đường dẫn /8.0.0/ sang /8.4.0/. Mỗi trang /8.4.0/... sinh
+				 * thêm một trang /8.0.0/... tự chuyển hướng sang, để link cũ (Google,
+				 * bookmark, bài viết) không 404. Nâng bản lần sau: thêm path cũ vào oldPaths.
+				 */
+				createRedirects(existingPath) {
+					const current = '/8.4.0';
+					const oldPaths = ['/8.0.0'];
+
+					if (existingPath !== current && !existingPath.startsWith(current + '/')) {
+						return undefined;
+					}
+
+					return oldPaths.map((old) => old + existingPath.slice(current.length));
 				},
 			},
 		],
@@ -187,7 +207,7 @@ const config = {
 			// Tắt contextualSearch để tránh xung đột với facetFilters bên dưới
 			contextualSearch: false,
 
-			// Chỉ lấy kết quả từ version hiện tại (8.0.0) của tất cả doc plugin
+			// Chỉ lấy kết quả từ version hiện tại (8.4.0) của tất cả doc plugin
 			searchParameters: {
 				facetFilters: [
 					[

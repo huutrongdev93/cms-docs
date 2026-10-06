@@ -1,6 +1,6 @@
 ### Trang danh sách thẻ (tag)
 
-> Module Thẻ có từ phiên bản **8.1.3**. Xem tài liệu tính năng đầy đủ tại [Thẻ (Tag)](/8.0.0/doc/Cms/Tags).
+> Module Thẻ có từ phiên bản **8.1.3**. Xem tài liệu tính năng đầy đủ tại [Thẻ (Tag)](/8.4.0/doc/Cms/Tags).
 
 #### Table columns
 Chỉnh sửa danh sách cột của bảng thẻ

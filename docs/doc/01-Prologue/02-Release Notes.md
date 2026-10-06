@@ -11,6 +11,78 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ`  |
 
+### version 8.4.0 - 06.10.2026
+
+<span class="badge text-bg-green">Add</span> Tích hợp sẵn Laravel AI SDK trong lõi. Plugin gọi AI trực tiếp (OpenAI, Gemini, Anthropic…) mà không phải tự cài thư viện; nhà cung cấp, API key và model được cấu hình một lần ở **Cấu hình hệ thống → AI**. Tab này chỉ hiện khi có plugin dùng AI. Xem mục tài liệu AI.
+
+<span class="badge text-bg-green">Add</span> Hàm `request.stream()` ở JavaScript nhận kết quả AI theo từng đoạn, hiển thị chữ ngay khi đang sinh thay vì chờ xong cả bài.
+
+<span class="badge text-bg-blue">Update</span> Page Builder: khi các cột của một hàng có tổng độ rộng tablet vượt 100%, hàng tự xuống dòng trên máy tính bảng, nên cột khai 100% ở tablet hiển thị đúng một cột mỗi hàng.
+
+<span class="badge text-bg-blue">Update</span> Khối (block) lưu trong Page Builder mang theo đầy đủ thiết lập của hàng lồng nhau và widget con trong container khi chèn sang trang khác.
+
+<span class="badge text-bg-blue">Update</span> Đường dẫn thẻ và trang tìm kiếm luôn đúng khi website cài trong thư mục con.
+
+<span class="badge text-bg-red">Fix</span> Callback khai bằng tên (`data-callback`, tham số `callback` của bảng và form quản trị) chạy đúng trở lại.
+
+<span class="badge text-bg-red">Fix</span> Trang quản trị luôn hiển thị trạng thái mới nhất sau khi thao tác, không còn bị trình duyệt trả lại bản cũ.
+
+<span class="badge text-bg-red">Fix</span> Giao diện mặc định: trang 404 có tiêu đề H1 và theo màu chủ đạo; máy tính bảng dọc chỉ hiện một header; logo trên điện thoại không bị méo; breadcrumb dài tự xuống dòng.
+
+### version 8.3.1 - 24.09.2026
+
+<span class="badge text-bg-green">Add</span> Bổ sung bản dịch tiếng anh cho giao diện admin
+
+<span class="badge text-bg-green">Add</span> Mở được các tính năng trình duyệt như thanh toán bằng ví (Apple Pay, Google Pay qua Stripe) bằng khoá `permissions_policy_extend`
+
+<span class="badge text-bg-green">Add</span> Luật kiểm tra số điện thoại nhận thêm số Mỹ và Canada.
+
+<span class="badge text-bg-blue">Update</span> Model Thời gian tạo và cập nhật lấy theo đúng múi giờ khai trong cấu hình ứng dụng.
+
+<span class="badge text-bg-blue">Update</span> Email gửi từ hệ thống tự điền người gửi theo cấu hình SMTP hoặc email liên hệ của website, nên plugin không cần tự khai báo.
+
+<span class="badge text-bg-blue">Update</span> Có thể nạp script từ URL không có đuôi `.js` (ví dụ `https://js.stripe.com/v3/`) bằng trình quản lý asset của theme.
+
+<span class="badge text-bg-red">Fix</span> Ô chọn giờ trong form quản trị giữ đúng giá trị đã lưu.
+
+<span class="badge text-bg-red">Fix</span> trình quản lý tệp lỗi khi mở trong nhiều modal liên tiếp <span class="badge text-bg-yellow">Tâm</span>
+
+### version 8.3.0 - 21.09.2026
+
+<span class="badge text-bg-green">Add</span> Trình quản lý tệp được viết lại hoàn toàn. Nhẹ hơn nhiều, không còn phụ thuộc thư viện ngoài.
+
+<span class="badge text-bg-green">Add</span> Nhật ký thao tác thư viện: ai tải lên, đổi tên, di chuyển hay xoá tệp nào, lúc nào. Mở từ dấu ba chấm trên thanh công cụ của trình quản lý tệp.
+
+<span class="badge text-bg-green">Add</span> Hộp thoại Dung lượng cho biết thư viện đang chiếm bao nhiêu, thư mục và tệp nào nặng nhất, và dọn được ngay những tệp chắc chắn thừa — bản thu nhỏ không còn ảnh gốc, mảnh tải lên bỏ dở.
+
+<span class="badge text-bg-green">Add</span> Quyền mới `file_manager` quyết định ai được dùng trình quản lý tệp. Vai trò quản trị đã được bật sẵn khi cập nhật.
+
+<span class="badge text-bg-blue">Update</span> Thư mục chứa hàng chục nghìn tệp giờ mở và cuộn nhanh hơn nhiều.
+
+<span class="badge text-bg-blue">Update</span> Tăng cường kiểm tra nội dung tệp tải lên và chặt chẽ hơn ở việc phục vụ tệp trong thư mục uploads. Website chạy nginx nên thêm cấu hình chặn thực thi cho thư mục uploads — xem tài liệu cài đặt.
+
+<span class="badge text-bg-blue">Update</span> Trang Cập nhật hệ thống trong quản trị hiển thị phiên bản đang chạy, và có nút kiểm tra lại phiên bản ngay.
+
+<span class="badge text-bg-blue">Update</span> Trang nâng cấp cơ sở dữ liệu được thiết kế lại, nói rõ những gì sẽ chạy trước khi bạn bấm.
+
+### version 8.2.5 - 19.09.2026
+
+<span class="badge text-bg-green">Add</span> Popup video của giao diện mặc định mở được thêm link YouTube Shorts, YouTube Live, TikTok, Facebook, Google Drive và Dailymotion. Người dùng cũng có thể dán nguyên mã nhúng `<iframe>` thay cho link. Theme gọi hàm `theme_video_fancybox($url)` để lấy sẵn `href` và `data-type` cho fancybox.
+
+<span class="badge text-bg-blue">Update</span> Khi cập nhật CMS từ trang quản trị, website chuyển sang chế độ bảo trì trong suốt quá trình cài và tự trở về đúng trạng thái trước đó khi xong — kể cả khi cài không thành công.
+
+<span class="badge text-bg-blue">Update</span> Trình cập nhật báo rõ nguyên nhân khi không tải được gói cập nhật, thay vì một thông báo thất bại chung chung.
+
+<span class="badge text-bg-blue">Update</span> Filter `pre_insert_{bảng}_check` nay nhận đối tượng model đang được tạo, đọc thẳng được các giá trị sắp lưu.
+
+<span class="badge text-bg-red">Fix</span> Cookie đặt bằng `Cookie::queue()` nay hết hạn đúng số phút đã khai báo; truyền `0` phút là cookie phiên, mất khi đóng trình duyệt.
+
+<span class="badge text-bg-red">Fix</span> Danh mục bài viết hiển thị đúng dạng cây cha – con ở mọi nơi dùng danh sách dạng cây.
+
+<span class="badge text-bg-red">Fix</span> Mục menu trỏ về trang chủ bằng `./` được giữ nguyên khi lưu.
+
+<span class="badge text-bg-red">Fix</span> Trang dùng giao diện riêng theo đường dẫn (ví dụ trang Liên hệ) hiển thị đầy đủ tiêu đề, breadcrumb và thẻ `<h1>` khi website có bố cục trang dựng bằng Page Builder.
+
 ### version 8.2.4 - 11.09.2026
 
 <span class="badge text-bg-green">Add</span> Cấu hình hệ thống → Cronjob nay cho biết cron của máy chủ có đang chạy hay không và lần chạy gần nhất là lúc nào, kèm câu lệnh đặt cron dựng sẵn để sao chép. Trang cũng liệt kê các tác vụ định kỳ đang có; plugin và giao diện tự khai tác vụ của mình qua filter `cms_cronjob_tasks`.
