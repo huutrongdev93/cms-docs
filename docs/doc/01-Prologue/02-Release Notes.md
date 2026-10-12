@@ -11,6 +11,46 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ`  |
 
+### version 8.5.1 - 12.10.2026
+
+<span class="badge text-bg-green">Add</span> Trang liên hệ có mẫu dựng sẵn bằng Page Builder (thông tin liên hệ, nút gọi/nhắn, form, bản đồ). Mẫu tự nạp một lần cho trang `lien-he` chưa được tùy biến; trang đã tự dựng hoặc có view riêng trong theme-child giữ nguyên.
+
+<span class="badge text-bg-green">Add</span> Tab **Cấu hình → Liên hệ** có thêm ô **Giờ làm việc**.
+
+<span class="badge text-bg-blue">Update</span> Trường Typography cho chỉnh chiều cao dòng theo từng thiết bị khi cỡ chữ đang chỉnh theo thiết bị. Nhập số nhỏ hơn 4 (ví dụ 1.5) để dùng tỉ lệ theo cỡ chữ, số lớn hơn được tính bằng px.
+
+<span class="badge text-bg-blue">Update</span> Trường `inputResponsive` nhận thêm thuộc tính `step`.
+
+<span class="badge text-bg-blue">Update</span> Nút menu, tìm kiếm, thanh điều hướng dưới và nút chia sẻ bài viết trên điện thoại to hơn, dễ chạm hơn.
+
+<span class="badge text-bg-blue">Fix</span> Trường `Background` fix lỗi image size tự reset về cover. <span class="badge text-bg-yellow">Tâm</span>
+
+<span class="badge text-bg-red">Fix</span> Ô chọn nhiều giá trị đặt trong Repeater lưu và hiển thị lại đúng dữ liệu.
+
+<span class="badge text-bg-red">Fix</span> Tùy chọn dạng danh sách (ví dụ chọn thiết bị hiển thị) giữ đúng các mục đã lưu thay vì bị trộn với giá trị mặc định.
+
+### version 8.5.0 - 08.10.2026
+
+<span class="badge text-bg-green">Add</span> Website có thể cho phép ChatGPT, Claude.ai, Gemini và các ứng dụng khác truy cập bằng luồng "Đăng nhập → Cho phép" (OAuth 2.1) thay vì dán API key. Ứng dụng đã kết nối được quản lý ở **Cấu hình hệ thống → API & Ứng dụng**; tab chỉ hiện khi có plugin khai tài nguyên qua filter `oauth_resources`.
+
+<span class="badge text-bg-green">Add</span> Tab **API & Ứng dụng** có nút kiểm tra máy chủ có chuyển header `Authorization` cho PHP hay không, kèm dòng cần thêm vào `.htaccess` nếu thiếu. Bản cập nhật không tự sửa `.htaccess` của website.
+
+<span class="badge text-bg-blue">Update</span> Breadcrumb ở trang quản trị của plugin tự lấy tên theo menu, hiển thị tiếng Việt đúng với mục đang mở.
+
+<span class="badge text-bg-blue">Update</span> Thông báo bật, tắt plugin luôn ghi rõ tên plugin.
+
+<span class="badge text-bg-blue">Update</span> Bổ sung bản dịch tiếng Việt cho trình soạn thảo và chỉnh nhiều câu chữ trong trang quản trị.
+
+<span class="badge text-bg-red">Fix</span> Website ổn định hơn khi có nhiều lượt truy cập cùng lúc ngay sau khi bật hoặc tắt plugin.
+
+<span class="badge text-bg-red">Fix</span> Form quản trị lưu xong chuyển về trang danh sách; nhấn Enter trong ô nhập không còn gửi form ngoài ý muốn; tắt Page Builder có hộp xác nhận.
+
+<span class="badge text-bg-red">Fix</span> Đổi mật khẩu cho tài khoản khác không còn ảnh hưởng tới phiên đăng nhập của người đang thao tác.
+
+<span class="badge text-bg-red">Fix</span> Bài viết, trang chưa có ảnh đại diện hiển thị ảnh mặc định ở trang quản trị.
+
+<span class="badge text-bg-red">Fix</span> Trên điện thoại, menu tài khoản của khách hiển thị đầy đủ phía trên thanh nút cuối màn hình; thông báo khi đổi mật khẩu rõ ràng hơn.
+
 ### version 8.4.0 - 06.10.2026
 
 <span class="badge text-bg-green">Add</span> Tích hợp sẵn Laravel AI SDK trong lõi. Plugin gọi AI trực tiếp (OpenAI, Gemini, Anthropic…) mà không phải tự cài thư viện; nhà cung cấp, API key và model được cấu hình một lần ở **Cấu hình hệ thống → AI**. Tab này chỉ hiện khi có plugin dùng AI. Xem mục tài liệu AI.
