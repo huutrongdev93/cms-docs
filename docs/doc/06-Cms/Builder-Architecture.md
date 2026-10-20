@@ -83,7 +83,7 @@ Widget init trong iframe: `packages/scripts/core/element.js` — `elementorFront
 
 **Cha → Iframe (vá DOM, không reload):** `ADD_ROW`, `ADD_COLUMN`, `ADD_NESTED_ROW`, `INSERT_WIDGET` (chèn wrapper widget mới rỗng), `UPDATE_ELEMENT` (fill 1 widget qua `renderWidget`), `DELETE_ROW/COLUMN/ELEMENT`, `MOVE_WIDGET`, `REORDER_WIDGETS`, `UPDATE_LAYOUT` (CSS width), `UPDATE_STYLE` (CSS 1 element), `HOVER/SELECT/...`.
 
-**Iframe → Cha:** `OPEN_CONFIG`, `IFRAME_DRAG_WIDGET`, `IFRAME_REORDER_ROWS`, `IFRAME_HOVER_ELEMENT`, `IFRAME_COLUMN_RESIZE`, `IFRAME_ADD_ROW/COLUMN`, `IFRAME_DROP_RESULT`, `IFRAME_DELETE/DUPLICATE/PASTE_ELEMENT`, ...
+**Iframe → Cha:** `OPEN_CONFIG`, `IFRAME_DRAG_WIDGET`, `IFRAME_REORDER_ROWS`, `IFRAME_HOVER_ELEMENT`, `IFRAME_COLUMN_RESIZE`, `IFRAME_ADD_ROW/COLUMN`, `IFRAME_DROP_RESULT`, `IFRAME_DELETE/DUPLICATE/PASTE_ELEMENT`, `IFRAME_INLINE_TEXT` (sửa chữ trực tiếp, mục 9b), ...
 
 **DOM iframe:** row `.build-row#id` (`.build-content` bên trong) · column `.build-column#id` (`.is-empty` khi rỗng) · widget `.elementor-widget[data-id][data-widget_type="{type}.default"]` · nested `.inner-row-wrapper[data-id][data-type="layout_row"]`.
 
@@ -113,7 +113,7 @@ Widget init trong iframe: `packages/scripts/core/element.js` — `elementorFront
 
 ## 9. Gotchas & bất biến (BẮT BUỘC nhớ)
 
-1. **Sửa JS builder phải build lại.** `element-builder.js`/`builder-data-store.js`/`studio` → `cms:build:js`. `element-builder-review.js` → build RIÊNG (không có trong `cms:build:js`). PHP/blade chạy ngay. Xem `[[js-bundle-build-pipeline]]`.
+1. **Sửa JS builder phải build lại.** `element-builder.js`/`builder-data-store.js`/`studio` và `element-builder-review.js` (iframe) đều do `cms:build:js` gộp + làm rối thành `script.bundle.js` / `element-builder-review.bundle.js`. PHP/blade chạy ngay. Xem `[[js-bundle-build-pipeline]]`.
 2. **Asset tĩnh element theo bundle section.** CSS/JS tĩnh của element (gồm handler `frontend/ready/{type}`) nằm trong bundle build LÚC iframe load. Kéo **loại element chưa từng có** → thiếu CSS/JS → phải reload để nạp. `insertWidgetToPreview` tự fallback. Xem `[[builder-preview-patch-architecture]]`.
 3. **Store luôn là nguồn đúng** → publish/save luôn đúng dù preview lệch. Lệch preview khắc phục bằng reload/refresh.
 4. **`this.settings === window.WIDGET_SETTINGS`** (cùng ref). `syncWidget` gửi `WIDGET_SETTINGS[id]`; đảm bảo store.addWidget đã chạy trước.
@@ -124,5 +124,25 @@ Widget init trong iframe: `packages/scripts/core/element.js` — `elementorFront
    - `BuilderReviewController::assets()` gỡ `header-style`/`footer-style`/`header-script`/`footer-script`; scope nào render header/footer thật thì **phải gọi lại** `ThemeHeader::assets()` / `ThemeFooter::assets()`, không thì header/footer mất CSS-JS.
    - `ElementBuilder::render()` xuất `.build-row`/`.build-column`/`.elementor-widget` ở **mọi mode**, nên header/footer thật cũng mang các class đó. **Vùng builder = `.wrapper-review`** — trong `element-builder-review.js` chỉ được truy vấn qua `builderQuery`/`builderQueryAll` và lọc handler bằng `scopedClosest`/`isInBuilderScope`, tuyệt đối không `document.querySelectorAll('.build-*')`.
 
+## 9b. Thành phần con & sửa chữ trực tiếp (`Element::parts()`)
+
+Element khai `parts()` (selector tương đối wrapper + `field` style / `content` nội dung / `edit` /
+`repeater` + `item`), xem `10-Theme Development/07-Theme-Elements.md` mục 9.5.
+
+- **PHP:** `ElementBuilder::rememberParts()` gom `parts()` khi render chế độ `review` (cả `builderColum()`
+  lẫn `Element::widgetContainer()`), `builder-review-single.blade.php` in một lần
+  `window.BUILDER_ELEMENT_PARTS` + cờ quyền `window.BUILDER_INLINE_EDIT` (`canClickConfig`).
+  HTML chế độ `live` không đổi.
+- **Iframe:** module `BuilderParts` (cuối `element-builder-review.js`): viền rê/chọn `.builder-part-box`
+  (`position: fixed` gắn vào `<body>`, không append vào widget), `OPEN_CONFIG` mang thêm `fields`
+  (chuỗi = field cấp trên, `{repeater, index, field}` = field con của item), sửa chữ bằng
+  `contenteditable` rồi bắn `IFRAME_INLINE_TEXT {elementId, field, value[, repeater, index]}`.
+- **Cha:** `SectionBuilder.focusConfigField()` mở mọi tab/collapse tổ tiên + item repeater rồi cuộn/nháy
+  `#box_{field}`; `ElementBuilderGlobal.applyInlineText()` ghi settings theo đúng các bước của
+  `autoSaveAndSync` (không render lại) và đặt lại ô của form đang mở.
+- Bất biến: iframe đổi DOM trước rồi mới báo; mọi handler click/contextmenu của iframe phải bỏ qua
+  vùng đang sửa (`BuilderParts.isEditing`); trong lúc sửa chặn `keypress/keyup/click/dblclick` lan lên
+  handler của theme. Chi tiết + bẫy: `BUILDER.md` mục 18 ở gốc repo nguồn.
+
 ## 10. Tạo element mới
-Xem `10-Theme Development/07-Theme-Elements.md` và skill `/element-builder`. Element = class extends `SkillDo\Cms\Element\Element`, implement `icon()/category()/form()/widget()`, optional `default()/cssBuilder()`, đăng ký trong `widget.json`.
+Xem `10-Theme Development/07-Theme-Elements.md` và skill `/element-builder`. Element = class extends `SkillDo\Cms\Element\Element`, implement `icon()/category()/form()/widget()`, optional `default()/cssBuilder()/parts()`, đăng ký trong `elements/elements.json` (KHÔNG phải `widget.json` — đó là registry widget sidebar).

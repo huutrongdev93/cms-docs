@@ -103,6 +103,8 @@ class MyElementWidget extends Element
     public function default(): void {}
     
     public function cssBuilder(): string {}
+
+    public function parts(): array {} // tùy chọn, xem mục 9.5
 }
 ```
 
@@ -1512,6 +1514,96 @@ Các loại scroll effects hỗ trợ:
 - `opacity` — Mờ dần
 - `blur` — Làm mờ
 
+### 9.5 Thành phần con & sửa chữ trực tiếp (`parts()`)
+
+Trong trình dựng, người dùng có thể **bấm thẳng vào một thành phần** của element (tiêu đề, mô tả, ảnh,
+khung, nút…) trên khung xem thử: thành phần được viền hồng kèm nhãn, form cấu hình mở đúng tab, mở đúng
+nhóm và cuộn tới field kiểu dáng của thành phần đó. Thành phần nào cho phép thì **sửa chữ ngay trên khung
+xem thử**.
+
+| Thao tác | Kết quả |
+|---|---|
+| Rê chuột | Viền đứt + nhãn quanh thành phần dưới con trỏ |
+| Bấm 1 lần | Chọn thành phần, form nhảy tới field **kiểu dáng** (không có thì field nội dung) |
+| Bấm lần 2 / double-click | Sửa chữ trực tiếp (thành phần có `edit`) |
+| Chuột phải | Thêm 2 mục **Sửa nội dung** / **Sửa kiểu** |
+| Đang sửa: Enter (`text`), Ctrl+Enter (`html`), bấm ra ngoài | Lưu |
+| Đang sửa: Esc | Hủy, trả lại chữ cũ |
+| Đang sửa: dán | Luôn dán chữ thuần |
+
+Chữ sửa trực tiếp đi vào đúng settings như khi gõ trong form (ô trong form cập nhật theo, có undo/redo,
+khi lưu vẫn qua bước làm sạch dữ liệu của server).
+
+Element khai các thành phần qua method tùy chọn `parts()`. Không khai thì element vẫn hoạt động như
+cũ (bấm vào đâu cũng mở form ở tab đầu).
+
+```php
+public function parts(): array
+{
+    return [
+        'box'         => ['selector' => '.item', 'label' => 'Khung', 'field' => 'boxStyle'],
+        'image'       => ['selector' => '.item-img-wrapper', 'label' => 'Ảnh', 'field' => 'imageBox', 'content' => 'image'],
+        'title'       => ['selector' => '.item-content .text-1', 'label' => 'Tiêu đề',
+                          'field' => 'titleStyle', 'content' => 'title', 'edit' => 'text', 'editTarget' => 'a'],
+        'description' => ['selector' => '.item-content .text-2', 'label' => 'Mô tả',
+                          'field' => 'descriptionStyle', 'content' => 'description', 'edit' => 'text'],
+    ];
+}
+```
+
+| Khóa | Bắt buộc | Ý nghĩa |
+|---|---|---|
+| `selector` | ✔ | Selector **tương đối với wrapper của element** (giống `cssSelector()`). Nên dùng đúng selector đã dùng trong `cssBuilder()`. |
+| `label` | | Tên hiện trên viền khi rê chuột. |
+| `field` | một trong hai | Field **kiểu dáng** (tab Style) của thành phần, vd `titleStyle`. |
+| `content` | một trong hai | Field **nội dung** (tab Chung), vd `title`. |
+| `edit` | | `'text'` (field text/textarea) hoặc `'html'` (wysiwyg): cho sửa chữ trực tiếp. |
+| `editTarget` | | Selector con thực sự chứa chữ, vd `'a'` khi tiêu đề được bọc link. |
+| `repeater` | | Tên field repeater nếu thành phần nằm trong **từng item** (vd `items`). Khi đó `content` là tên field **con** của item. |
+| `item` | khi có `repeater` | Selector gốc của **mỗi item**, tương đối với wrapper. |
+
+Khi nhiều thành phần lồng nhau cùng chứa điểm bấm, thành phần **sâu nhất** thắng (bấm vào tiêu đề nằm
+trong khung thì ra tiêu đề).
+
+Thành phần trong repeater:
+
+```php
+'title' => ['selector' => '.item .title p', 'label' => 'Tiêu đề', 'field' => 'titleStyle',
+            'repeater' => 'items', 'item' => '.list-item > .item', 'content' => 'title'],
+```
+
+Trình dựng ánh xạ **item thứ i trên trang ↔ item thứ i trong form**, form sẽ tự mở item đó. Thành phần
+trong repeater cũng khai `edit` được như thường (vd câu hỏi / câu trả lời của FAQ).
+
+> [!WARNING]
+> **Chỉ khai `edit` khi phần tử chứa đúng giá trị option**. Chữ trên khung xem thử được đọc ngược lại
+> vào settings, nên nếu view cắt chữ (`Str::limit`), format, ghép thêm chữ / icon vào cùng thẻ (dùng
+> `editTarget` trỏ vào thẻ con chỉ chứa chữ) thì sửa trực tiếp sẽ làm hỏng dữ liệu. `'text'` đọc
+> `textContent` nên view in `{{ $options->title }}` hay `{!! $options->title !!}` đều được; `'html'` đọc
+> `innerHTML` nên bắt buộc `{!! !!}`. Không chắc thì chỉ khai
+> `field`/`content` (vẫn nhảy được tới field).
+
+> [!CAUTION]
+> Kiểu `'text'` **tự từ chối sửa (không báo lỗi) khi phần tử còn thẻ con** (`<a>`, `<span>`, `<br>`…) để
+> không làm mất thẻ. Chữ nằm trong thẻ con thì phải khai `editTarget` trỏ vào thẻ đó, vd
+> `<p class="heading"><a href="…">{{ $item['title'] }}</a></p>` → `'selector' => '.heading', 'editTarget' => 'a'`.
+> Khai xong hãy thử double-click trong trình dựng để chắc chế độ sửa bật được.
+
+> [!WARNING]
+> **Repeater chỉ đúng khi view lặp đủ mọi item theo đúng thứ tự** của settings: không `continue` bỏ
+> item, không sort / `array_chunk` / slice. Carousel Swiper có `loop` thì thêm
+> `:not(.swiper-slide-duplicate)` vào `item` và không khai `edit` (bản nhân bản của slide không tự cập nhật).
+
+> [!NOTE]
+> - Dữ liệu lấy từ DB (bài viết, sản phẩm, breadcrumb, tiêu đề trang…) không nằm trong settings của
+>   element: chỉ khai `field` kiểu dáng cho phần đó, không khai `content` / `edit`.
+> - Element chứa element con (`widgetContainer()`): không khai gì cho element con, mỗi con là một
+>   element riêng và dùng `parts()` của chính nó.
+> - Chỉ sửa trực tiếp được ngôn ngữ mặc định (khung xem thử luôn render ngôn ngữ mặc định); ngôn ngữ
+>   khác vẫn sửa trong form.
+> - `parts()` chỉ dùng trong trình dựng, HTML ngoài trang thật không đổi.
+> - `composer check` kiểm mọi `field` / `content` / `repeater` khai trong `parts()` có thật trong `form()`.
+
 ---
 
 ## 10. Luồng Xử Lý (Request Flow)
@@ -1547,6 +1639,7 @@ flowchart TD
 - [ ] **(Tùy chọn)** Tạo JS trong assets/ theo **class pattern** + đăng ký qua `$this->assets()`, lắng nghe `elementor/frontend/init` và dùng `elementorFrontend.hooks.addAction('frontend/ready/{ClassName}.default', ...)`
 - [ ] **(Tùy chọn)** Override default() cho giá trị mặc định
 - [ ] **(Tùy chọn)** Override cssBuilder() cho CSS động
+- [ ] **(Tùy chọn)** Khai `parts()` để bấm vào thành phần trong trình dựng nhảy thẳng tới field (mục 9.5)
 - [ ] **Đăng ký** trong `elements/elements.json` (nhóm `header`/`footer`/`general`) với key = tên class
 - [ ] **Kiểm tra** trong Admin → Builder
 

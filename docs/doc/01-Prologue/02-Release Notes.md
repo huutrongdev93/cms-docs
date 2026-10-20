@@ -11,6 +11,42 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ`  |
 
+### version 8.6.0 - 20.10.2026
+
+<span class="badge text-bg-green">Add</span> Page Builder cho bấm thẳng vào từng thành phần trong element (tiêu đề, nút, ảnh…) để mở đúng ô cấu hình, bấm lần nữa để sửa chữ trực tiếp. Element tự viết khai các thành phần này bằng hàm `parts()`.
+
+<span class="badge text-bg-green">Add</span> Ô chọn menu trong Page Builder có link "Sửa menu này" để sửa menu ngay trong trình dựng, không phải rời trang.
+
+<span class="badge text-bg-blue">Update</span> Tên font có chữ số (ví dụ "Baloo 2") chọn ở tùy chọn giao diện hay trong Page Builder nay được áp dụng đúng.
+
+<span class="badge text-bg-blue">Update</span> Script của element chỉ chạy một lần dù element xuất hiện ở nhiều vùng (header, trang, footer).
+
+<span class="badge text-bg-red">Fix</span> Cột đặt "Ẩn theo thiết bị" giữ đúng bố cục Flexbox ở các thiết bị còn hiển thị.
+
+<span class="badge text-bg-red">Fix</span> Mục menu dạng liên kết tới một phần của trang (`trang#muc`) hoặc có tham số (`trang?x=1`) được lưu đúng khi tạo.
+
+<span class="badge text-bg-red">Fix</span> Trình soạn thảo trong admin nạp nhẹ hơn và chạy ổn định với mọi cấu hình font.
+
+### version 8.5.2 - 15.10.2026
+
+<span class="badge text-bg-green">Add</span> Tab Giao diện → Mobile có thêm ô chọn màu nền, màu chữ, màu nhấn cho thanh nút ở đáy điện thoại, và màu hai nút của thanh "Thêm vào giỏ" nổi ở trang sản phẩm.
+
+<span class="badge text-bg-blue">Update</span> Mẫu trang liên hệ dựng sẵn nay vẫn được nạp khi trang `lien-he` được tạo sau lần cập nhật, tự khai đủ các element mà mẫu dùng và tạo sẵn form `lien-he` nếu plugin form đăng ký đang bật.
+
+<span class="badge text-bg-blue">Update</span> Field `posts()` dùng được bên trong `repeater()` của Page Builder.
+
+<span class="badge text-bg-blue">Update</span> Controller được gọi qua đường dẫn slug nhận thêm tham số `$objectType` (loại đối tượng của đường dẫn), dùng khi một controller phục vụ nhiều loại đối tượng.
+
+<span class="badge text-bg-red">Fix</span> Trang dựng bằng Page Builder hiển thị đúng slider và các khối có cấu hình JSON, và không còn bị lề ngang nhân đôi khi nằm trong layout trang nội dung.
+
+<span class="badge text-bg-red">Fix</span> Ô "Khoảng cách" của cột trong Page Builder và bo góc dưới phải hoạt động đúng.
+
+<span class="badge text-bg-red">Fix</span> Trang 404 hiển thị đầy đủ trên máy chủ chạy PHP-FPM / LiteSpeed.
+
+<span class="badge text-bg-red">Fix</span> Hiệu ứng xuất hiện khi cuộn ổn định hơn: thẻ bài viết hiện cùng một nhịp, nội dung vẫn hiển thị khi thư viện hiệu ứng không tải được; tiêu đề "Bài viết liên quan" theo đúng tùy chọn căn lề.
+
+<span class="badge text-bg-red">Fix</span> Thanh nút ở đáy điện thoại không còn che nội dung cuối trang; ô đường dẫn ở form danh mục lưu đúng slug.
+
 ### version 8.5.1 - 12.10.2026
 
 <span class="badge text-bg-green">Add</span> Trang liên hệ có mẫu dựng sẵn bằng Page Builder (thông tin liên hệ, nút gọi/nhắn, form, bản đồ). Mẫu tự nạp một lần cho trang `lien-he` chưa được tùy biến; trang đã tự dựng hoặc có view riêng trong theme-child giữ nguyên.

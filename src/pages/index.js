@@ -197,7 +197,7 @@ function HeroBanner() {
                     <div className={styles.heroBadge}>
                         <span className={styles.heroBadgeDot} />
                         <span>SkillDo CMS</span>
-                        <span className={styles.heroBadgeVersion}>v8.4.0</span>
+                        <span className={styles.heroBadgeVersion}>v8.6.0</span>
                         <span>by SKDSoftware</span>
                     </div>
 
@@ -212,12 +212,12 @@ function HeroBanner() {
                     </p>
 
                     <div className={styles.heroActions}>
-                        <Link to="/8.4.0/doc/Prologue/Overview" className={styles.btnPrimary}>
+                        <Link to="/8.6.0/doc/Prologue/Overview" className={styles.btnPrimary}>
                             <BookOpen size={18} strokeWidth={2} />
                             Đọc tài liệu
                             <span className={styles.btnGlow} />
                         </Link>
-                        <Link to="/8.4.0/doc/Prologue/Overview" className={styles.btnSecondary}>
+                        <Link to="/8.6.0/doc/Prologue/Overview" className={styles.btnSecondary}>
                             <Rocket size={18} strokeWidth={2} />
                             Bắt đầu ngay
                             <ArrowRight size={16} strokeWidth={2} />
@@ -428,10 +428,10 @@ function CtaSection() {
                 </Heading>
                 <p className={styles.ctaSubtitle}>Đọc tài liệu đầy đủ để hiểu cách cài đặt, cấu hình và mở rộng hệ thống.</p>
                 <div className={styles.ctaActions}>
-                    <Link to="/8.4.0/doc/Prologue/Overview" className={styles.btnPrimary}>
+                    <Link to="/8.6.0/doc/Prologue/Overview" className={styles.btnPrimary}>
                         <BookOpen size={18} strokeWidth={2} />Tổng quan hệ thống<span className={styles.btnGlow} />
                     </Link>
-                    <Link to="/8.4.0/doc/Prologue/Overview" className={styles.btnSecondary}>
+                    <Link to="/8.6.0/doc/Prologue/Overview" className={styles.btnSecondary}>
                         <Rocket size={18} strokeWidth={2} />Hướng dẫn bắt đầu<ArrowRight size={16} strokeWidth={2} />
                     </Link>
                 </div>
