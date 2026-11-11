@@ -11,6 +11,34 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ`  |
 
+### version 8.6.2 - 11.11.2026
+
+<span class="badge text-bg-green">Add</span> Hook `ajax_menu_location_success` chạy sau khi đổi vị trí hiển thị của menu, tiện cho plugin cần làm mới cache trang.
+
+<span class="badge text-bg-blue">Update</span> Ô tìm kiếm trên điện thoại có giao diện mới: nút xoá từ khoá, nút Đóng, gợi ý kết quả ngay khi gõ từ 2 ký tự, nút "Xem tất cả kết quả", bấm ra ngoài hoặc phím Esc để đóng.
+
+<span class="badge text-bg-blue">Update</span> Menu trên điện thoại có giao diện mới, kèm lối vào tài khoản và đăng xuất. <span class="badge text-bg-yellow">Tâm</span>
+
+<span class="badge text-bg-red">Fix</span> Đóng menu điện thoại bằng cách bấm ra ngoài không còn đưa trang về đầu.
+
+### version 8.6.1 - 31.10.2026
+
+<span class="badge text-bg-green">Add</span> Field nền (Background) có thêm ảnh nền và vị trí ảnh riêng cho điện thoại.
+
+<span class="badge text-bg-blue">Update</span> Cập nhật CMS từ admin nhanh và ổn định hơn: chỉ sao lưu những file sắp thay, website tự mở lại nếu quá trình cập nhật dừng giữa chừng. Cải tiến này có tác dụng từ lần cập nhật sau bản 8.6.1.
+
+<span class="badge text-bg-blue">Update</span> Thanh nút đáy trên điện thoại có giao diện mới: nút gọi nổi ở giữa theo màu nhấn của thanh, ô Zalo chỉ hiện khi đã nhập Zalo, ô danh mục hiện khi bật "icon danh mục". <span class="badge text-bg-yellow">Tâm</span>
+
+<span class="badge text-bg-blue">Update</span> Khối dựng bằng Page Builder ở trang con hiển thị nền trải hết chiều rộng màn hình.
+
+<span class="badge text-bg-red">Fix</span> Nút Menu ở thanh nút đáy trên điện thoại mở được menu.
+
+<span class="badge text-bg-red">Fix</span> Liên kết tới một phần của trang (`#muc`) cuộn tới đúng vị trí trên trang hiện tại.
+
+<span class="badge text-bg-red">Fix</span> Trang danh sách sản phẩm dựng bằng Page Builder: các element có form riêng (ô tìm kiếm, form liên hệ…) hoạt động bình thường bên cạnh bộ lọc.
+
+<span class="badge text-bg-red">Fix</span> Mục menu trỏ tới file (ví dụ `tai-lieu.pdf`) giữ đúng đường dẫn khi lưu; ảnh xem trước của video YouTube hiển thị đúng; tùy chọn lưu giá trị `true` được đọc lại đúng.
+
 ### version 8.6.0 - 20.10.2026
 
 <span class="badge text-bg-green">Add</span> Page Builder cho bấm thẳng vào từng thành phần trong element (tiêu đề, nút, ảnh…) để mở đúng ô cấu hình, bấm lần nữa để sửa chữ trực tiếp. Element tự viết khai các thành phần này bằng hàm `parts()`.
