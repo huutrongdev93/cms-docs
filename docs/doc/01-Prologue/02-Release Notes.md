@@ -11,6 +11,32 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ`  |
 
+### version 8.7.0 - 16.11.2026
+
+<span class="badge text-bg-green">Add</span> Đăng nhập sai nhiều lần liên tiếp sẽ tạm khoá trong 15 phút, áp dụng cho cả trang quản trị, trang thành viên và API.
+
+<span class="badge text-bg-green">Add</span> Filter `admin_ajax_model_capability` và `admin_builder_ajax_capability` để plugin khai quyền cần có cho các thao tác xoá, khôi phục, lưu và dựng trang với module của mình.
+
+<span class="badge text-bg-green">Add</span> Filter `theme_table_ajax_allowed` để theme và plugin khai bảng dữ liệu được phép tải qua ajax ngoài site.
+
+<span class="badge text-bg-green">Add</span> Biến `HTTP_VERIFY_SSL` trong `.env`. Đặt `HTTP_VERIFY_SSL=true` để CMS kiểm chứng chỉ khi tải gói cập nhật và kho ứng dụng; nên bật trên máy chủ đã có bộ chứng chỉ gốc.
+
+<span class="badge text-bg-blue">Update</span> Tăng cường kiểm tra quyền và làm sạch dữ liệu ở khu vực quản trị. Tài khoản nhân viên giờ cần đúng quyền của từng khu vực (cấu hình, giao diện, menu, widget, thư viện) mới thao tác được; nếu nhân viên báo bị từ chối, hãy xem lại phân quyền của chức vụ.
+
+<span class="badge text-bg-blue">Update</span> Đổi mật khẩu sẽ đăng xuất các phiên API cũ; đăng xuất sẽ huỷ ghi nhớ đăng nhập trên mọi thiết bị.
+
+<span class="badge text-bg-blue">Update</span> Sự kiện `saving` và `creating` của model có thể huỷ thao tác lưu bằng cách trả về `false` hoặc `SKD_Error`; hook riêng khai trong `$rules['hooks']` của model nay được gọi.
+
+<span class="badge text-bg-blue">Update</span> Cấu hình cache trong `config/cache.php` nay có hiệu lực với driver; trang quản trị danh mục và menu nhiều cấp tải nhanh hơn.
+
+<span class="badge text-bg-blue">Update</span> File `.htaccess` của bản cài mới chặn truy cập trực tiếp vào file cấu hình và mã nguồn. Site đang chạy không bị ghi đè `.htaccess`, nên cần tự bổ sung nếu muốn dùng.
+
+<span class="badge text-bg-red">Fix</span> Xoá hàng loạt nay xoá đủ khi chọn nhiều hơn 100 dòng.
+
+<span class="badge text-bg-red">Fix</span> Xoá thư viện ảnh và xoá bài viết hoạt động ổn định; xoá danh mục làm mới đường dẫn và menu ngay.
+
+<span class="badge text-bg-red">Fix</span> Trình dựng trang hiển thị được các section cũ hoặc section nhập từ nơi khác; phím tắt Ctrl + H mở lại bảng phím tắt.
+
 ### version 8.6.2 - 11.11.2026
 
 <span class="badge text-bg-green">Add</span> Hook `ajax_menu_location_success` chạy sau khi đổi vị trí hiển thị của menu, tiện cho plugin cần làm mới cache trang.
