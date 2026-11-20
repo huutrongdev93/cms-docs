@@ -11,6 +11,24 @@
 |      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ`  |
 |      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ`  |
 
+### version 8.7.1 - 20.11.2026
+
+<span class="badge text-bg-green">Add</span> Chạy CMS không cần database: đặt `DB_ENABLED=false` trong `.env` cho site chỉ phục vụ vài endpoint API đơn giản. CMS tự tắt admin, theme, plugin và không đòi cài đặt. Xem [Chạy Không Cần Database](../13-Api%20Security/04-Khong-Database.md).
+
+<span class="badge text-bg-green">Add</span> Biến `APP_URL` trong `.env` (ví dụ `APP_URL=https://example.com`) để chốt tên miền dùng trong link gửi qua email, như link đặt lại mật khẩu.
+
+<span class="badge text-bg-green">Add</span> Filter `admin_table_capability` để plugin khai quyền cần có khi tải bảng dữ liệu của module mình trong trang quản trị.
+
+<span class="badge text-bg-blue">Update</span> Cấu hình gửi mail hỗ trợ đầy đủ Brevo và SendGrid: chọn dịch vụ và nhập API key trong phần cấu hình mail là gửi được.
+
+<span class="badge text-bg-blue">Update</span> Controller trả về `JsonResponse` (hoặc `Response`) giờ giữ nguyên mã trạng thái và header, tiện cho việc viết API trả 201, 404, 422…
+
+<span class="badge text-bg-blue">Update</span> Tăng cường kiểm tra quyền và làm sạch dữ liệu ở khu vực quản trị và giao diện.
+
+<span class="badge text-bg-red">Fix</span> Trường lặp (repeater) lồng trong một trường lặp khác hiển thị đúng bố cục trong form quản trị.
+
+<span class="badge text-bg-red">Fix</span> Nhập file JSON trong trình dựng trang giờ dùng được cả với file xuất từ trang khác.
+
 ### version 8.7.0 - 16.11.2026
 
 <span class="badge text-bg-green">Add</span> Đăng nhập sai nhiều lần liên tiếp sẽ tạm khoá trong 15 phút, áp dụng cho cả trang quản trị, trang thành viên và API.
