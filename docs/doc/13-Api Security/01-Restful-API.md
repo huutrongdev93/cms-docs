@@ -44,10 +44,11 @@ Toàn bộ quá trình định tuyến và phản hồi API đã được chuẩ
 
 ## 1. Định Tuyến API (API Routes)
 
-Tất cả các endpoint API phải được đăng ký trong file **`routes/api.php`**. 
-Mặc định, các route đăng ký trong file này sẽ tự động được hệ thống gắn:
-- **Prefix URL**: `/api/` 
-- **Middleware**: Các logic bảo vệ định dạng request và Middleware API riêng biệt (như JWT token, kiểm tra CSRF ngoại lệ).
+Tất cả các endpoint API phải được đăng ký trong file **`routes/api.php`** (plugin dùng `plugins/<id>/routes/api.php`, theme dùng `routes/api.php` trong thư mục theme). Các route trong file này:
+- **Không tự gắn tiền tố URL.** Phải tự viết đầy đủ đường dẫn, quy ước đặt dưới `api/...` (ví dụ `Route::get('api/products', ...)` cho `GET /api/products`). Khai `Route::get('products', ...)` thì endpoint nằm ở `/products` mức gốc và có thể che mất trang có cùng slug ở website.
+- **Thuộc nhóm middleware `api`**: không kiểm tra CSRF, không chạy các middleware của website (chuyển ngôn ngữ, trạng thái đóng/mở website, chuyển về `/install`). Xác thực (`jwt`, `api-key`, `api.auth`) phải tự gắn cho từng route, xem bài [JWT & API Key](./02-JWT-ApiKey.md).
+
+> Site chỉ phục vụ API, không cần admin/theme/plugin: có thể chạy không cần database, xem [Chạy Không Cần Database](./04-Khong-Database.md).
 
 ### Ví dụ Tạo Một Endpoint API Mới
 
@@ -135,5 +136,5 @@ class ProductApiController {
 Bên cạnh bảo mật xác thực (Sẽ đề cập ở bài Access Token), Framework API có những cơ chế ngầm:
 
 1. **`HandleCors`**: Đảm bảo rằng ứng dụng Mobile App hay Website (Khác tên miền `domain.com`) có thể thực hiện gọi AJAX POST thẳng vào tên miền của bạn mà không bị rào chặn CORS Error (Cross-Origin Resource Sharing) Policy. *(Có thể đổi Origin ở `config/cors.php`)*.
-2. **Loại bỏ CSRF**: Toàn bộ Endpoint có gắn `/api/*` sẽ được Bypass (Bỏ qua) không cần kiểm tra CSRF Token. (Vì môi trường API Stateless, không xài Session). Thay vì cookie, bảo mật sẽ dùng Token Headers.
+2. **Không kiểm tra CSRF**: Mọi route khai trong `routes/api.php` thuộc nhóm middleware `api`, nhóm này không có `VerifyCsrfToken` (điều kiện là nhóm middleware chứ không phải đường dẫn bắt đầu bằng `/api/`). Thay vì cookie, bảo mật dùng Token trong Header.
 3. **`RequestSanitizer`**: Bảo vệ API Endpoint của bạn tự động chống lại SQL Injection và XSS bằng cách lọc sạch thẻ `<script>` ra khỏi input khi App Client bắn request POST lên tạo Sản phẩm.
