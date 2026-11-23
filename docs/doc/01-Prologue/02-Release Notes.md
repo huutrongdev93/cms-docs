@@ -2,14 +2,20 @@
 
 ### Phiên bản hỗ trợ
 
-| Cms Version |  PHP Support  |  Release   |    Support     |
-|:-----------:|:-------------:|:----------:|:--------------:|
-|      8      | 8.4.x - 8.5.x | 30/03/2026 |  Đang hỗ trợ   |
+| Cms Version |  PHP Support  |  Release   |    Support    |
+|:-----------:|:-------------:|:----------:|:-------------:|
+|      8      | 8.4.x - 8.5.x | 30/03/2026 |  Đang hỗ trợ  |
 |      7      | 8.2.x - 8.3.x | 10/08/2024 | `Dừng hỗ trợ` |
-|      6      | 8.0.x - 8.1.x | 25/07/2022 | `Dừng hỗ trợ`  |
-|      5      | 8.0.x - 8.1.x | 10/12/2021 | `Dừng hỗ trợ`  |
-|      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ`  |
-|      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ`  |
+|      6      | 8.0.x - 8.1.x | 25/07/2022 | `Dừng hỗ trợ` |
+|      5      | 8.0.x - 8.1.x | 10/12/2021 | `Dừng hỗ trợ` |
+|      4      | 7.0.x - 7.3.x | 29/09/2020 | `Dừng hỗ trợ` |
+|      3      |      5.6      | 18/09/2019 | `Dừng hỗ trợ` |
+
+### version 8.7.2 - 23.11.2026
+
+<span class="badge text-bg-blue">Update</span> Cập nhật các thư viện nền (Illuminate, Guzzle, Symfony HTTP, phpseclib, Dompdf, PhpSpreadsheet, Flysystem) lên bản vá bảo mật mới nhất trong cùng dòng phiên bản. Theme và plugin không cần sửa gì.
+
+<span class="badge text-bg-blue">Update</span> Phiên đăng nhập dùng cấu hình mã phiên mặc định của PHP 8.4 trở lên.
 
 ### version 8.7.1 - 20.11.2026
 
